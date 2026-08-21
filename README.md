@@ -52,11 +52,11 @@ El proyecto está dirigido principalmente a estudiantes, personas interesadas en
 
 ## 👥 Equipo de desarrollo
 
-| Integrante | Rol |
-|------------|-----|
-| Benjamin Salinas | Lider De proyecto |
-| Alexander Carrasco | |
-| Alejandro Álvarez | |
+| Integrante | Rol Scrum | Rol dentro del Proyecto |
+|------------|------------|-------------------------|
+| Benjamin Salinas | Product Owner | Líder del proyecto, Programador, Modelado 3D, Desarrollo del Gameplay y coordinación del equipo |
+| Alexander Carrasco | Scrum Master | Programador, Modelado 3D, Diseño de escenarios, coordinación de Sprints y apoyo en la organización del proyecto |
+| Alejandro Álvarez | Developer | Programador, Modelado 3D, Testing, documentación y desarrollo de funcionalidades |
 
 # 📋 Metodología de trabajo
 
