@@ -1,4 +1,12 @@
-# CyberResponseSimulator
+<p align="center">
+  <img src="./assets/BANNER.gif" width="500">
+</p>
+
+<h1 align="center">
+  CyberResponse Simulator
+</h1>
+
+---
 
 ## 📌 Descripción
 
