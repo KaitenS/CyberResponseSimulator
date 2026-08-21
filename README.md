@@ -37,7 +37,6 @@ El proyecto está dirigido principalmente a estudiantes, personas interesadas en
 ### Modelado y diseño
 
 - Blender
-- Blockbench
 
 ### Control de versiones
 
