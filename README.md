@@ -1,10 +1,11 @@
-<p align="center">
-  <img src="./Assets/BANNER.gif" width="500">
-</p>
 
 <h1 align="center">
   CyberResponse Simulator
 </h1>
+
+<p align="center">
+  <img src="./Assets/BANNER.gif" width="500">
+</p>
 
 ---
 
