@@ -1,12 +1,13 @@
-
-<h1 align="center">
-  CyberResponse Simulator
+<!-- Linea Separadora Delgada -->
+<h1>
 </h1>
 
+<!-- Logo Oficial de CyberResponse Simulator -->
 <p align="center">
   <img src="./Assets/CyberResponseSimulatorLogo.png" width="500">
 </p>
 
+<!-- Linea Separadora Gruesa -->
 ---
 
 ## 📌 Descripción
