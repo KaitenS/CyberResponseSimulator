@@ -1,0 +1,151 @@
+[gd_scene format=3 uid="uid://bhks2ynj73yao"]
+
+[ext_resource type="Texture2D" uid="uid://dpdhpp7glkbes" path="res://assets/CyberResponseSimulatorLogo.png" id="2_2wh52"]
+[ext_resource type="Shader" uid="uid://muba30eccke1" path="res://shaders/VHSOverlayShader.gdshader" id="2_ow34m"]
+[ext_resource type="Shader" uid="uid://b5hg02lpxrw14" path="res://shaders/LavaShader.gdshader" id="3_2wh52"]
+[ext_resource type="Script" uid="uid://e2ifln7egxll" path="res://scripts/mascot_layer.gd" id="3_l72w3"]
+[ext_resource type="Texture2D" uid="uid://k0ms02wtmohb" path="res://assets/CybugLogo.png" id="4_826wr"]
+[ext_resource type="Script" uid="uid://daqbycc00vuwo" path="res://scripts/Button_Glitch.gd" id="6_826wr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ow34m"]
+shader = ExtResource("3_2wh52")
+shader_parameter/color_1 = Color(0.035, 0.008, 0.08, 1)
+shader_parameter/color_2 = Color(0.18, 0.025, 0.38, 1)
+shader_parameter/color_3 = Color(0.55, 0.08, 0.85, 1)
+shader_parameter/speed = 0.15
+shader_parameter/distortion = 1.5
+shader_parameter/contrast = 1.2
+shader_parameter/swirl = 1.5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_l72w3"]
+shader = ExtResource("2_ow34m")
+shader_parameter/scanline_strength = 0.18
+shader_parameter/noise_strength = 0.08
+shader_parameter/rgb_shift = 0.004
+shader_parameter/distortion = 0.006
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_826wr"]
+bg_color = Color(0.07058824, 0.039215688, 0.10980392, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.45490196, 0.21176471, 0.72156864, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h7a2f"]
+bg_color = Color(0.12941177, 0.06666667, 0.18431373, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.60784316, 0.33333334, 0.83137256, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[node name="Node2D" type="Node2D" unique_id=1197150799]
+
+[node name="MainMenu" type="Control" parent="." unique_id=1812864235]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+
+[node name="LavaBackground" type="ColorRect" parent="MainMenu" unique_id=5464976]
+material = SubResource("ShaderMaterial_ow34m")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VHSOverlay" type="ColorRect" parent="MainMenu" unique_id=1501342204]
+material = SubResource("ShaderMaterial_l72w3")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MascotLayer" type="Control" parent="MainMenu" unique_id=42671229]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_l72w3")
+
+[node name="Mascot" type="TextureRect" parent="MainMenu/MascotLayer" unique_id=35901415]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+texture = ExtResource("4_826wr")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CenterContainer" type="CenterContainer" parent="MainMenu" unique_id=358836269]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Menu" type="VBoxContainer" parent="MainMenu/CenterContainer" unique_id=468096063]
+custom_minimum_size = Vector2(400, 400)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Logo" type="TextureRect" parent="MainMenu/CenterContainer/Menu" unique_id=1802073739]
+custom_minimum_size = Vector2(400, 180)
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("2_2wh52")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PlayButton" type="Button" parent="MainMenu/CenterContainer/Menu" unique_id=346915422]
+custom_minimum_size = Vector2(360, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84705883, 0.7058824, 0.99607843, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(0.65882355, 0.33333334, 0.96862745, 1)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_826wr")
+theme_override_styles/hover = SubResource("StyleBoxFlat_h7a2f")
+text = "> Iniciar Simulacion"
+script = ExtResource("6_826wr")
+
+[node name="Options Button" type="Button" parent="MainMenu/CenterContainer/Menu" unique_id=2017784073]
+custom_minimum_size = Vector2(360, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84705883, 0.7058824, 0.99607843, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(0.65882355, 0.33333334, 0.96862745, 1)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_826wr")
+theme_override_styles/hover = SubResource("StyleBoxFlat_h7a2f")
+text = "> Opciones"
+script = ExtResource("6_826wr")
+
+[node name="ExitButton" type="Button" parent="MainMenu/CenterContainer/Menu" unique_id=640862474]
+custom_minimum_size = Vector2(360, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84705883, 0.7058824, 0.99607843, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(0.65882355, 0.33333334, 0.96862745, 1)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_826wr")
+theme_override_styles/hover = SubResource("StyleBoxFlat_h7a2f")
+text = "> Salir"
+script = ExtResource("6_826wr")
