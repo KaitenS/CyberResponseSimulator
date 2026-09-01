@@ -4,7 +4,7 @@
 </h1>
 
 <p align="center">
-  <img src="./Assets/BANNER.gif" width="500">
+  <img src="./Assets/CyberResponseSimulatorLogo.png" width="500">
 </p>
 
 ---
