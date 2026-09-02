@@ -1,0 +1,43 @@
+name: Discord Notifications
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - closed
+      - reopened
+      - synchronize
+
+jobs:
+  discord:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            MESSAGE="🟢 **Push a main**\n\n📦 Repositorio: **${{ github.repository }}**\n👤 Autor: **${{ github.actor }}**\n📝 Commit: **${{ github.event.head_commit.message }}**\n🔗 https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          else
+            if [ "${{ github.event.action }}" = "closed" ]; then
+              if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+                MESSAGE="🟣 **Pull Request fusionado**\n\n📦 Repositorio: **${{ github.repository }}**\n👤 Autor: **${{ github.actor }}**\n🔀 PR: **#${{ github.event.pull_request.number }} — ${{ github.event.pull_request.title }}**\n🔗 ${{ github.event.pull_request.html_url }}"
+              else
+                MESSAGE="🔴 **Pull Request cerrado sin fusionar**\n\n📦 Repositorio: **${{ github.repository }}**\n🔀 PR: **#${{ github.event.pull_request.number }} — ${{ github.event.pull_request.title }}**\n🔗 ${{ github.event.pull_request.html_url }}"
+              fi
+            else
+              MESSAGE="🔵 **Pull Request actualizado**\n\n📦 Repositorio: **${{ github.repository }}**\n👤 Autor: **${{ github.actor }}**\n🔀 PR: **#${{ github.event.pull_request.number }} — ${{ github.event.pull_request.title }}**\n📌 Acción: **${{ github.event.action }}**\n🔗 ${{ github.event.pull_request.html_url }}"
+            fi
+          fi
+
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\":\"$MESSAGE\"}" \
+            "$DISCORD_WEBHOOK"
