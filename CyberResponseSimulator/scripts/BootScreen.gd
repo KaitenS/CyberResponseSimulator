@@ -29,6 +29,9 @@ var displayed_text := ""
 
 
 func _ready():
+	
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	
 	# Limpiar BootText
 	boot_text.text = ""
 
