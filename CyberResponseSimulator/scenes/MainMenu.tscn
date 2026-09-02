@@ -1,11 +1,14 @@
 [gd_scene format=3 uid="uid://bhks2ynj73yao"]
 
+[ext_resource type="Script" uid="uid://cxvrg8rjsdmy" path="res://scripts/MainMenu.gd" id="1_ucygd"]
 [ext_resource type="Texture2D" uid="uid://dpdhpp7glkbes" path="res://assets/CyberResponseSimulatorLogo.png" id="2_2wh52"]
 [ext_resource type="Shader" uid="uid://muba30eccke1" path="res://shaders/VHSOverlayShader.gdshader" id="2_ow34m"]
 [ext_resource type="Shader" uid="uid://b5hg02lpxrw14" path="res://shaders/LavaShader.gdshader" id="3_2wh52"]
 [ext_resource type="Script" uid="uid://e2ifln7egxll" path="res://scripts/mascot_layer.gd" id="3_l72w3"]
 [ext_resource type="Texture2D" uid="uid://k0ms02wtmohb" path="res://assets/CybugLogo.png" id="4_826wr"]
 [ext_resource type="Script" uid="uid://daqbycc00vuwo" path="res://scripts/Button_Glitch.gd" id="6_826wr"]
+[ext_resource type="Texture2D" uid="uid://n7oefyuq58xo" path="res://assets/CheckBox.png" id="8_mipys"]
+[ext_resource type="Texture2D" uid="uid://b2h6662taefv0" path="res://assets/CheckBox_1.png" id="9_8a8k8"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ow34m"]
 shader = ExtResource("3_2wh52")
@@ -44,6 +47,18 @@ corner_radius_top_right = 1
 corner_radius_bottom_right = 1
 corner_radius_bottom_left = 1
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8a8k8"]
+bg_color = Color(0.07058824, 0.039215688, 0.10980392, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.45490196, 0.21176471, 0.72156864, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [node name="Node2D" type="Node2D" unique_id=1197150799]
 
 [node name="MainMenu" type="Control" parent="." unique_id=1812864235]
@@ -51,6 +66,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 1280.0
 offset_bottom = 720.0
+script = ExtResource("1_ucygd")
 
 [node name="LavaBackground" type="ColorRect" parent="MainMenu" unique_id=5464976]
 material = SubResource("ShaderMaterial_ow34m")
@@ -149,3 +165,77 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_826wr")
 theme_override_styles/hover = SubResource("StyleBoxFlat_h7a2f")
 text = "> Salir"
 script = ExtResource("6_826wr")
+
+[node name="OptionsPanel" type="Panel" parent="MainMenu" unique_id=1223452057]
+visible = false
+custom_minimum_size = Vector2(500, 445)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -214.0
+offset_right = 250.0
+offset_bottom = 231.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_8a8k8")
+
+[node name="OptionsContainer" type="VBoxContainer" parent="MainMenu/OptionsPanel" unique_id=1781712388]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 35.0
+offset_right = -40.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Title_Options" type="Label" parent="MainMenu/OptionsPanel/OptionsContainer" unique_id=411052646]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Opciones del Sistema"
+horizontal_alignment = 1
+
+[node name="VolumeLabel" type="Label" parent="MainMenu/OptionsPanel/OptionsContainer" unique_id=1948253465]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Sonido General"
+
+[node name="VolumeSlider" type="HSlider" parent="MainMenu/OptionsPanel/OptionsContainer" unique_id=1696100698]
+layout_mode = 2
+value = 100.0
+
+[node name="FullScreenRow" type="HBoxContainer" parent="MainMenu/OptionsPanel/OptionsContainer" unique_id=1992295707]
+layout_mode = 2
+
+[node name="Fullcreen_Label" type="Label" parent="MainMenu/OptionsPanel/OptionsContainer/FullScreenRow" unique_id=1539555815]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Pantalla Completa"
+
+[node name="Spacer" type="Control" parent="MainMenu/OptionsPanel/OptionsContainer/FullScreenRow" unique_id=1936927144]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FullScreenCheck" type="CheckBox" parent="MainMenu/OptionsPanel/OptionsContainer/FullScreenRow" unique_id=300460568]
+layout_mode = 2
+theme_override_icons/checked = ExtResource("9_8a8k8")
+theme_override_icons/unchecked = ExtResource("8_mipys")
+
+[node name="BackButton" type="Button" parent="MainMenu/OptionsPanel/OptionsContainer" unique_id=2015771427]
+layout_mode = 2
+size_flags_vertical = 10
+theme_override_font_sizes/font_size = 18
+text = "[ Volver ]"
+
+[connection signal="pressed" from="MainMenu/CenterContainer/Menu/Options Button" to="MainMenu" method="_on_options_button_pressed"]
+[connection signal="pressed" from="MainMenu/CenterContainer/Menu/ExitButton" to="MainMenu" method="_on_exit_button_pressed"]
+[connection signal="value_changed" from="MainMenu/OptionsPanel/OptionsContainer/VolumeSlider" to="MainMenu" method="_on_volume_slider_value_changed"]
+[connection signal="toggled" from="MainMenu/OptionsPanel/OptionsContainer/FullScreenRow/FullScreenCheck" to="MainMenu" method="_on_full_screen_check_toggled"]
+[connection signal="pressed" from="MainMenu/OptionsPanel/OptionsContainer/BackButton" to="MainMenu" method="_on_back_button_pressed"]
