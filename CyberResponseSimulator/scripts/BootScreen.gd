@@ -341,5 +341,5 @@ func glitch_transition():
 	# =====================================================
 
 	get_tree().change_scene_to_file(
-		"res://scenes/MainMenu.tscn"
+		"res://scenes/Menu/MainMenu.tscn"
 	)
