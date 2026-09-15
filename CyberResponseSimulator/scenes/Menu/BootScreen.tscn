@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d27tv35lywpqr"]
 
-[ext_resource type="Script" uid="uid://b2gwl6t63jc2l" path="res://scripts/BootScreen.gd" id="1_w4v1v"]
+[ext_resource type="Script" uid="uid://b2gwl6t63jc2l" path="res://scripts/Menu/BootScreen.gd" id="1_w4v1v"]
 [ext_resource type="Shader" uid="uid://dke6ggbudg2s8" path="res://shaders/GlitchShader.gdshader" id="2_qo86g"]
 [ext_resource type="Texture2D" uid="uid://dtl31nynvarht" path="res://assets/GodotLogo.png" id="3_5xodi"]
 [ext_resource type="Texture2D" uid="uid://cmpovd3im3fm" path="res://assets/Logo_DuocUC.png" id="4_768qo"]

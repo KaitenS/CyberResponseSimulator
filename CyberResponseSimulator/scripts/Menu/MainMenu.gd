@@ -27,6 +27,7 @@ func _on_options_button_pressed():
 	tween.tween_property(panel, "position:x", original_position.x, 0.06)
 
 
+
 func _on_back_button_pressed():
 	var panel = $OptionsPanel
 	
@@ -45,6 +46,9 @@ func _on_back_button_pressed():
 		panel.position = original_position
 	)
 
+func _on_play_button_pressed():
+	GameManager.start_game()
+	get_tree().change_scene_to_file("res://scenes/Game/Game.tscn")
 
 func _on_exit_button_pressed():
 	get_tree().quit()
