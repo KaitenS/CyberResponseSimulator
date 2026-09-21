@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dtl31nynvarht"
-path="res://.godot/imported/GodotLogo.png-5688af2a781bf4c33eee78bd410eacf3.ctex"
+uid="uid://dpdhpp7glkbes"
+path="res://.godot/imported/CyberResponseSimulatorLogo.png-e80fed357bf14662bbc9eafc9c27bc69.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/GodotLogo.png"
-dest_files=["res://.godot/imported/GodotLogo.png-5688af2a781bf4c33eee78bd410eacf3.ctex"]
+source_file="res://assets/Logos/CyberResponseSimulatorLogo.png"
+dest_files=["res://.godot/imported/CyberResponseSimulatorLogo.png-e80fed357bf14662bbc9eafc9c27bc69.ctex"]
 
 [params]
 
