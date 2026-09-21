@@ -1,7 +1,62 @@
 [gd_scene format=3 uid="uid://7w828gjuoce5"]
 
 [ext_resource type="PackedScene" uid="uid://b1rpuf13ck37c" path="res://scenes/Game/Player.tscn" id="1_bekgd"]
+[ext_resource type="PackedScene" uid="uid://dix65o2rc6b2o" path="res://assets/Models/Office.blend" id="2_2k76m"]
+[ext_resource type="Script" uid="uid://c7tui2qbxvtw5" path="res://scripts/Game/Interaction/Interactable.gd" id="3_1asa3"]
+[ext_resource type="PackedScene" uid="uid://0pwjijbq1v1s" path="res://assets/Models/Pc_Model.blend" id="4_yqgss"]
+
+[sub_resource type="Environment" id="Environment_bekgd"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tt4u6"]
+size = Vector3(35, 0.2, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_50swi"]
+size = Vector3(0.6, 0.35, 0.6)
 
 [node name="Game" type="Node3D" unique_id=221791749]
 
 [node name="Player" parent="." unique_id=1615212832 instance=ExtResource("1_bekgd")]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1503072395]
+transform = Transform3D(0.4513888, 0.81627876, -0.36046794, -0.6378497, 0.5776582, 0.509371, 0.624016, 0, 0.7814116, -1.810559, 3.323124, 1.8862411)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=96887587]
+environment = SubResource("Environment_bekgd")
+
+[node name="Floor" type="StaticBody3D" parent="." unique_id=1624057287]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.2651663)
+
+[node name="Office" parent="Floor" unique_id=370840373 instance=ExtResource("2_2k76m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0003004074, 0, 8.70092)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=420898150]
+shape = SubResource("BoxShape3D_tt4u6")
+
+[node name="Computer" type="StaticBody3D" parent="." unique_id=584969706]
+script = ExtResource("3_1asa3")
+
+[node name="Computer_Model" parent="Computer" unique_id=1078576353 instance=ExtResource("4_yqgss")]
+transform = Transform3D(0.06, 0, 0, 0, 0.06, 0, 0, 0, 0.06, 0, 0, 1.4457788)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Computer" unique_id=120575627]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1048948, 0.15621248, 1.4350747)
+shape = SubResource("BoxShape3D_50swi")
+
+[node name="InteractionUI" type="CanvasLayer" parent="." unique_id=1302227768]
+
+[node name="InteractionLabel" type="Label" parent="InteractionUI" unique_id=1700504105]
+visible = false
+custom_minimum_size = Vector2(200, 50)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -50.0
+offset_right = 100.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "[E] Interactuar"
+horizontal_alignment = 1
+vertical_alignment = 1
