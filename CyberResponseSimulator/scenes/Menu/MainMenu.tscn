@@ -1,14 +1,14 @@
 [gd_scene format=3 uid="uid://bhks2ynj73yao"]
 
 [ext_resource type="Script" uid="uid://cxvrg8rjsdmy" path="res://scripts/Menu/MainMenu.gd" id="1_ucygd"]
-[ext_resource type="Texture2D" uid="uid://dpdhpp7glkbes" path="res://assets/CyberResponseSimulatorLogo.png" id="2_2wh52"]
+[ext_resource type="Texture2D" uid="uid://dpdhpp7glkbes" path="res://assets/Logos/CyberResponseSimulatorLogo.png" id="2_2wh52"]
 [ext_resource type="Shader" uid="uid://muba30eccke1" path="res://shaders/VHSOverlayShader.gdshader" id="2_ow34m"]
 [ext_resource type="Shader" uid="uid://b5hg02lpxrw14" path="res://shaders/LavaShader.gdshader" id="3_2wh52"]
 [ext_resource type="Script" uid="uid://e2ifln7egxll" path="res://scripts/Menu/mascot_layer.gd" id="3_l72w3"]
-[ext_resource type="Texture2D" uid="uid://k0ms02wtmohb" path="res://assets/CybugLogo.png" id="4_826wr"]
+[ext_resource type="Texture2D" uid="uid://k0ms02wtmohb" path="res://assets/Logos/CybugLogo.png" id="4_826wr"]
 [ext_resource type="Script" uid="uid://daqbycc00vuwo" path="res://scripts/Menu/Button_Glitch.gd" id="6_826wr"]
-[ext_resource type="Texture2D" uid="uid://n7oefyuq58xo" path="res://assets/CheckBox.png" id="8_mipys"]
-[ext_resource type="Texture2D" uid="uid://b2h6662taefv0" path="res://assets/CheckBox_1.png" id="9_8a8k8"]
+[ext_resource type="Texture2D" uid="uid://n7oefyuq58xo" path="res://assets/Buttons/CheckBox.png" id="8_mipys"]
+[ext_resource type="Texture2D" uid="uid://b2h6662taefv0" path="res://assets/Buttons/CheckBox_1.png" id="9_8a8k8"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ow34m"]
 shader = ExtResource("3_2wh52")
