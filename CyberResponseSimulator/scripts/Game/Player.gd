@@ -66,3 +66,6 @@ func _input(event):
 		camera_pitch = clamp(camera_pitch, -1.5, 1.5)
 
 		$Camera3D.rotation.x = camera_pitch
+
+	if event.is_action_pressed("interact") and current_interactable:
+		current_interactable.interact()
