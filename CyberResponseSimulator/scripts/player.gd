@@ -5,6 +5,8 @@ const SENSITIVITY = 0.003
 
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
+var interaction_prompt_label: Label
+
 @onready var head: Node3D = $Head
 @onready var camera: Camera3D = $Head/Camera3D
 @onready var interaction_ray: RayCast3D = $Head/Camera3D/RayCast3D  # NUEVO
@@ -13,6 +15,7 @@ var current_interactable: Interactable = null  # NUEVO: lo que el rayo está mir
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	interaction_prompt_label = get_tree().get_first_node_in_group("interaction_prompt_label")
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -48,16 +51,20 @@ func _physics_process(delta: float) -> void:
 
 	_check_interaction()  # NUEVO
 
-# NUEVO: revisa cada frame si el rayo está mirando un objeto interactuable
 func _check_interaction() -> void:
+	if Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
+		interaction_prompt_label.visible = false
+		return
+
 	if interaction_ray.is_colliding():
 		var collider = interaction_ray.get_collider()
 		if collider is Interactable:
 			if current_interactable != collider:
 				current_interactable = collider
-				print("Mirando: ", current_interactable.name, " -> ", current_interactable.interaction_prompt)
+				interaction_prompt_label.text = current_interactable.interaction_prompt
+				interaction_prompt_label.visible = true
 			return
 
-	# Si llegó aquí, no hay nada interactuable enfrente
 	if current_interactable != null:
 		current_interactable = null
+		interaction_prompt_label.visible = false

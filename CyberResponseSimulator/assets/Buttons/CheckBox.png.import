@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmpovd3im3fm"
-path="res://.godot/imported/Logo_DuocUC.png-e54f8b3526923ccf5758e9c9d8d253e4.ctex"
+uid="uid://n7oefyuq58xo"
+path="res://.godot/imported/CheckBox.png-653fd6a5de71928b0b77da1a23b3b484.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Logo_DuocUC.png"
-dest_files=["res://.godot/imported/Logo_DuocUC.png-e54f8b3526923ccf5758e9c9d8d253e4.ctex"]
+source_file="res://assets/Buttons/CheckBox.png"
+dest_files=["res://.godot/imported/CheckBox.png-653fd6a5de71928b0b77da1a23b3b484.ctex"]
 
 [params]
 

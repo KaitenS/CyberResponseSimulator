@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dpdhpp7glkbes"
-path="res://.godot/imported/CyberResponseSimulatorLogo.png-15ce3f02d44edef9635904b7f0ff9ee0.ctex"
+uid="uid://b2h6662taefv0"
+path="res://.godot/imported/CheckBox_1.png-f4cb77d5115f47e192b65ae6ef0244cc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/CyberResponseSimulatorLogo.png"
-dest_files=["res://.godot/imported/CyberResponseSimulatorLogo.png-15ce3f02d44edef9635904b7f0ff9ee0.ctex"]
+source_file="res://assets/Buttons/CheckBox_1.png"
+dest_files=["res://.godot/imported/CheckBox_1.png-f4cb77d5115f47e192b65ae6ef0244cc.ctex"]
 
 [params]
 

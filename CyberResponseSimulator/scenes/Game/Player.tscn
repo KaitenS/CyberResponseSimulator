@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://b1rpuf13ck37c"]
+
+[ext_resource type="PackedScene" uid="uid://wqfmnd7e6nj5" path="res://assets/Models/SC_Model.blend" id="1_bon1s"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bon1s"]
+radius = 0.33544922
+height = 1.0332031
+
+[node name="Player" type="CharacterBody3D" unique_id=1615212832]
+
+[node name="SC_Model" parent="." unique_id=700588945 instance=ExtResource("1_bon1s")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=202286457]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.516, 0)
+shape = SubResource("CapsuleShape3D_bon1s")
