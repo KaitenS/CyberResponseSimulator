@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="MalwareIncidentData" format=3 uid="uid://cik5bb381swee"]
+
+[ext_resource type="Script" uid="uid://cs1fyu2gc821y" path="res://scripts/Malware/file_entry.gd" id="1_irw1c"]
+[ext_resource type="Script" uid="uid://c1nih121rphdg" path="res://scripts/Malware/process_entry.gd" id="2_t88t2"]
+[ext_resource type="Script" uid="uid://cwpqq23dywlpr" path="res://scripts/Data/malware_incident_data.gd" id="3_w1kla"]
+
+[sub_resource type="Resource" id="Resource_irw1c"]
+script = ExtResource("1_irw1c")
+file_name = "factura_urgente.exe"
+is_malicious = true
+evidence_id = "archivo_factura_exe"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_t88t2"]
+script = ExtResource("1_irw1c")
+file_name = "informe_ventas.docx"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_w1kla"]
+script = ExtResource("1_irw1c")
+file_name = "presupuesto_2026.xlsx"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_usism"]
+script = ExtResource("2_t88t2")
+process_name = "svch0st.exe"
+is_malicious = true
+evidence_id = "proceso_svchost_falso"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_iv606"]
+script = ExtResource("2_t88t2")
+process_name = "chrome.exe"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_e3po3"]
+script = ExtResource("2_t88t2")
+process_name = "explorer.exe"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[resource]
+script = ExtResource("3_w1kla")
+title = "Equipo de Finanzas con comportamiento anómalo"
+required_evidence_ids = Array[String](["proceso_svchost_falso", "archivo_factura_exe"])
+processes = Array[ExtResource("2_t88t2")]([SubResource("Resource_usism"), SubResource("Resource_iv606"), SubResource("Resource_e3po3")])
+files = Array[ExtResource("1_irw1c")]([SubResource("Resource_irw1c"), SubResource("Resource_t88t2"), SubResource("Resource_w1kla")])
+malicious_process_ids = Array[String](["proceso_svchost_falso"])
+malicious_file_ids = Array[String](["archivo_factura_exe"])
+correct_containment_strategy = "aislar_equipo"
+metadata/_custom_type_script = "uid://cwpqq23dywlpr"
