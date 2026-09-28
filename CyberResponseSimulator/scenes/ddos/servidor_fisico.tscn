@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://dgar6hffx2lre"]
+
+[ext_resource type="Script" uid="uid://donr57a8b5f3j" path="res://scripts/ddos/servidor_fisico.gd" id="1_d8ixe"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gyfej"]
+size = Vector3(0.6, 1.8, 0.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_a7vr1"]
+size = Vector3(0.6, 1.8, 0.5)
+
+[node name="ServidorFisico" type="StaticBody3D" unique_id=697435599 node_paths=PackedStringArray("pantalla", "luz", "malla")]
+script = ExtResource("1_d8ixe")
+pantalla = NodePath("Pantalla")
+luz = NodePath("Luz")
+malla = NodePath("MeshInstance3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1185737903]
+shape = SubResource("BoxShape3D_gyfej")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=829796420]
+mesh = SubResource("BoxMesh_a7vr1")
+
+[node name="Pantalla" type="Label3D" parent="." unique_id=376190326]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.26)
+pixel_size = 0.006
+font_size = 34
+
+[node name="Luz" type="OmniLight3D" parent="." unique_id=40163487]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0.3)
+light_color = Color(0.25, 1, 0.45, 1)
+omni_range = 1.5

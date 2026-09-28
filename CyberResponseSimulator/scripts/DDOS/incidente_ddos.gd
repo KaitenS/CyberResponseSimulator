@@ -19,7 +19,8 @@ signal alerta_encolada(cantidad: int)
 
 # ---------------------------------------------------------------- ENUMS
 enum Servidor { ALERTAS, CAMARAS, MONITOREO }
-enum Vector { SYN_FLOOD, UDP_AMP, HTTP_FLOOD, BOTNET }
+## LEGITIMO es la oleada trampa: parece trafico anomalo pero es real y no requiere accion.
+enum Vector { SYN_FLOOD, UDP_AMP, HTTP_FLOOD, BOTNET, LEGITIMO }
 enum Mitigacion { SYN_COOKIES, FILTRO_UDP, RATE_LIMIT, BLACKHOLE }
 
 const NOMBRE_SERVIDOR := {
@@ -33,6 +34,7 @@ const NOMBRE_VECTOR := {
 	Vector.UDP_AMP: "Amplificacion UDP",
 	Vector.HTTP_FLOOD: "HTTP Flood",
 	Vector.BOTNET: "Botnet distribuida",
+	Vector.LEGITIMO: "Trafico legitimo (falsa alarma)",
 }
 
 const NOMBRE_MITIGACION := {
@@ -42,13 +44,17 @@ const NOMBRE_MITIGACION := {
 	Mitigacion.BLACKHOLE: "Blackhole de rango de origen",
 }
 
-## Vector -> contramedida correcta
+## Vector -> contramedida correcta. LEGITIMO no aparece aqui a proposito:
+## no tiene contramedida valida, la jugada correcta es no tocar nada.
 const CONTRAMEDIDA := {
 	Vector.SYN_FLOOD: Mitigacion.SYN_COOKIES,
 	Vector.UDP_AMP: Mitigacion.FILTRO_UDP,
 	Vector.HTTP_FLOOD: Mitigacion.RATE_LIMIT,
 	Vector.BOTNET: Mitigacion.BLACKHOLE,
 }
+
+## Vectores que representan ataques reales (excluye la trampa LEGITIMO).
+const VECTORES_ATAQUE := [Vector.SYN_FLOOD, Vector.UDP_AMP, Vector.HTTP_FLOOD, Vector.BOTNET]
 
 # ---------------------------------------------------------- BALANCE (tunear aqui)
 const DURACION_INCIDENTE := 180.0      ## Duracion total del ataque en segundos
@@ -77,8 +83,18 @@ const PUNTOS_OLEADA_MITIGADA := 120
 const PUNTOS_FALSO_POSITIVO := -60
 const PUNTOS_POR_SEG_CAIDO := -1.5
 const PUNTOS_REINICIO_GENERAL := -80
+const PUNTOS_LEGITIMA_IGNORADA := 15   ## Bono por NO tocar una oleada trampa hasta que expira
 
 const FACTOR_JORNADA_SIN_CAMARAS := 1.5
+
+## Probabilidad de que una oleada nueva sea trafico legitimo (trampa).
+const PROB_LEGITIMA := 0.22
+## A partir de que numero de oleada pueden aparecer trampas.
+const OLEADA_MINIMA_LEGITIMA := 1
+## Probabilidad de que una oleada real venga con un segundo vector combinado.
+const PROB_COMBINADA := 0.3
+## A partir de que numero de oleada pueden aparecer ataques combinados.
+const OLEADA_MINIMA_COMBINADA := 4
 
 # ---------------------------------------------------------------- ESTADO
 var activo: bool = false
@@ -89,7 +105,10 @@ var puntaje: float = 0.0
 ## Cada servidor: { carga, online, reiniciando, progreso_reinicio }
 var servidores: Array[Dictionary] = []
 
-## Cada oleada activa: { indice, vector, objetivos, intensidad, mitigada, vida, telemetria }
+## Cada oleada activa:
+## { indice, vector, vector_extra, objetivos, intensidad, mitigada, mitigada_extra,
+##   vida, telemetria, telemetria_extra }
+## vector_extra = -1 cuando la oleada tiene un solo vector (caso normal).
 var oleadas: Array[Dictionary] = []
 
 var cooldown_restante: float = 0.0
@@ -101,6 +120,8 @@ var _contador_oleadas: int = 0
 var _oleadas_mitigadas: int = 0
 var _falsos_positivos: int = 0
 var _usos_reinicio_general: int = 0
+var _oleadas_legitimas: int = 0
+var _oleadas_combinadas: int = 0
 var _rng := RandomNumberGenerator.new()
 
 
@@ -166,8 +187,10 @@ func aplicar_mitigacion(m: int) -> void:
 			"Consola ocupada. Espere %.1f s." % cooldown_restante)
 		return
 
-	var objetivo := _oleada_activa_para(m)
-	if objetivo == -1:
+	var resultado := _buscar_objetivo_mitigacion(m)
+	var idx: int = resultado.get("idx", -1)
+
+	if idx == -1:
 		_falsos_positivos += 1
 		puntaje += PUNTOS_FALSO_POSITIVO
 		cooldown_restante = COOLDOWN_FALLO
@@ -177,19 +200,30 @@ func aplicar_mitigacion(m: int) -> void:
 		_log("[ERROR] " + msg.replace("\n", " "))
 		return
 
-	var ol: Dictionary = oleadas[objetivo]
-	ol.mitigada = true
-	_oleadas_mitigadas += 1
+	var ol: Dictionary = oleadas[idx]
+	var parte: String = resultado.get("parte", "principal")
+	if parte == "principal":
+		ol.mitigada = true
+	else:
+		ol.mitigada_extra = true
+
 	cooldown_restante = COOLDOWN_MITIGACION
 
-	if puede_registrar_puntaje():
-		puntaje += PUNTOS_OLEADA_MITIGADA
-	else:
-		_log("[AVISO] Monitoreo offline: esta accion no otorga puntaje.")
+	var completo: bool = ol.mitigada and (ol.vector_extra == -1 or ol.mitigada_extra)
+	var txt: String
 
-	var txt := "Contramedida aplicada. %s neutralizado." % NOMBRE_VECTOR[ol.vector]
+	if completo:
+		_oleadas_mitigadas += 1
+		if puede_registrar_puntaje():
+			puntaje += PUNTOS_OLEADA_MITIGADA
+		else:
+			_log("[AVISO] Monitoreo offline: esta accion no otorga puntaje.")
+		txt = "Contramedida aplicada. Flujo #%d neutralizado por completo." % (ol.indice + 1)
+		emit_signal("oleada_neutralizada", ol.indice, ol.vector)
+	else:
+		txt = "Contramedida parcial aplicada al flujo #%d. Se detecto una segunda firma: aplique tambien su contramedida." % (ol.indice + 1)
+
 	emit_signal("mitigacion_resultado", true, txt)
-	emit_signal("oleada_neutralizada", ol.indice, ol.vector)
 	_log("[OK] " + txt)
 
 
@@ -276,6 +310,9 @@ func _actualizar_oleadas(delta: float) -> void:
 	for i in range(oleadas.size() - 1, -1, -1):
 		oleadas[i].vida -= delta
 		if oleadas[i].vida <= 0.0:
+			if oleadas[i].vector == Vector.LEGITIMO and not oleadas[i].mitigada:
+				puntaje += PUNTOS_LEGITIMA_IGNORADA
+				_log("[OK] El flujo #%d era trafico legitimo. Buen criterio: no se aplico ninguna contramedida." % (oleadas[i].indice + 1))
 			var idx: int = oleadas[i].indice
 			oleadas.remove_at(i)
 			emit_signal("oleada_expirada", idx)
@@ -290,8 +327,11 @@ func _actualizar_servidores(delta: float) -> void:
 
 		var presion := 0.0
 		for ol in oleadas:
+			if ol.vector == Vector.LEGITIMO:
+				continue # el trafico legitimo nunca genera carga real
 			if id in ol.objetivos:
-				var f: float = PRESION_MITIGADA if ol.mitigada else 1.0
+				var completo: bool = ol.mitigada and (ol.vector_extra == -1 or ol.mitigada_extra)
+				var f: float = PRESION_MITIGADA if completo else 1.0
 				presion += PRESION_BASE * ol.intensidad * f
 
 		if presion > 0.0:
@@ -340,6 +380,8 @@ func _reset_estado() -> void:
 	_oleadas_mitigadas = 0
 	_falsos_positivos = 0
 	_usos_reinicio_general = 0
+	_oleadas_legitimas = 0
+	_oleadas_combinadas = 0
 
 
 func _set_online(id: int, valor: bool) -> void:
@@ -363,7 +405,21 @@ func _lanzar_oleada() -> void:
 	_temporizador_oleada = INTERVALO_OLEADA
 	var intensidad := 1.0 + ESCALADA_POR_OLEADA * float(_contador_oleadas)
 
-	var vector: int = _rng.randi_range(0, 3)
+	var vector: int
+	var vector_extra: int = -1
+
+	var es_legitima := _contador_oleadas >= OLEADA_MINIMA_LEGITIMA and _rng.randf() < PROB_LEGITIMA
+	if es_legitima:
+		vector = Vector.LEGITIMO
+		_oleadas_legitimas += 1
+	else:
+		vector = VECTORES_ATAQUE[_rng.randi_range(0, VECTORES_ATAQUE.size() - 1)]
+		if _contador_oleadas >= OLEADA_MINIMA_COMBINADA and _rng.randf() < PROB_COMBINADA:
+			vector_extra = VECTORES_ATAQUE[_rng.randi_range(0, VECTORES_ATAQUE.size() - 1)]
+			while vector_extra == vector:
+				vector_extra = VECTORES_ATAQUE[_rng.randi_range(0, VECTORES_ATAQUE.size() - 1)]
+			_oleadas_combinadas += 1
+
 	var objetivos: Array[int] = []
 	var disponibles: Array[int] = [0, 1, 2]
 	disponibles.shuffle()
@@ -373,21 +429,31 @@ func _lanzar_oleada() -> void:
 		objetivos.append(disponibles[i])
 
 	var telemetria := _generar_telemetria(vector, intensidad)
+	var telemetria_extra := {} if vector_extra == -1 else _generar_telemetria(vector_extra, intensidad)
 
 	oleadas.append({
 		"indice": _contador_oleadas,
 		"vector": vector,
+		"vector_extra": vector_extra,
 		"objetivos": objetivos,
 		"intensidad": intensidad,
 		"mitigada": false,
+		"mitigada_extra": false,
 		"vida": DURACION_OLEADA,
 		"telemetria": telemetria,
+		"telemetria_extra": telemetria_extra,
 	})
 
 	var nombres: Array[String] = []
 	for o in objetivos:
 		nombres.append(NOMBRE_SERVIDOR[o])
-	_log("[TRAFICO] Pico anomalo hacia: %s" % ", ".join(nombres))
+
+	if es_legitima:
+		_log("[TRAFICO] Pico de trafico hacia: %s (revisar antes de actuar)" % ", ".join(nombres))
+	elif vector_extra != -1:
+		_log("[TRAFICO] Ataque combinado hacia: %s (%s + %s)" % [", ".join(nombres), NOMBRE_VECTOR[vector], NOMBRE_VECTOR[vector_extra]])
+	else:
+		_log("[TRAFICO] Pico anomalo hacia: %s" % ", ".join(nombres))
 
 	emit_signal("oleada_iniciada", _contador_oleadas, vector, objetivos, telemetria)
 	_contador_oleadas += 1
@@ -427,7 +493,7 @@ func _generar_telemetria(vector: int, intensidad: float) -> Dictionary:
 				"handshakes_completados": "%d %%" % _rng.randi_range(94, 100),
 				"nota": "Peticiones GET validas y repetidas a /login. Mismo User-Agent en el 89 %% del trafico.",
 			}
-		_:
+		Vector.BOTNET:
 			return {
 				"paquetes_seg": int(base * 2.1 + _rng.randf_range(-2500, 2500)),
 				"tamano_medio": "%d B" % _rng.randi_range(700, 1500),
@@ -437,16 +503,30 @@ func _generar_telemetria(vector: int, intensidad: float) -> Dictionary:
 				"handshakes_completados": "%d %%" % _rng.randi_range(55, 75),
 				"nota": "Trafico mixto sostenido desde un unico rango autonomo AS%d." % _rng.randi_range(12000, 64000),
 			}
+		_: # Vector.LEGITIMO
+			return {
+				"paquetes_seg": int(7000 + _rng.randf_range(-1500, 1500)),
+				"tamano_medio": "%d B" % _rng.randi_range(400, 900),
+				"porcentaje_syn": "%d %%" % _rng.randi_range(3, 8),
+				"ips_origen": "%d (rango corporativo conocido)" % _rng.randi_range(4, 12),
+				"puerto_destino": "443/TCP",
+				"handshakes_completados": "%d %%" % _rng.randi_range(96, 100),
+				"nota": "Coincide con la ventana del respaldo nocturno programado. Sin senales de origen falsificado.",
+			}
 
 
-## Devuelve el indice de una oleada activa que esa contramedida resuelve, o -1.
-func _oleada_activa_para(m: int) -> int:
+## Busca que oleada activa (y que parte de ella: principal o extra) resuelve
+## la contramedida 'm'. Devuelve {idx:-1} si ninguna coincide (falso positivo).
+func _buscar_objetivo_mitigacion(m: int) -> Dictionary:
 	for i in oleadas.size():
-		if oleadas[i].mitigada:
-			continue
-		if CONTRAMEDIDA[oleadas[i].vector] == m:
-			return i
-	return -1
+		var ol: Dictionary = oleadas[i]
+		if ol.vector == Vector.LEGITIMO:
+			continue # nunca hay contramedida correcta para trafico legitimo
+		if not ol.mitigada and CONTRAMEDIDA.get(ol.vector, -1) == m:
+			return {"idx": i, "parte": "principal"}
+		if ol.vector_extra != -1 and not ol.mitigada_extra and CONTRAMEDIDA.get(ol.vector_extra, -1) == m:
+			return {"idx": i, "parte": "extra"}
+	return {"idx": -1}
 
 
 func _castigo_falso_positivo() -> void:
@@ -467,6 +547,8 @@ func _finalizar(exito: bool) -> void:
 		"falsos_positivos": _falsos_positivos,
 		"reinicios_generales": _usos_reinicio_general,
 		"alertas_perdidas": alertas_en_cola,
+		"oleadas_legitimas": _oleadas_legitimas,
+		"oleadas_combinadas": _oleadas_combinadas,
 	}
 	_log("[FIN] Incidente cerrado. Disponibilidad final: %.0f %%" % disponibilidad)
 	emit_signal("incidente_terminado", exito, resumen)

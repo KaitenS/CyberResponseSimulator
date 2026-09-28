@@ -140,6 +140,8 @@ func _refrescar_lista_flujos() -> void:
 		var b := Button.new()
 		b.text = _etiqueta_flujo(ol)
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		b.clip_text = false
+		b.custom_minimum_size = Vector2(0, 44)
 		var idx: int = ol.indice
 		b.pressed.connect(func(): _flujo_seleccionado = idx; _refrescar_telemetria())
 		_lista_flujos.add_child(b)
@@ -152,6 +154,20 @@ func _etiqueta_flujo(ol: Dictionary) -> String:
 	var destinos: Array[String] = []
 	for o in ol.objetivos:
 		destinos.append(IncidenteDDoS.NOMBRE_SERVIDOR[o].replace("Servidor de ", ""))
+
+	if ol.vector == IncidenteDDoS.Vector.LEGITIMO:
+		return "?  FLUJO #%d  ->  %s\n(posible falsa alarma)" % [ol.indice + 1, ", ".join(destinos)]
+
+	if ol.vector_extra != -1:
+		var completo: bool = ol.mitigada and ol.mitigada_extra
+		var marca_c := "[MITIGADO] " if completo else ""
+		var hechos := int(ol.mitigada) + int(ol.mitigada_extra)
+		var estado := "" if completo else "  (%d/2)" % hechos
+		return "%sFLUJO #%d  ->  %s\n%s + %s%s" % [
+			marca_c, ol.indice + 1, ", ".join(destinos),
+			IncidenteDDoS.NOMBRE_VECTOR[ol.vector], IncidenteDDoS.NOMBRE_VECTOR[ol.vector_extra], estado
+		]
+
 	var marca := "[MITIGADO] " if ol.mitigada else ""
 	return "%sFLUJO #%d  ->  %s" % [marca, ol.indice + 1, ", ".join(destinos)]
 
@@ -162,10 +178,38 @@ func _refrescar_telemetria() -> void:
 		_telemetria.text = "[color=#5a7a6a]Seleccione un flujo para analizar su telemetria.[/color]"
 		return
 
-	var t: Dictionary = ol.telemetria
 	var lineas := PackedStringArray()
 	lineas.append("[b]CAPTURA DE TRAFICO - FLUJO #%d[/b]" % (ol.indice + 1))
 	lineas.append("")
+
+	if ol.vector == IncidenteDDoS.Vector.LEGITIMO:
+		lineas.append("[color=#ffcc55]Este flujo podria ser trafico legitimo. Analice antes de actuar.[/color]")
+		lineas.append("")
+		_agregar_bloque_telemetria(lineas, ol.telemetria)
+		lineas.append("")
+		lineas.append("[color=#3fe08a]Recomendacion: si nada aqui parece un ataque real, NO aplique ninguna contramedida.[/color]")
+		_telemetria.text = "\n".join(lineas)
+		return
+
+	_agregar_bloque_telemetria(lineas, ol.telemetria)
+
+	if ol.vector_extra != -1:
+		lineas.append("")
+		lineas.append("[b]-- Se detecto una segunda firma superpuesta --[/b]")
+		_agregar_bloque_telemetria(lineas, ol.telemetria_extra)
+
+	var completo: bool = ol.mitigada and (ol.vector_extra == -1 or ol.mitigada_extra)
+	if completo:
+		lineas.append("")
+		lineas.append("[color=#3fe08a]>> Flujo totalmente neutralizado.[/color]")
+	elif ol.mitigada or ol.mitigada_extra:
+		lineas.append("")
+		lineas.append("[color=#ffcc55]>> Contramedida parcial aplicada. Falta neutralizar la otra firma.[/color]")
+
+	_telemetria.text = "\n".join(lineas)
+
+
+func _agregar_bloque_telemetria(lineas: PackedStringArray, t: Dictionary) -> void:
 	lineas.append("Paquetes/s .............. %s" % _fmt_miles(t.paquetes_seg))
 	lineas.append("Tamano medio de paquete . %s" % t.tamano_medio)
 	lineas.append("Paquetes SYN ............ %s" % t.porcentaje_syn)
@@ -174,10 +218,6 @@ func _refrescar_telemetria() -> void:
 	lineas.append("Puerto destino .......... %s" % t.puerto_destino)
 	lineas.append("")
 	lineas.append("[color=#ffcc55]OBSERVACION:[/color] %s" % t.nota)
-	if ol.mitigada:
-		lineas.append("")
-		lineas.append("[color=#3fe08a]>> Contramedida activa. Flujo bajo control.[/color]")
-	_telemetria.text = "\n".join(lineas)
 
 
 func _refrescar_botones() -> void:
@@ -392,6 +432,13 @@ Pocos paquetes/s pero handshakes completos, peticiones GET validas repetidas.
 [b]Botnet distribuida[/b]
 Decenas de miles de IPs residenciales reales, trafico mixto, un unico rango AS.
 -> [color=#3fe08a]Blackhole[/color]
+
+[b]Trafico legitimo (falsa alarma)[/b]
+Handshakes casi perfectos, pocas IPs de rangos corporativos conocidos, coincide con actividad programada (respaldos, campañas).
+-> [color=#ff8a5c]NO aplicar ninguna contramedida[/color]
+
+[b]Ataques combinados[/b]
+Algunos flujos muestran dos firmas de red distintas a la vez. Se debe aplicar UNA contramedida para cada firma, una despues de otra, antes de que el flujo quede controlado.
 [/color]"""
 
 
