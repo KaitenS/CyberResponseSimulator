@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="MalwareIncidentData" format=3 uid="uid://c12lqqst2i2c3"]
+
+[ext_resource type="Script" uid="uid://cs1fyu2gc821y" path="res://scripts/Incidents/Malware/file_entry.gd" id="1_d0drh"]
+[ext_resource type="Script" uid="uid://c1nih121rphdg" path="res://scripts/Incidents/Malware/process_entry.gd" id="2_25yf0"]
+[ext_resource type="Script" uid="uid://cwpqq23dywlpr" path="res://scripts/Data/malware_incident_data.gd" id="3_sw52p"]
+
+[sub_resource type="Resource" id="Resource_d0drh"]
+script = ExtResource("1_d0drh")
+file_name = "contrato_cliente.pdf.locked"
+is_malicious = true
+evidence_id = "archivo_cifrado"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_25yf0"]
+script = ExtResource("1_d0drh")
+file_name = "agenda_reuniones.docx"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_sw52p"]
+script = ExtResource("2_25yf0")
+process_name = "winlogon32.exe"
+is_malicious = true
+evidence_id = "proceso_winlogon_falso"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_6p0r8"]
+script = ExtResource("2_25yf0")
+process_name = "outlook.exe"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[resource]
+script = ExtResource("3_sw52p")
+title = "Equipo de Recepción cifrando archivos"
+required_evidence_ids = Array[String](["proceso_winlogon_falso", "archivo_cifrado"])
+processes = Array[ExtResource("2_25yf0")]([SubResource("Resource_sw52p"), SubResource("Resource_6p0r8")])
+files = Array[ExtResource("1_d0drh")]([SubResource("Resource_d0drh"), SubResource("Resource_25yf0")])
+malicious_process_ids = Array[String](["proceso_winlogon_falso"])
+malicious_file_ids = Array[String](["archivo_cifrado"])
+correct_containment_strategy = "aislar_equipo"
+metadata/_custom_type_script = "uid://cwpqq23dywlpr"
