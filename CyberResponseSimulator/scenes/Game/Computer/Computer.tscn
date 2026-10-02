@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://biyvuu061mkf2"]
 
+[ext_resource type="Texture2D" uid="uid://b382mppsyt32x" path="res://assets/CyberDesk/CyberDesk-Background.png" id="1_pg3wt"]
+
 [node name="ComputerUI" type="Control" unique_id=171432533]
 layout_mode = 3
 anchors_preset = 15
@@ -16,14 +18,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Desktop" type="ColorRect" parent="CyberDesk" unique_id=1819924541]
+[node name="Desktop Background" type="TextureRect" parent="CyberDesk" unique_id=1531170411]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1558049, 0.15426886, 0.15655467, 1)
+texture = ExtResource("1_pg3wt")
 
 [node name="DesktopIcons" type="Control" parent="CyberDesk" unique_id=2083363117]
 layout_mode = 1
@@ -102,8 +104,9 @@ layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
+offset_left = 8.0
 offset_top = -15.5
-offset_right = 91.0
+offset_right = 100.0
 offset_bottom = 15.5
 grow_vertical = 2
 text = "CyberDesk"
