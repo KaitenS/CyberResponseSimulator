@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="DailySummary" format=3 uid="uid://c1v5sfmtff607"]
+
+[ext_resource type="Script" uid="uid://bmp4j51dulpll" path="res://scripts/Incidents/Pishing/DailySummary.gd" id="1_pxxuf"]
+
+[resource]
+script = ExtResource("1_pxxuf")
+summary_id = "pishing_01"
+title = "Resumen Diario - 01"
+content = "RESUMEN DIARIO — LUNES
+
+• Se espera recibir durante la mañana un informe de María González, del área de Finanzas.
+• El archivo esperado corresponde al informe mensual de gastos.
+• El archivo esperado debe ser un documento PDF.
+• Juan Pérez, del área de Recursos Humanos, se encuentra de vacaciones esta semana.
+• El área de TI no ha anunciado ninguna actualización de software para hoy.
+• No se esperan archivos ejecutables ni instaladores enviados por correo.
+• Cualquier solicitud urgente relacionada con credenciales debe ser reportada."
+metadata/_custom_type_script = "uid://bmp4j51dulpll"

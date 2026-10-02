@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3 uid="uid://cmk2o4vbnplh3"]
+
+[ext_resource type="Script" uid="uid://l3b3e5vup7qn" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1_3jo3v"]
+
+[resource]
+script = ExtResource("1_3jo3v")
+email_id = "email_01_P"
+sender_name = "Juan Pérez"
+sender_address = "juan.perez@empresa.cl"
+recipient = "empleado@empresa.cl"
+subject = "Documento urgente - revisar inmediatamente"
+body = "Hola,
+
+Necesito que revises este documento lo antes posible.
+Es importante que lo abras y confirmes la información.
+
+Saludos,
+Juan"
+attachment_name = "actualizacion.exe"
+has_attachment = true
+is_phishing = true
+metadata/_custom_type_script = "uid://l3b3e5vup7qn"

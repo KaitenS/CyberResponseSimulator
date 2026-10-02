@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3 uid="uid://bfegjmkrrgdk7"]
+
+[ext_resource type="Script" uid="uid://l3b3e5vup7qn" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1_7ngt8"]
+
+[resource]
+script = ExtResource("1_7ngt8")
+email_id = "email_02"
+sender_name = "Carlos Ramírez"
+sender_address = "carlos.ramirez@empresa.cl"
+recipient = "empleado@empresa.cl"
+subject = "Reunión de equipo - 15:00"
+body = "Hola,
+
+Les recuerdo que hoy tendremos la reunión del equipo a las 15:00.
+
+Saludos,
+Carlos"
+metadata/_custom_type_script = "uid://l3b3e5vup7qn"
