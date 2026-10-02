@@ -1,0 +1,192 @@
+[gd_scene format=3 uid="uid://biyvuu061mkf2"]
+
+[node name="ComputerUI" type="Control" unique_id=171432533]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CyberDesk" type="Control" parent="." unique_id=742670332]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Desktop" type="ColorRect" parent="CyberDesk" unique_id=1819924541]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1558049, 0.15426886, 0.15655467, 1)
+
+[node name="DesktopIcons" type="Control" parent="CyberDesk" unique_id=2083363117]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Email Button" type="Button" parent="CyberDesk/DesktopIcons" unique_id=2048116363]
+layout_mode = 0
+offset_left = 614.0
+offset_top = 187.0
+offset_right = 675.0
+offset_bottom = 241.0
+text = " 📧
+Correo"
+
+[node name="FilesButton" type="Button" parent="CyberDesk/DesktopIcons" unique_id=408110068]
+layout_mode = 0
+offset_left = 468.0
+offset_top = 322.0
+offset_right = 543.0
+offset_bottom = 376.0
+text = " 📁
+Archivos"
+
+[node name="ServersButton" type="Button" parent="CyberDesk/DesktopIcons" unique_id=285674537]
+layout_mode = 0
+offset_left = 403.0
+offset_top = 62.0
+offset_right = 493.0
+offset_bottom = 116.0
+text = " 🖥
+Servidores"
+
+[node name="SecurityButton" type="Button" parent="CyberDesk/DesktopIcons" unique_id=595296682]
+layout_mode = 0
+offset_left = 304.0
+offset_top = 189.0
+offset_right = 390.0
+offset_bottom = 243.0
+text = " 🔒
+Seguridad"
+
+[node name="BrowserButton" type="Button" parent="CyberDesk/DesktopIcons" unique_id=830779610]
+layout_mode = 0
+offset_left = 66.0
+offset_top = 173.0
+offset_right = 159.0
+offset_bottom = 227.0
+text = " 🌐
+Navegador"
+
+[node name="DailySummaryButton" type="Button" parent="CyberDesk/DesktopIcons" unique_id=88323791]
+layout_mode = 0
+offset_left = 162.0
+offset_top = 63.0
+offset_right = 293.0
+offset_bottom = 117.0
+text = " 📋
+Resumen Diario"
+
+[node name="TaskBar" type="Panel" parent="CyberDesk" unique_id=426650603]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -50.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="StartButton" type="Button" parent="CyberDesk/TaskBar" unique_id=104071494]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -15.5
+offset_right = 91.0
+offset_bottom = 15.5
+grow_vertical = 2
+text = "CyberDesk"
+
+[node name="ClockLabel" type="Label" parent="CyberDesk/TaskBar" unique_id=1479154132]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -55.0
+offset_top = -11.5
+offset_right = -10.0
+offset_bottom = 11.5
+grow_horizontal = 0
+grow_vertical = 2
+text = "12:00"
+
+[node name="Windows" type="Control" parent="CyberDesk" unique_id=2018633459]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DailySummaryWindow" type="Panel" parent="CyberDesk/Windows" unique_id=425900637]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -298.0
+offset_top = -202.0
+offset_right = 302.0
+offset_bottom = 198.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleBar" type="ColorRect" parent="CyberDesk/Windows/DailySummaryWindow" unique_id=1488702187]
+layout_mode = 0
+offset_right = 600.0
+offset_bottom = 32.0
+color = Color(0, 0, 0, 0.16078432)
+
+[node name="TitleLabel" type="Label" parent="CyberDesk/Windows/DailySummaryWindow/TitleBar" unique_id=1165350519]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 10.0
+offset_top = -11.5
+offset_right = 133.0
+offset_bottom = 11.5
+grow_vertical = 2
+text = "Resumen Diario"
+
+[node name="SummaryContent" type="RichTextLabel" parent="CyberDesk/Windows/DailySummaryWindow" unique_id=1684277610]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 45.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "RESUMEN DIARIO
+
+• Se espera recibir durante la mañana un informe de María González, del área de Finanzas.
+
+• El archivo esperado corresponde al informe mensual de gastos.
+
+• El archivo esperado debe ser un documento PDF.
+
+• Juan Pérez, del área de Recursos Humanos, se encuentra de vacaciones esta semana.
+
+• El área de TI no ha anunciado ninguna actualización de software para hoy.
+
+• No se esperan archivos ejecutables ni instaladores enviados por correo.
+
+• Cualquier solicitud urgente relacionada con credenciales debe ser reportada."
