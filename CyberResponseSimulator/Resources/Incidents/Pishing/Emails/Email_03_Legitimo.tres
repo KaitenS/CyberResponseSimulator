@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3 uid="uid://c1scwk2h7g43o"]
+
+[ext_resource type="Script" uid="uid://l3b3e5vup7qn" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1_cttjh"]
+
+[resource]
+script = ExtResource("1_cttjh")
+email_id = "email_03"
+sender_name = "Soporte TI"
+sender_address = "soporte@empresa.cl"
+recipient = "empleado@empresa.cl"
+subject = "Actualización de seguridad requerida"
+body = "Se requiere instalar la actualización adjunta para continuar utilizando los sistemas de la empresa.
+
+Ejecute el archivo y reinicie el equipo.
+
+Saludos,
+Soporte TI"
+attachment_name = "SecurityUpdate.exe"
+has_attachment = true
+is_phishing = true
+metadata/_custom_type_script = "uid://l3b3e5vup7qn"
