@@ -32,6 +32,7 @@ window/stretch/mode="canvas_items"
 folder_colors={
 "res://Resources/Incidents/": "red",
 "res://Resources/Incidents/Pishing/": "green",
+"res://assets/CyberDesk/": "gray",
 "res://scenes/": "blue",
 "res://scenes/Incidents/Pishing/": "green",
 "res://scenes/Menu/": "purple",
