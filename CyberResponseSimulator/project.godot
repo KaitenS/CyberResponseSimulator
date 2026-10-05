@@ -27,6 +27,23 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 
+[file_customization]
+
+folder_colors={
+"res://Resources/Incidents/": "red",
+"res://Resources/Incidents/Pishing/": "green",
+"res://scenes/": "blue",
+"res://scenes/Incidents/Pishing/": "green",
+"res://scenes/Menu/": "purple",
+"res://scripts/": "yellow",
+"res://scripts/Data/": "yellow",
+"res://scripts/Game/": "yellow",
+"res://scripts/Incidents/": "red",
+"res://scripts/Incidents/Pishing/": "green",
+"res://scripts/Managers/": "yellow",
+"res://scripts/Menu/": "purple"
+}
+
 [input]
 
 move_forward={

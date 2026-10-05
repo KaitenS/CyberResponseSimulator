@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://diacu7q4rfptl"]
+
+[ext_resource type="Script" uid="uid://bihw48igynrr8" path="res://scripts/Incidents/Pishing/Pishing.gd" id="1_wbjv4"]
+[ext_resource type="Resource" uid="uid://bo2iftogxj5vv" path="res://Resources/Incidents/Pishing/Pishing_01.tres" id="2_8uvht"]
+
+[node name="Pishing" type="Node" unique_id=467302305]
+script = ExtResource("1_wbjv4")
+phishing_data = ExtResource("2_8uvht")

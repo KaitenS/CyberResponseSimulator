@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3 uid="uid://cheal71m583x1"]
+
+[ext_resource type="Script" uid="uid://l3b3e5vup7qn" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1_x8q4q"]
+
+[resource]
+script = ExtResource("1_x8q4q")
+email_id = "email_01"
+sender_name = "María Gonzáles"
+sender_address = "maria.gonzalez@empresa.cl"
+recipient = "empleado@empresa.cl"
+subject = "Informe mensual de gastos"
+body = "Hola,
+
+Te envío el informe mensual de gastos correspondiente a este período.
+
+Saludos,
+María"
+attachment_name = "informe_gastos.pdf"
+has_attachment = true
+metadata/_custom_type_script = "uid://l3b3e5vup7qn"
