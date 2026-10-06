@@ -5,10 +5,13 @@
 [ext_resource type="Shader" uid="uid://muba30eccke1" path="res://shaders/VHSOverlayShader.gdshader" id="2_ow34m"]
 [ext_resource type="Shader" uid="uid://b5hg02lpxrw14" path="res://shaders/LavaShader.gdshader" id="3_2wh52"]
 [ext_resource type="Script" uid="uid://e2ifln7egxll" path="res://scripts/Menu/mascot_layer.gd" id="3_l72w3"]
+[ext_resource type="AudioStream" uid="uid://b7i8xilhn7s8i" path="res://assets/Audio/SFX/342200__christopherderp__videogame-menu-button-click.wav" id="3_s1avh"]
 [ext_resource type="Texture2D" uid="uid://k0ms02wtmohb" path="res://assets/Logos/CybugLogo.png" id="4_826wr"]
 [ext_resource type="Script" uid="uid://daqbycc00vuwo" path="res://scripts/Menu/Button_Glitch.gd" id="6_826wr"]
+[ext_resource type="FontFile" uid="uid://mashn6f4lmra" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="7_4xcma"]
 [ext_resource type="Texture2D" uid="uid://n7oefyuq58xo" path="res://assets/Buttons/CheckBox.png" id="8_mipys"]
 [ext_resource type="Texture2D" uid="uid://b2h6662taefv0" path="res://assets/Buttons/CheckBox_1.png" id="9_8a8k8"]
+[ext_resource type="AudioStream" uid="uid://bgycibwtncguu" path="res://assets/Audio/Music/Sketchbook 2025-12-11_BREAKDOWN.ogg" id="10_scfwc"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ow34m"]
 shader = ExtResource("3_2wh52")
@@ -26,6 +29,33 @@ shader_parameter/scanline_strength = 0.18
 shader_parameter/noise_strength = 0.08
 shader_parameter/rgb_shift = 0.004
 shader_parameter/distortion = 0.006
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_scfwc"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.0627451, 0.07450981, 0.10980392, 0.8)
+border_width_top = 2
+border_width_bottom = 2
+border_color = Color(0.40784314, 0.4392157, 0.5019608, 1)
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4xcma"]
+bg_color = Color(0.03137255, 0.043137256, 0.0627451, 0.93333334)
+border_color = Color(0.65882355, 0.6901961, 0.7529412, 1)
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1hvmq"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.10980392, 0.13333334, 0.1882353, 0.8666667)
+border_width_top = 3
+border_width_bottom = 3
+border_color = Color(0.5411765, 0.5803922, 0.65882355, 1)
+corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_826wr"]
 bg_color = Color(0.07058824, 0.039215688, 0.10980392, 1)
@@ -67,6 +97,8 @@ anchors_preset = 0
 offset_right = 1280.0
 offset_bottom = 720.0
 script = ExtResource("1_ucygd")
+hover_sound = ExtResource("3_s1avh")
+click_sound = ExtResource("3_s1avh")
 
 [node name="LavaBackground" type="ColorRect" parent="MainMenu" unique_id=5464976]
 material = SubResource("ShaderMaterial_ow34m")
@@ -130,14 +162,17 @@ stretch_mode = 5
 [node name="PlayButton" type="Button" parent="MainMenu/CenterContainer/Menu" unique_id=346915422]
 custom_minimum_size = Vector2(360, 60)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.84705883, 0.7058824, 0.99607843, 1)
+theme_override_colors/font_color = Color(0.8392157, 0.8509804, 0.8784314, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_pressed_color = Color(0.65882355, 0.33333334, 0.96862745, 1)
 theme_override_constants/outline_size = 1
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_826wr")
-theme_override_styles/hover = SubResource("StyleBoxFlat_h7a2f")
-text = "> Iniciar Simulacion"
+theme_override_fonts/font = ExtResource("7_4xcma")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_scfwc")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_4xcma")
+theme_override_styles/hover = SubResource("StyleBoxFlat_1hvmq")
+text = "◈  INICIAR SIMULACIÓN"
+text_direction = 1
 script = ExtResource("6_826wr")
 
 [node name="Options Button" type="Button" parent="MainMenu/CenterContainer/Menu" unique_id=2017784073]
@@ -233,6 +268,13 @@ layout_mode = 2
 size_flags_vertical = 10
 theme_override_font_sizes/font_size = 18
 text = "[ Volver ]"
+
+[node name="MenuMusic" type="AudioStreamPlayer" parent="MainMenu" unique_id=750942192]
+stream = ExtResource("10_scfwc")
+volume_db = -10.0
+autoplay = true
+
+[node name="MenuSFX" type="AudioStreamPlayer" parent="MainMenu" unique_id=1596725243]
 
 [connection signal="pressed" from="MainMenu/CenterContainer/Menu/PlayButton" to="MainMenu" method="_on_play_button_pressed"]
 [connection signal="pressed" from="MainMenu/CenterContainer/Menu/Options Button" to="MainMenu" method="_on_options_button_pressed"]
