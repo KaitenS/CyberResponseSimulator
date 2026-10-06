@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b1rpuf13ck37c"]
 
-[ext_resource type="PackedScene" uid="uid://wqfmnd7e6nj5" path="res://assets/Models/SC_Model.blend" id="1_bon1s"]
+[ext_resource type="PackedScene" uid="uid://wqfmnd7e6nj5" path="res://assets/Models/Player/SC_Model.blend" id="1_bon1s"]
 [ext_resource type="Script" uid="uid://dqssy831fvsrn" path="res://scripts/Game/Player.gd" id="1_jja0a"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bon1s"]
