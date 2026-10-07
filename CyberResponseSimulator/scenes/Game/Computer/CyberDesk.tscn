@@ -1,0 +1,439 @@
+[gd_scene format=3 uid="uid://biyvuu061mkf2"]
+
+[ext_resource type="Texture2D" uid="uid://b382mppsyt32x" path="res://assets/CyberDesk/CyberDesk-Background.png" id="1_pg3wt"]
+[ext_resource type="Texture2D" uid="uid://b7a6s2rvefiqi" path="res://assets/CyberDesk/Desktop Icons/Email_Logo.png" id="2_qqs5g"]
+[ext_resource type="FontFile" uid="uid://mashn6f4lmra" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_1yodp"]
+[ext_resource type="Texture2D" uid="uid://hru6m2358jfh" path="res://assets/CyberDesk/Desktop Icons/Server_logo.png" id="4_cis4s"]
+[ext_resource type="Texture2D" uid="uid://dch4x8ymtc1o4" path="res://assets/CyberDesk/Desktop Icons/Folder_Icon.png" id="5_oe3jx"]
+[ext_resource type="Texture2D" uid="uid://ry07t12lyic1" path="res://assets/CyberDesk/Desktop Icons/Navigator_icon.png" id="6_48p2y"]
+[ext_resource type="Texture2D" uid="uid://dugskpxqp8346" path="res://assets/CyberDesk/Desktop Icons/Security_Icon.png" id="7_12346"]
+[ext_resource type="Texture2D" uid="uid://cwidrq25aiemo" path="res://assets/CyberDesk/Desktop Icons/Summary_Icon.png" id="8_7dni4"]
+[ext_resource type="Texture2D" uid="uid://cg44dmcv7kkix" path="res://assets/CyberDesk/Desktop Icons/Folder Trash Icon.png" id="9_uj266"]
+
+[node name="ComputerUI" type="Control" unique_id=171432533]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CyberDesk" type="Control" parent="." unique_id=742670332]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Desktop Background" type="TextureRect" parent="CyberDesk" unique_id=1531170411]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_pg3wt")
+
+[node name="DesktopIcons" type="Control" parent="CyberDesk" unique_id=2083363117]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Email Button" type="Button" parent="CyberDesk/DesktopIcons" unique_id=2048116363]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 17.0
+offset_right = 77.0
+offset_bottom = 76.0
+disabled = true
+icon_alignment = 1
+vertical_icon_alignment = 0
+
+[node name="Icon" type="TextureRect" parent="CyberDesk/DesktopIcons/Email Button" unique_id=878060689]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -32.0
+offset_top = -10.0
+offset_right = 32.0
+offset_bottom = 54.0
+grow_horizontal = 2
+texture = ExtResource("2_qqs5g")
+expand_mode = 1
+stretch_mode = 2
+
+[node name="Label" type="Label" parent="CyberDesk/DesktopIcons/Email Button" unique_id=902399135]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -28.5
+offset_top = -23.0
+offset_right = 28.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("3_1yodp")
+text = "Correo"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Server Button" type="Button" parent="CyberDesk/DesktopIcons" unique_id=1110571496]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 101.0
+offset_right = 82.0
+offset_bottom = 160.0
+disabled = true
+icon_alignment = 1
+vertical_icon_alignment = 0
+
+[node name="Icon" type="TextureRect" parent="CyberDesk/DesktopIcons/Server Button" unique_id=1588062973]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -32.0
+offset_right = 32.0
+offset_bottom = 64.0
+grow_horizontal = 2
+texture = ExtResource("4_cis4s")
+expand_mode = 1
+stretch_mode = 2
+
+[node name="Label" type="Label" parent="CyberDesk/DesktopIcons/Server Button" unique_id=1258228704]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -28.5
+offset_top = -23.0
+offset_right = 28.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("3_1yodp")
+text = "Servidores"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Files Button" type="Button" parent="CyberDesk/DesktopIcons" unique_id=362831586]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 175.0
+offset_right = 84.0
+offset_bottom = 245.0
+disabled = true
+icon_alignment = 1
+vertical_icon_alignment = 0
+
+[node name="Icon" type="TextureRect" parent="CyberDesk/DesktopIcons/Files Button" unique_id=1280021849]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -32.0
+offset_right = 32.0
+offset_bottom = 64.0
+grow_horizontal = 2
+texture = ExtResource("5_oe3jx")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="CyberDesk/DesktopIcons/Files Button" unique_id=771361201]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -28.5
+offset_top = -23.0
+offset_right = 28.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("3_1yodp")
+text = "Archvios"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Navegador Button" type="Button" parent="CyberDesk/DesktopIcons" unique_id=1059571354]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 263.0
+offset_right = 86.0
+offset_bottom = 342.0
+disabled = true
+icon_alignment = 1
+vertical_icon_alignment = 0
+
+[node name="Icon" type="TextureRect" parent="CyberDesk/DesktopIcons/Navegador Button" unique_id=405464880]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -32.0
+offset_right = 32.0
+offset_bottom = 64.0
+grow_horizontal = 2
+texture = ExtResource("6_48p2y")
+expand_mode = 1
+stretch_mode = 2
+
+[node name="Label" type="Label" parent="CyberDesk/DesktopIcons/Navegador Button" unique_id=50640391]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -28.5
+offset_top = -23.0
+offset_right = 28.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("3_1yodp")
+text = "Navegador"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Security Button" type="Button" parent="CyberDesk/DesktopIcons" unique_id=919534133]
+layout_mode = 0
+offset_left = 119.0
+offset_top = 20.0
+offset_right = 183.0
+offset_bottom = 92.0
+disabled = true
+icon_alignment = 1
+vertical_icon_alignment = 0
+
+[node name="Icon" type="TextureRect" parent="CyberDesk/DesktopIcons/Security Button" unique_id=1402359937]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -32.0
+offset_right = 32.0
+offset_bottom = 64.0
+grow_horizontal = 2
+texture = ExtResource("7_12346")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="CyberDesk/DesktopIcons/Security Button" unique_id=1535088036]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -28.5
+offset_top = -23.0
+offset_right = 28.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("3_1yodp")
+text = "Seguridad"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="DailySummary Button" type="Button" parent="CyberDesk/DesktopIcons" unique_id=1205632840]
+layout_mode = 0
+offset_left = 23.0
+offset_top = 368.0
+offset_right = 87.0
+offset_bottom = 427.0
+disabled = true
+icon_alignment = 1
+vertical_icon_alignment = 0
+
+[node name="Icon" type="TextureRect" parent="CyberDesk/DesktopIcons/DailySummary Button" unique_id=1794198382]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -32.0
+offset_right = 32.0
+offset_bottom = 64.0
+grow_horizontal = 2
+texture = ExtResource("8_7dni4")
+expand_mode = 1
+stretch_mode = 2
+
+[node name="Label" type="Label" parent="CyberDesk/DesktopIcons/DailySummary Button" unique_id=1120158658]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -47.0
+offset_top = -23.0
+offset_right = 47.0
+offset_bottom = 17.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("3_1yodp")
+text = "Servidores"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="TrashCan Button" type="Button" parent="CyberDesk/DesktopIcons" unique_id=211517865]
+layout_mode = 0
+offset_left = 1194.0
+offset_top = 593.0
+offset_right = 1258.0
+offset_bottom = 665.0
+disabled = true
+icon_alignment = 1
+vertical_icon_alignment = 0
+
+[node name="Icon" type="TextureRect" parent="CyberDesk/DesktopIcons/TrashCan Button" unique_id=141590341]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -32.0
+offset_right = 32.0
+offset_bottom = 64.0
+grow_horizontal = 2
+texture = ExtResource("9_uj266")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="CyberDesk/DesktopIcons/TrashCan Button" unique_id=1467989393]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -28.5
+offset_top = -23.0
+offset_right = 28.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("3_1yodp")
+text = "Papelera"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="TaskBar" type="Panel" parent="CyberDesk" unique_id=426650603]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -50.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="StartButton" type="Button" parent="CyberDesk/TaskBar" unique_id=104071494]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 8.0
+offset_top = -15.5
+offset_right = 100.0
+offset_bottom = 15.5
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 22
+text = "CyberDesk"
+
+[node name="ClockLabel" type="Label" parent="CyberDesk/TaskBar" unique_id=1479154132]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -78.0
+offset_top = -14.0
+offset_right = -14.0
+offset_bottom = 9.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 22
+text = "12:00"
+
+[node name="Windows" type="Control" parent="CyberDesk" unique_id=2018633459]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DailySummaryWindow" type="Panel" parent="CyberDesk/Windows" unique_id=425900637]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -298.0
+offset_top = -202.0
+offset_right = 302.0
+offset_bottom = 198.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleBar" type="ColorRect" parent="CyberDesk/Windows/DailySummaryWindow" unique_id=1488702187]
+layout_mode = 0
+offset_right = 600.0
+offset_bottom = 32.0
+color = Color(0, 0, 0, 0.16078432)
+
+[node name="TitleLabel" type="Label" parent="CyberDesk/Windows/DailySummaryWindow/TitleBar" unique_id=1165350519]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 10.0
+offset_top = -11.5
+offset_right = 133.0
+offset_bottom = 11.5
+grow_vertical = 2
+text = "Resumen Diario"
+
+[node name="SummaryContent" type="RichTextLabel" parent="CyberDesk/Windows/DailySummaryWindow" unique_id=1684277610]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 45.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "RESUMEN DIARIO
+
+• Se espera recibir durante la mañana un informe de María González, del área de Finanzas.
+
+• El archivo esperado corresponde al informe mensual de gastos.
+
+• El archivo esperado debe ser un documento PDF.
+
+• Juan Pérez, del área de Recursos Humanos, se encuentra de vacaciones esta semana.
+
+• El área de TI no ha anunciado ninguna actualización de software para hoy.
+
+• No se esperan archivos ejecutables ni instaladores enviados por correo.
+
+• Cualquier solicitud urgente relacionada con credenciales debe ser reportada."
