@@ -4,32 +4,46 @@ class_name ServidorFisico
 ## El jugador se para frente a el y MANTIENE la tecla de interaccion
 ## durante 5 segundos para reiniciarlo. Si se suelta, se cancela.
 ##
-## Estructura sugerida de la escena:
+## Estructura de la escena (ver servidor_fisico.tscn):
 ##   ServidorFisico (StaticBody3D)  <- este script
 ##     |- CollisionShape3D
 ##     |- MeshInstance3D            (el rack)
-##     |- Label3D "Pantalla"        (texto de estado)
-##     |- OmniLight3D "Luz"         (verde/rojo segun estado)
+##     |- Pantalla (Label3D)        (texto de estado)
+##     |- Luz (OmniLight3D)         (verde/ambar/rojo segun estado)
+##     |- Led1, Led2, Led3          (tira de leds frontales, sincronizados)
+##     |- Ventilador (MeshInstance3D) (gira mas rapido cuanto mas carga)
+##     |- Chispas (GPUParticles3D)  (estallido breve cuando el rack cae)
 
 @export var id_servidor: IncidenteDDoS.Servidor = IncidenteDDoS.Servidor.ALERTAS
 
 @export var pantalla: Label3D
 @export var luz: OmniLight3D
 @export var malla: MeshInstance3D
+@export var leds: Array[MeshInstance3D] = []
+@export var ventilador: Node3D
+@export var chispas: GPUParticles3D
 
 @export var color_ok := Color(0.25, 1.0, 0.45)
 @export var color_alerta := Color(1.0, 0.75, 0.15)
 @export var color_caido := Color(1.0, 0.2, 0.2)
 
+const VELOCIDAD_VENTILADOR_MIN := 1.5   ## rad/seg con el servidor sin carga
+const VELOCIDAD_VENTILADOR_MAX := 14.0  ## rad/seg a carga maxima
+
 var _manteniendo := false
 var _progreso := 0.0
 var _parpadeo := 0.0
+var _online_anterior := true
 
 
 func _ready() -> void:
 	add_to_group("interactuable")
 	IncidenteDDoS.servidor_estado_cambiado.connect(_on_estado_cambiado)
+	_online_anterior = true
 	_refrescar_pantalla()
+	if chispas:
+		chispas.emitting = false
+		chispas.one_shot = true
 
 
 # ------------------------------------------------- API que llama el jugador
@@ -76,6 +90,20 @@ func _process(delta: float) -> void:
 	_parpadeo += delta
 	_refrescar_pantalla()
 	_refrescar_luz()
+	_refrescar_leds()
+	_refrescar_ventilador(delta)
+
+
+func _estado_actual() -> String:
+	## Devuelve "ok", "alerta" o "caido". Centraliza la logica de estado
+	## para que pantalla, leds y luz siempre coincidan entre si.
+	if not IncidenteDDoS.activo:
+		return "ok"
+	if not IncidenteDDoS.esta_online(id_servidor):
+		return "caido"
+	if IncidenteDDoS.carga_de(id_servidor) > 60.0:
+		return "alerta"
+	return "ok"
 
 
 func _refrescar_pantalla() -> void:
@@ -86,7 +114,7 @@ func _refrescar_pantalla() -> void:
 
 	if _manteniendo:
 		var barras := int(_progreso * 12.0)
-		pantalla.text = "%s\nREINICIANDO\n[%s%s] %d%%" % [
+		pantalla.text = "%s\n? REINICIANDO\n[%s%s] %d%%" % [
 			nombre,
 			"#".repeat(barras),
 			".".repeat(12 - barras),
@@ -96,18 +124,21 @@ func _refrescar_pantalla() -> void:
 		return
 
 	if not IncidenteDDoS.activo:
-		pantalla.text = "%s\nOPERATIVO" % nombre
+		pantalla.text = "%s\n[OK] OPERATIVO" % nombre
 		pantalla.modulate = color_ok
 		return
 
 	if not IncidenteDDoS.esta_online(id_servidor):
 		var visible_ahora := fmod(_parpadeo, 0.8) < 0.5
-		pantalla.text = "%s\n%s" % [nombre, "FUERA DE SERVICIO" if visible_ahora else ""]
+		pantalla.text = "%s\n%s" % [nombre, "[X] FUERA DE SERVICIO" if visible_ahora else ""]
 		pantalla.modulate = color_caido
 		return
 
 	var carga := IncidenteDDoS.carga_de(id_servidor)
-	pantalla.text = "%s\nCARGA %d%%\n%s" % [nombre, int(carga), _barra(carga)]
+	# El simbolo, ademas del color, deja el estado legible sin depender
+	# de distinguir verde/ambar (accesibilidad para daltonismo).
+	var simbolo := "[OK]" if carga < 60.0 else "[!]"
+	pantalla.text = "%s\n%s CARGA %d%%\n%s" % [nombre, simbolo, int(carga), _barra(carga)]
 	pantalla.modulate = color_ok if carga < 60.0 else color_alerta
 
 
@@ -134,6 +165,59 @@ func _refrescar_luz() -> void:
 		luz.light_energy = 1.0
 
 
-func _on_estado_cambiado(id: int, _online: bool) -> void:
-	if id == id_servidor:
-		_refrescar_pantalla()
+## Tira de leds en la cara frontal del rack. Se leen de un vistazo desde
+## lejos, mucho antes de poder leer el texto de la pantalla.
+func _refrescar_leds() -> void:
+	if leds.is_empty():
+		return
+
+	var estado := _estado_actual()
+	var color: Color
+	var parpadeando := false
+
+	match estado:
+		"caido":
+			color = color_caido
+			parpadeando = true
+		"alerta":
+			color = color_alerta
+		_:
+			color = color_ok
+
+	var energia := 1.0
+	if parpadeando:
+		energia = 0.3 + 0.7 * (0.5 + 0.5 * sin(_parpadeo * 10.0))
+
+	for led in leds:
+		if led == null:
+			continue
+		var mat := led.get_surface_override_material(0)
+		if mat == null or not (mat is StandardMaterial3D):
+			mat = StandardMaterial3D.new()
+			mat.emission_enabled = true
+			led.set_surface_override_material(0, mat)
+		mat.albedo_color = color
+		mat.emission = color
+		mat.emission_energy_multiplier = energia * 2.0
+
+
+## El ventilador gira mas rapido cuanto mas carga tiene el servidor.
+## Comunica "esfuerzo" sin que el jugador necesite leer ningun numero.
+func _refrescar_ventilador(delta: float) -> void:
+	if ventilador == null:
+		return
+	var carga := IncidenteDDoS.carga_de(id_servidor) if IncidenteDDoS.activo else 0.0
+	var velocidad := lerpf(VELOCIDAD_VENTILADOR_MIN, VELOCIDAD_VENTILADOR_MAX, clampf(carga / 100.0, 0.0, 1.0))
+	ventilador.rotate_z(velocidad * delta)
+
+
+func _on_estado_cambiado(id: int, online: bool) -> void:
+	if id != id_servidor:
+		return
+	_refrescar_pantalla()
+	# Estallido de chispas justo en el instante en que el servidor cae
+	# (no cuando se reinicia hacia arriba).
+	if _online_anterior and not online and chispas:
+		chispas.restart()
+		chispas.emitting = true
+	_online_anterior = online
