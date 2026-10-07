@@ -32,10 +32,6 @@ var _flujo_seleccionado: int = -1
 var _indices_visibles: Array[int] = []
 var _acumulador := 0.0
 
-const LOG_CARACTERES_POR_SEG := 55.0
-var _log_pendiente := ""
-var _log_reveal_acumulado := 0.0
-
 var abierta := false
 
 
@@ -59,15 +55,6 @@ func abrir() -> void:
 	_raiz.visible = true
 	set_process(true)
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-
-	# El historial que llego mientras la consola estaba cerrada se
-	# vuelca de una vez (no tiene sentido hacer esperar al jugador a
-	# que se "escriba" solo el registro de los ultimos minutos).
-	if not _log_pendiente.is_empty() and _consola != null:
-		_consola.append_text(_log_pendiente)
-		_log_pendiente = ""
-		_log_reveal_acumulado = 0.0
-
 	_refrescar()
 	emit_signal("pantalla_abierta")
 
@@ -91,7 +78,6 @@ func _unhandled_input(event: InputEvent) -> void:
 # ============================================================ LOOP
 
 func _process(delta: float) -> void:
-	_procesar_typewriter(delta)
 	_acumulador += delta
 	if _acumulador >= 0.2:
 		_acumulador = 0.0
@@ -290,23 +276,8 @@ func _on_terminado(exito: bool, resumen: Dictionary) -> void:
 
 
 func _escribir(texto: String) -> void:
-	# El texto no aparece de golpe: se va revelando letra por letra en
-	# _procesar_typewriter(), como en una terminal real. Es texto plano
-	# (sin bbcode), asi que revelarlo caracter a caracter es seguro.
-	_log_pendiente += texto + "\n"
-
-
-func _procesar_typewriter(delta: float) -> void:
-	if _log_pendiente.is_empty() or _consola == null:
-		return
-	_log_reveal_acumulado += delta * LOG_CARACTERES_POR_SEG
-	var n := int(_log_reveal_acumulado)
-	if n <= 0:
-		return
-	_log_reveal_acumulado -= n
-	n = mini(n, _log_pendiente.length())
-	_consola.append_text(_log_pendiente.substr(0, n))
-	_log_pendiente = _log_pendiente.substr(n)
+	if _consola:
+		_consola.append_text(texto + "\n")
 
 
 # ============================================================ UI
@@ -322,16 +293,7 @@ func _construir_ui() -> void:
 	fondo.color = Color(0, 0, 0, 0.55)
 	_raiz.add_child(fondo)
 
-	# Tema monoespaciado: se aplica al marco y hereda a todos sus hijos
-	# (labels, botones, RichTextLabel), asi toda la consola se lee como
-	# una terminal real en vez de la fuente por defecto de la UI.
-	var fuente_mono := SystemFont.new()
-	fuente_mono.font_names = ["Cascadia Code", "Consolas", "Courier New", "monospace"]
-	var tema := Theme.new()
-	tema.default_font = fuente_mono
-
 	var marco := PanelContainer.new()
-	marco.theme = tema
 	marco.set_anchors_preset(Control.PRESET_CENTER)
 	marco.custom_minimum_size = Vector2(960, 620)
 	marco.anchor_left = 0.5
@@ -451,38 +413,6 @@ func _construir_ui() -> void:
 	salir.text = "CERRAR TERMINAL  [ESC]"
 	salir.pressed.connect(cerrar)
 	col.add_child(salir)
-
-	_agregar_scanlines(marco)
-
-
-## Overlay semitransparente con lineas de escaneo horizontales moviendose,
-## puramente decorativo (ignora el mouse). Refuerza la estetica de
-## "terminal vieja" sin afectar la legibilidad del texto de abajo.
-func _agregar_scanlines(objetivo: Control) -> void:
-	var overlay := ColorRect.new()
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	overlay.color = Color(1, 1, 1, 1)
-
-	var shader := Shader.new()
-	shader.code = """
-shader_type canvas_item;
-
-uniform float velocidad : hint_range(0.0, 5.0) = 0.6;
-uniform float densidad : hint_range(10.0, 400.0) = 180.0;
-uniform float intensidad : hint_range(0.0, 0.3) = 0.08;
-
-void fragment() {
-	float linea = sin((UV.y * densidad) - (TIME * velocidad * 20.0));
-	float sombra = smoothstep(0.0, 1.0, linea) * intensidad;
-	COLOR = vec4(0.0, 0.0, 0.0, sombra);
-}
-"""
-	var mat := ShaderMaterial.new()
-	mat.shader = shader
-	overlay.material = mat
-
-	objetivo.add_child(overlay)
 
 
 func _texto_manual() -> String:

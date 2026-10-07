@@ -16,10 +16,6 @@ signal servidor_estado_cambiado(id: int, online: bool)
 signal mitigacion_resultado(exito: bool, mensaje: String)
 signal log_terminal(texto: String)
 signal alerta_encolada(cantidad: int)
-## Emitida para que el jugador (camara) reaccione fisicamente: caida de un
-## servidor o falso positivo. intensidad va de 0.0 a 1.0, mientras mas
-## fuerte el golpe, mayor la sacudida esperada.
-signal impacto_camara(intensidad: float)
 
 # ---------------------------------------------------------------- ENUMS
 enum Servidor { ALERTAS, CAMARAS, MONITOREO }
@@ -199,7 +195,6 @@ func aplicar_mitigacion(m: int) -> void:
 		puntaje += PUNTOS_FALSO_POSITIVO
 		cooldown_restante = COOLDOWN_FALLO
 		_castigo_falso_positivo()
-		emit_signal("impacto_camara", 0.5)
 		var msg := "FALSO POSITIVO: %s no corresponde al trafico actual.\nSe bloqueo trafico legitimo de usuarios." % NOMBRE_MITIGACION[m]
 		emit_signal("mitigacion_resultado", false, msg)
 		_log("[ERROR] " + msg.replace("\n", " "))
@@ -346,7 +341,6 @@ func _actualizar_servidores(delta: float) -> void:
 
 		if s.carga >= CARGA_MAXIMA and s.online:
 			_set_online(id, false)
-			emit_signal("impacto_camara", 0.8)
 			_log("[CRITICO] %s FUERA DE SERVICIO." % NOMBRE_SERVIDOR[id])
 
 
