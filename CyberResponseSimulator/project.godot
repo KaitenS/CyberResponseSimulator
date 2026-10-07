@@ -18,6 +18,8 @@ config/features=PackedStringArray("4.6", "GL Compatibility")
 
 GameManager="*uid://d00im5gcjr1vw"
 IncidentManager="*uid://dugw1sl1ky5ak"
+IncidenteDDoS="*uid://detuu4wg1bwyv"
+AudioDDoS="*uid://c5fojj4t3o5gs"
 
 [display]
 
@@ -30,6 +32,7 @@ window/stretch/mode="canvas_items"
 folder_colors={
 "res://Resources/Incidents/": "red",
 "res://Resources/Incidents/Pishing/": "green",
+"res://assets/CyberDesk/": "gray",
 "res://scenes/": "blue",
 "res://scenes/Incidents/Pishing/": "green",
 "res://scenes/Menu/": "purple",
