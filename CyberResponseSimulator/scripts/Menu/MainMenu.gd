@@ -5,7 +5,7 @@ extends Control
 @export var hover_sound: AudioStream
 @export var click_sound: AudioStream
 
-var ignore_first_hover := true
+var initializing_menu := true
 
 
 func _ready():
@@ -15,33 +15,28 @@ func _ready():
 	var fullscreen = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 	$OptionsPanel/OptionsContainer/FullScreenRow/FullScreenCheck.button_pressed = fullscreen
 
+	# El menú ya terminó de inicializarse
+	initializing_menu = false
+
 	# Conectar sonidos de hover
 	var play_button = get_node_or_null("CenterContainer/Menu/PlayButton")
-	var options_button = get_node_or_null("CenterContainer/Menu/OptionsButton")
 	var exit_button = get_node_or_null("CenterContainer/Menu/ExitButton")
 
 	if play_button:
 		play_button.mouse_entered.connect(_on_button_mouse_entered)
-		play_button.mouse_exited.connect(_on_button_mouse_exited)
-
-	if options_button:
-		options_button.mouse_entered.connect(_on_button_mouse_entered)
-		options_button.mouse_exited.connect(_on_button_mouse_exited)
 
 	if exit_button:
 		exit_button.mouse_entered.connect(_on_button_mouse_entered)
-		exit_button.mouse_exited.connect(_on_button_mouse_exited)
 
 
 func _on_button_mouse_entered():
-	if ignore_first_hover:
-		return
-
+	print(">>> HOVER DETECTADO <<<")
 	play_hover_sound()
 
 
-func _on_button_mouse_exited():
-	ignore_first_hover = false
+func _on_options_button_mouse_entered() -> void:
+	print(">>> OPTIONS HOVER <<<")
+	play_hover_sound()
 
 
 func play_hover_sound():
@@ -57,8 +52,6 @@ func play_click_sound():
 
 
 func _on_options_button_pressed():
-	print(">>> OPTIONS PRESSED <<<")
-
 	play_click_sound()
 
 	var panel = $OptionsPanel
@@ -81,8 +74,6 @@ func _on_options_button_pressed():
 
 
 func _on_back_button_pressed():
-	print(">>> BACK PRESSED <<<")
-
 	play_click_sound()
 
 	var panel = $OptionsPanel
@@ -104,8 +95,6 @@ func _on_back_button_pressed():
 
 
 func _on_play_button_pressed():
-	print(">>> PLAY PRESSED <<<")
-
 	play_click_sound()
 
 	GameManager.start_game()
@@ -113,8 +102,6 @@ func _on_play_button_pressed():
 
 
 func _on_exit_button_pressed():
-	print(">>> EXIT PRESSED <<<")
-
 	play_click_sound()
 	get_tree().quit()
 
@@ -129,14 +116,11 @@ func _on_volume_slider_value_changed(value):
 
 
 func _on_full_screen_check_toggled(toggled_on: bool) -> void:
-	print(">>> FULLSCREEN TOGGLED <<<")
-	print("CHECKBOX: ", toggled_on)
-
-	play_click_sound()
+	# No reproducir sonido durante la inicialización
+	if not initializing_menu:
+		play_click_sound()
 
 	if toggled_on:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-
-	print("MODO ACTUAL: ", DisplayServer.window_get_mode())
