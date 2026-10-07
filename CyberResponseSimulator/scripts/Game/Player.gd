@@ -91,6 +91,9 @@ func check_interaction():
 	if interaction_ray.is_colliding():
 		var object = interaction_ray.get_collider()
 
+		print("RAYCAST GOLPEA: ", object.name)
+		print("TIPO: ", object.get_class())
+
 		if object is Interactable:
 			if current_interactable != object:
 				current_interactable = object
