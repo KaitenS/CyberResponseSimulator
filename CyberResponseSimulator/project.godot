@@ -16,10 +16,10 @@ config/features=PackedStringArray("4.6", "GL Compatibility")
 
 [autoload]
 
-GameManager="*uid://d00im5gcjr1vw"
-IncidentManager="*uid://dugw1sl1ky5ak"
-IncidenteDDoS="*uid://detuu4wg1bwyv"
-AudioDDoS="*uid://c5fojj4t3o5gs"
+GameManager="*res://scripts/Managers/GameManager.gd"
+IncidentManager="*res://scripts/Managers/IncidentManager.gd"
+IncidenteDDoS="*res://scripts/Incidents/ddos/incidente_ddos.gd"
+AudioDDoS="*res://scripts/Incidents/ddos/audio_ddos.gd"
 
 [display]
 
