@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PhishingData" format=3 uid="uid://bo2iftogxj5vv"]
+
+[ext_resource type="Resource" uid="uid://c1v5sfmtff607" path="res://resources/Incidents/Pishing/Summarys/Pishing_01_Summary.tres" id="1_u72rb"]
+[ext_resource type="Script" uid="uid://l3b3e5vup7qn" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1_usjry"]
+[ext_resource type="Script" uid="uid://c8i61im5igeyg" path="res://scripts/Incidents/Pishing/PishingData.gd" id="2_20sh0"]
+[ext_resource type="Resource" uid="uid://cheal71m583x1" path="res://resources/Incidents/Pishing/Emails/Email_01_Legitimo.tres" id="3_d61js"]
+[ext_resource type="Resource" uid="uid://cmk2o4vbnplh3" path="res://resources/Incidents/Pishing/Emails/Email_01_Pishing.tres" id="4_41bpp"]
+[ext_resource type="Resource" uid="uid://bfegjmkrrgdk7" path="res://resources/Incidents/Pishing/Emails/Email_02_Legitimo.tres" id="5_4mae6"]
+[ext_resource type="Resource" uid="uid://cgqe1lw77if3u" path="res://resources/Incidents/Pishing/Emails/Email_02_Pishing.tres" id="6_tfpct"]
+[ext_resource type="Resource" uid="uid://c1scwk2h7g43o" path="res://resources/Incidents/Pishing/Emails/Email_03_Legitimo.tres" id="7_qb421"]
+
+[resource]
+script = ExtResource("2_20sh0")
+incident_id = "pishing_01"
+incident_name = "Phishing - 01"
+daily_summary = ExtResource("1_u72rb")
+emails = Array[ExtResource("1_usjry")]([ExtResource("3_d61js"), ExtResource("4_41bpp"), ExtResource("5_4mae6"), ExtResource("6_tfpct"), ExtResource("7_qb421")])
+metadata/_custom_type_script = "uid://c8i61im5igeyg"
