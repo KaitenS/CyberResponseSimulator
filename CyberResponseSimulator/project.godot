@@ -30,19 +30,23 @@ window/stretch/mode="canvas_items"
 [file_customization]
 
 folder_colors={
-"res://Resources/Incidents/": "red",
-"res://Resources/Incidents/Pishing/": "green",
-"res://assets/CyberDesk/": "gray",
-"res://scenes/": "blue",
-"res://scenes/Incidents/Pishing/": "green",
+"res://assets/": "purple",
+"res://assets/CyberDesk/": "purple",
+"res://resources/": "green",
+"res://resources/Incidents/": "green",
+"res://resources/Incidents/Pishing/": "green",
+"res://scenes/": "orange",
+"res://scenes/Incidents/Pishing/": "orange",
 "res://scenes/Menu/": "purple",
 "res://scripts/": "yellow",
 "res://scripts/Data/": "yellow",
 "res://scripts/Game/": "yellow",
-"res://scripts/Incidents/": "red",
-"res://scripts/Incidents/Pishing/": "green",
+"res://scripts/Incidents/": "yellow",
+"res://scripts/Incidents/Pishing/": "yellow",
 "res://scripts/Managers/": "yellow",
-"res://scripts/Menu/": "purple"
+"res://scripts/Menu/": "purple",
+"res://shaders/": "red",
+"res://ui/": "pink"
 }
 
 [input]

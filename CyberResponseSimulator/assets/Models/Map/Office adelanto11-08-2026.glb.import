@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://nbeac2yx8r0k"
-path="res://.godot/imported/Office adelanto11-08-2026.glb-64866ce6aad2eb3192fc3fabffe5ad5b.scn"
+path="res://.godot/imported/Office adelanto11-08-2026.glb-52fdef4741d39222eb311cdc8179a432.scn"
 
 [deps]
 
-source_file="res://Mapa/Office adelanto11-08-2026.glb"
-dest_files=["res://.godot/imported/Office adelanto11-08-2026.glb-64866ce6aad2eb3192fc3fabffe5ad5b.scn"]
+source_file="res://assets/Models/Map/Office adelanto11-08-2026.glb"
+dest_files=["res://.godot/imported/Office adelanto11-08-2026.glb-52fdef4741d39222eb311cdc8179a432.scn"]
 
 [params]
 

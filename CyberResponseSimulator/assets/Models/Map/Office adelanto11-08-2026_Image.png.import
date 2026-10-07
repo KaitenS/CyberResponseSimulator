@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://csdvbya2xdlcr"
-path.s3tc="res://.godot/imported/Office adelanto11-08-2026_Image.png-36e25c2b6819c60ebd1cc74b61bbe442.s3tc.ctex"
+uid="uid://dyue55prh4ovd"
+path.s3tc="res://.godot/imported/Office adelanto11-08-2026_Image.png-076f7d5ababce8ba8cbf392a33eab71e.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://Mapa/Office adelanto11-08-2026_Image.png"
-dest_files=["res://.godot/imported/Office adelanto11-08-2026_Image.png-36e25c2b6819c60ebd1cc74b61bbe442.s3tc.ctex"]
+source_file="res://assets/Models/Map/Office adelanto11-08-2026_Image.png"
+dest_files=["res://.godot/imported/Office adelanto11-08-2026_Image.png-076f7d5ababce8ba8cbf392a33eab71e.s3tc.ctex"]
 
 [params]
 
