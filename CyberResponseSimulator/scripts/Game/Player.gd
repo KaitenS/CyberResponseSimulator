@@ -7,9 +7,21 @@ const MOUSE_SENSITIVITY := 0.002
 var camera_pitch := 0.0
 var current_interactable: Interactable = null
 
+# ==========================================
+# Variables para el acercamiento de cámara al [Interactuar]
+# ==========================================
+
+var camera_locked := false
+var camera_original_position := Vector3.ZERO
+var camera_original_rotation := Vector3.ZERO
+
+# ==========================================
+
 @onready var camera: Camera3D = $Camera3D
 @onready var interaction_ray: RayCast3D = $Camera3D/InteractionRay
-@onready var interaction_label: Label = get_tree().current_scene.get_node_or_null("InteractionUI/InteractionLabel")
+@onready var interaction_label: Label = get_tree().current_scene.get_node_or_null(
+	"InteractionUI/InteractionLabel"
+)
 
 
 func _ready():
@@ -114,7 +126,7 @@ func _input(event):
 	# ==========================================
 
 	if event is InputEventMouseMotion:
-		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and not camera_locked:
 
 			rotate_y(
 				-event.relative.x * MOUSE_SENSITIVITY
@@ -162,3 +174,76 @@ func _input(event):
 				Input.set_mouse_mode(
 					Input.MOUSE_MODE_CAPTURED
 				)
+
+
+# ==========================================
+# ENTRAR EN LA VISTA DEL COMPUTADOR
+# ==========================================
+
+func enter_computer_view(camera_point: Marker3D) -> void:
+	if camera_locked:
+		return
+
+	camera_locked = true
+
+	# Guardar posición y rotación actuales de la cámara
+	camera_original_position = camera.position
+	camera_original_rotation = camera.rotation
+
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+	var target_position := camera_point.global_position
+	var target_rotation := camera_point.global_rotation
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.set_trans(Tween.TRANS_QUAD)
+	tween.set_ease(Tween.EASE_IN_OUT)
+
+	tween.tween_property(
+		camera,
+		"global_position",
+		target_position,
+		0.6
+	)
+
+	tween.tween_property(
+		camera,
+		"global_rotation",
+		target_rotation,
+		0.6
+	)
+
+
+# ==========================================
+# SALIR DE LA VISTA DEL COMPUTADOR
+# ==========================================
+
+func exit_computer_view() -> void:
+	if not camera_locked:
+		return
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.set_trans(Tween.TRANS_QUAD)
+	tween.set_ease(Tween.EASE_IN_OUT)
+
+	tween.tween_property(
+		camera,
+		"position",
+		camera_original_position,
+		0.6
+	)
+
+	tween.tween_property(
+		camera,
+		"rotation",
+		camera_original_rotation,
+		0.6
+	)
+
+	await tween.finished
+
+	camera_locked = false
+
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

@@ -1,9 +1,8 @@
 [gd_scene format=3 uid="uid://7w828gjuoce5"]
 
 [ext_resource type="PackedScene" uid="uid://b1rpuf13ck37c" path="res://scenes/Game/Player.tscn" id="1_bekgd"]
-[ext_resource type="PackedScene" uid="uid://dix65o2rc6b2o" path="res://assets/Models/Map/Office.blend" id="2_2k76m"]
-[ext_resource type="Script" uid="uid://dla32wdqxa60s" path="res://scripts/Game/Interaction/Computer.gd" id="3_1asa3"]
-[ext_resource type="PackedScene" uid="uid://0pwjijbq1v1s" path="res://assets/Models/Extras/Pc_Model.blend" id="4_yqgss"]
+[ext_resource type="PackedScene" uid="uid://j4wor5h7047f" path="res://assets/Models/Map/Office.blend" id="2_2k76m"]
+[ext_resource type="PackedScene" uid="uid://dx3u5dwfddwgy" path="res://scenes/Game/Computer/Computer.tscn" id="2_yqgss"]
 [ext_resource type="Script" uid="uid://c3m7r2008afre" path="res://scripts/Game/ui/GameHud.gd" id="5_50swi"]
 [ext_resource type="Script" uid="uid://c70j0s800typg" path="res://scripts/Managers/IncidentFlowManager.gd" id="5_yqgss"]
 
@@ -11,9 +10,6 @@
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tt4u6"]
 size = Vector3(35, 0.2, 20)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_50swi"]
-size = Vector3(0.6, 0.35, 0.6)
 
 [node name="Game" type="Node3D" unique_id=221791749]
 
@@ -25,46 +21,17 @@ transform = Transform3D(0.4513888, 0.81627876, -0.36046794, -0.6378497, 0.577658
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=96887587]
 environment = SubResource("Environment_bekgd")
 
+[node name="Computer" parent="." unique_id=1867787470 instance=ExtResource("2_yqgss")]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0.0029226542, 0.01684165, 1.3366933)
+
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1624057287]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.2651663)
 
-[node name="Office" parent="Floor" unique_id=370840373 instance=ExtResource("2_2k76m")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0003004074, 0, 8.70092)
+[node name="Office" parent="Floor" unique_id=1885051379 instance=ExtResource("2_2k76m")]
+transform = Transform3D(0.9, 0, 0, 0, 0.5, 0, 0, 0, 0.7, -1.131, 0, 1.993)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=420898150]
 shape = SubResource("BoxShape3D_tt4u6")
-
-[node name="Computer_01" type="StaticBody3D" parent="." unique_id=584969706 groups=["computers"]]
-script = ExtResource("3_1asa3")
-
-[node name="Computer_Model" parent="Computer_01" unique_id=1078576353 instance=ExtResource("4_yqgss")]
-transform = Transform3D(0.06, 0, 0, 0, 0.06, 0, 0, 0, 0.06, 0, 0, 1.4457788)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Computer_01" unique_id=120575627]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1048948, 0.15621248, 1.4350747)
-shape = SubResource("BoxShape3D_50swi")
-
-[node name="Computer_02" type="StaticBody3D" parent="." unique_id=753165807 groups=["computers"]]
-transform = Transform3D(0.008360007, 0, 0.9999651, 0, 1, 0, -0.9999651, 0, 0.008360007, 9.24116, -1.4305115e-06, -2.5082965)
-script = ExtResource("3_1asa3")
-
-[node name="Computer_Model" parent="Computer_02" unique_id=1354022681 instance=ExtResource("4_yqgss")]
-transform = Transform3D(0.06, 0, 0, 0, 0.06, 0, 0, 0, 0.06, 0, 0, 1.4457788)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Computer_02" unique_id=1899912531]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1048948, 0.15621248, 1.4350747)
-shape = SubResource("BoxShape3D_50swi")
-
-[node name="Computer_03" type="StaticBody3D" parent="." unique_id=662850129 groups=["computers"]]
-transform = Transform3D(0.01267073, 0, -0.9999197, 0, 1, 0, 0.9999197, 0, 0.01267073, -6.3948994, 0, -2.6275535)
-script = ExtResource("3_1asa3")
-
-[node name="Computer_Model" parent="Computer_03" unique_id=1122628822 instance=ExtResource("4_yqgss")]
-transform = Transform3D(0.06, 0, 0, 0, 0.06, 0, 0, 0, 0.06, 0, 0, 1.4457788)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Computer_03" unique_id=428129441]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1048948, 0.15621248, 1.4350747)
-shape = SubResource("BoxShape3D_50swi")
 
 [node name="InteractionUI" type="CanvasLayer" parent="." unique_id=1302227768]
 
