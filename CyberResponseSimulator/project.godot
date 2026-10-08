@@ -30,6 +30,7 @@ window/stretch/mode="canvas_items"
 [file_customization]
 
 folder_colors={
+"res://Resources/": "green",
 "res://assets/": "purple",
 "res://assets/CyberDesk/": "purple",
 "res://resources/": "green",

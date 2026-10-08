@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://7w828gjuoce5"]
 
 [ext_resource type="PackedScene" uid="uid://b1rpuf13ck37c" path="res://scenes/Game/Player.tscn" id="1_bekgd"]
-[ext_resource type="PackedScene" uid="uid://dix65o2rc6b2o" path="res://assets/Models/Map/Office.blend" id="2_2k76m"]
+[ext_resource type="PackedScene" uid="uid://j4wor5h7047f" path="res://assets/Models/Map/Office.blend" id="2_2k76m"]
 [ext_resource type="PackedScene" uid="uid://dx3u5dwfddwgy" path="res://scenes/Game/Computer/Computer.tscn" id="2_yqgss"]
 [ext_resource type="Script" uid="uid://c3m7r2008afre" path="res://scripts/Game/ui/GameHud.gd" id="5_50swi"]
 [ext_resource type="Script" uid="uid://c70j0s800typg" path="res://scripts/Managers/IncidentFlowManager.gd" id="5_yqgss"]
@@ -27,8 +27,8 @@ transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0.0029226542, 0.0168
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1624057287]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.2651663)
 
-[node name="Office" parent="Floor" unique_id=370840373 instance=ExtResource("2_2k76m")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0003004074, 0, 8.70092)
+[node name="Office" parent="Floor" unique_id=1885051379 instance=ExtResource("2_2k76m")]
+transform = Transform3D(0.9, 0, 0, 0, 0.5, 0, 0, 0, 0.7, -1.131, 0, 1.993)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=420898150]
 shape = SubResource("BoxShape3D_tt4u6")
@@ -43,10 +43,9 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -590.0
-offset_top = -670.0
-offset_right = -390.0
-offset_bottom = -620.0
+offset_left = -100.0
+offset_top = -50.0
+offset_right = 100.0
 grow_horizontal = 2
 grow_vertical = 0
 text = "[E] Interactuar"

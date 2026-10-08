@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dyue55prh4ovd"
-path.s3tc="res://.godot/imported/Office adelanto11-08-2026_Image.png-076f7d5ababce8ba8cbf392a33eab71e.s3tc.ctex"
+uid="uid://s2j18g4cptht"
+path.s3tc="res://.godot/imported/SC_Player_Texture.png-139146ca9d6524383779a1c7dd0c2237.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "8597d4e7e65352a302b63e07bc01a7da"
+"md5": "934458f3bc3a43742ec96eb6c5f00656"
 }
 
 [deps]
 
-source_file="res://assets/Models/Map/Office adelanto11-08-2026_Image.png"
-dest_files=["res://.godot/imported/Office adelanto11-08-2026_Image.png-076f7d5ababce8ba8cbf392a33eab71e.s3tc.ctex"]
+source_file="res://assets/Models/textures/SC_Player_Texture.png"
+dest_files=["res://.godot/imported/SC_Player_Texture.png-139146ca9d6524383779a1c7dd0c2237.s3tc.ctex"]
 
 [params]
 
