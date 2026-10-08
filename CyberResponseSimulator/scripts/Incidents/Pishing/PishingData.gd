@@ -1,9 +1,5 @@
 class_name PhishingData
-extends Resource
-
-
-@export var incident_id: String = ""
-@export var incident_name: String = "Phishing"
+extends IncidentData
 
 @export var daily_summary: DailySummary
 

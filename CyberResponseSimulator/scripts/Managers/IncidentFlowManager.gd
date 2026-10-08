@@ -2,6 +2,7 @@ extends Node
 
 
 @export var first_incident_delay: float = 5.0
+@export var phishing_data: PhishingData
 
 var computers: Array[Computer] = []
 var phishing_incident: IncidentData = null
@@ -38,12 +39,12 @@ func create_phishing_incident() -> void:
 		print("ERROR: No hay computadores disponibles.")
 		return
 
-	# Crear los datos del incidente.
-	var incident := IncidentData.new()
+	# Usar los datos definidos en el archivo .tres.
+	if phishing_data == null:
+		print("ERROR: Falta asignar los datos del incidente de Phishing.")
+		return
 
-	incident.incident_id = "phishing_test"
-	incident.incident_name = "Phishing"
-	incident.difficulty = 1
+	var incident: IncidentData = phishing_data
 
 	# Registrar el incidente en IncidentManager.
 	if not IncidentManager.start_incident(incident):
