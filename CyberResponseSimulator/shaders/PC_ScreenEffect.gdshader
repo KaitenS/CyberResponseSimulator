@@ -22,5 +22,5 @@ void fragment() {
 	float effect = scanlines + vignette + noise;
 
 	ALBEDO = vec3(effect);
-	ALPHA = 0.30;
+	ALPHA = 0.20;
 }
