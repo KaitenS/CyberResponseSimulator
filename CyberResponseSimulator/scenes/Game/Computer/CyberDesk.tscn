@@ -12,6 +12,18 @@
 [ext_resource type="Texture2D" uid="uid://cg44dmcv7kkix" path="res://assets/CyberDesk/Desktop Icons/Folder Trash Icon.png" id="9_uj266"]
 [ext_resource type="Texture2D" uid="uid://c36cq5t0x2wbb" path="res://assets/CyberDesk/Desktop Icons/OFF_Button.png" id="10_daobf"]
 [ext_resource type="Texture2D" uid="uid://cu3c5x1m5plbc" path="res://assets/CyberDesk/Desktop Icons/Cursor.png" id="10_durkf"]
+[ext_resource type="Texture2D" uid="uid://r3wt6uk2picy" path="res://assets/CyberDesk/Desktop Windows/DailySummary.png" id="12_6nhqd"]
+[ext_resource type="Texture2D" uid="uid://c2oj3nmw47cpo" path="res://assets/Buttons/Close Button.png" id="13_08gl3"]
+[ext_resource type="Texture2D" uid="uid://br671yjpunmeo" path="res://assets/CyberDesk/Desktop Windows/MailWindow.png" id="14_mryue"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_08gl3"]
+bg_color = Color(0.9490196, 0.9490196, 0.9490196, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_detail = 1
 
 [node name="ComputerUI" type="Control" unique_id=171432533]
 layout_mode = 3
@@ -329,8 +341,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="DailySummaryWindow" type="Panel" parent="CyberDesk/Windows" unique_id=425900637]
+[node name="DailySummaryWindow" type="TextureRect" parent="CyberDesk/Windows" unique_id=1852926505]
 visible = false
+z_index = 10
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -343,24 +356,42 @@ offset_right = 302.0
 offset_bottom = 198.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("12_6nhqd")
+expand_mode = 1
 
 [node name="TitleBar" type="ColorRect" parent="CyberDesk/Windows/DailySummaryWindow" unique_id=1488702187]
 layout_mode = 0
-offset_right = 600.0
-offset_bottom = 32.0
-color = Color(0, 0, 0, 0.16078432)
+offset_left = 5.0
+offset_top = 4.0
+offset_right = 596.0
+offset_bottom = 39.0
+color = Color(0, 0, 0, 0)
 
-[node name="TitleLabel" type="Label" parent="CyberDesk/Windows/DailySummaryWindow/TitleBar" unique_id=1165350519]
+[node name="HBoxContainer" type="HBoxContainer" parent="CyberDesk/Windows/DailySummaryWindow/TitleBar" unique_id=548972592]
 layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 10.0
-offset_top = -11.5
-offset_right = 133.0
-offset_bottom = 11.5
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_right = -8.0
+grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="CyberDesk/Windows/DailySummaryWindow/TitleBar/HBoxContainer" unique_id=1165350519]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 22
 text = "Resumen Diario"
+vertical_alignment = 1
+
+[node name="TaskbarSpacer" type="Control" parent="CyberDesk/Windows/DailySummaryWindow/TitleBar/HBoxContainer" unique_id=2112732569]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="TextureButton" parent="CyberDesk/Windows/DailySummaryWindow/TitleBar/HBoxContainer" unique_id=1238352072]
+layout_mode = 2
+texture_normal = ExtResource("13_08gl3")
 
 [node name="SummaryContent" type="RichTextLabel" parent="CyberDesk/Windows/DailySummaryWindow" unique_id=1684277610]
 layout_mode = 1
@@ -373,6 +404,8 @@ offset_right = -15.0
 offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_fonts/normal_font = ExtResource("3_1yodp")
 text = "RESUMEN DIARIO
 
 • Se espera recibir durante la mañana un informe de María González, del área de Finanzas.
@@ -389,6 +422,246 @@ text = "RESUMEN DIARIO
 
 • Cualquier solicitud urgente relacionada con credenciales debe ser reportada."
 
+[node name="CyberMailWindow" type="TextureRect" parent="CyberDesk/Windows" unique_id=1415927651]
+visible = false
+layout_mode = 0
+offset_left = 342.0
+offset_top = 158.0
+offset_right = 942.0
+offset_bottom = 558.0
+texture = ExtResource("14_mryue")
+expand_mode = 1
+
+[node name="TitleBar" type="ColorRect" parent="CyberDesk/Windows/CyberMailWindow" unique_id=1193700012]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 4.0
+offset_right = 596.0
+offset_bottom = 39.0
+color = Color(0, 0, 0, 0)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CyberDesk/Windows/CyberMailWindow/TitleBar" unique_id=228527785]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/TitleBar/HBoxContainer" unique_id=1476866538]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 22
+text = " ✉ CyberMail"
+vertical_alignment = 1
+
+[node name="TaskbarSpacer" type="Control" parent="CyberDesk/Windows/CyberMailWindow/TitleBar/HBoxContainer" unique_id=1472465622]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="TextureButton" parent="CyberDesk/Windows/CyberMailWindow/TitleBar/HBoxContainer" unique_id=950064829]
+layout_mode = 2
+texture_normal = ExtResource("13_08gl3")
+
+[node name="InboxHeader" type="ColorRect" parent="CyberDesk/Windows/CyberMailWindow" unique_id=380058411]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 43.0
+offset_right = 595.0
+offset_bottom = 78.0
+color = Color(0, 0, 0, 0)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CyberDesk/Windows/CyberMailWindow/InboxHeader" unique_id=1709587150]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -116.0
+offset_top = -10.0
+offset_right = 116.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="InboxTitleLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/InboxHeader/HBoxContainer" unique_id=2131091161]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 22
+text = "Bandeja de Entrada"
+
+[node name="MailList" type="VBoxContainer" parent="CyberDesk/Windows/CyberMailWindow" unique_id=548243015]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 57.0
+offset_right = 596.0
+offset_bottom = 374.0
+scale = Vector2(0.99573684, 0.99875194)
+theme_override_constants/separation = -45
+alignment = 1
+
+[node name="MailEntry_1" type="Panel" parent="CyberDesk/Windows/CyberMailWindow/MailList" unique_id=38445412]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_styles/panel = SubResource("StyleBoxFlat_08gl3")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_1" unique_id=734308074]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 6.0
+offset_right = 10.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SenderLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_1/VBoxContainer" unique_id=1974317924]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+text = "María González                                          09:42"
+
+[node name="SubjectLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_1/VBoxContainer" unique_id=1145558385]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 14
+text = "Informe mensual de gastos"
+
+[node name="AttachmentLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_1/VBoxContainer" unique_id=1329959390]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.33333334, 0.33333334, 0.33333334, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 12
+text = "📎 informe_gastos.pdf"
+
+[node name="MailEntry_2" type="Panel" parent="CyberDesk/Windows/CyberMailWindow/MailList" unique_id=8422976]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_styles/panel = SubResource("StyleBoxFlat_08gl3")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_2" unique_id=317690151]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 6.0
+offset_right = 10.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SenderLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_2/VBoxContainer" unique_id=632116785]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+text = "Soporte TI                                      09:51"
+
+[node name="SubjectLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_2/VBoxContainer" unique_id=2120999789]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 14
+text = "⚠ Verificación urgente de cuenta"
+
+[node name="AttachmentLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_2/VBoxContainer" unique_id=503743665]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.33333334, 0.33333334, 0.33333334, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 12
+text = "Sin archivos adjuntos"
+
+[node name="MailEntry_3" type="Panel" parent="CyberDesk/Windows/CyberMailWindow/MailList" unique_id=1421893514]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_styles/panel = SubResource("StyleBoxFlat_08gl3")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_3" unique_id=1396076438]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 6.0
+offset_right = 10.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SenderLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_3/VBoxContainer" unique_id=1203194966]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+text = "Juan Pérez                                      10:03"
+
+[node name="SubjectLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_3/VBoxContainer" unique_id=254799181]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 14
+text = "Reunión de Recursos Humanos"
+
+[node name="AttachmentLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_3/VBoxContainer" unique_id=1013512892]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.33333334, 0.33333334, 0.33333334, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 12
+text = "Sin archivos adjuntos"
+
+[node name="MailEntry_4" type="Panel" parent="CyberDesk/Windows/CyberMailWindow/MailList" unique_id=1205348629]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_styles/panel = SubResource("StyleBoxFlat_08gl3")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_4" unique_id=1469151643]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 6.0
+offset_right = 10.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SenderLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_4/VBoxContainer" unique_id=1583325988]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+text = "Carolina Soto                                   10:17"
+
+[node name="SubjectLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_4/VBoxContainer" unique_id=673802090]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 14
+text = "Actualización de horarios de oficina"
+
+[node name="AttachmentLabel" type="Label" parent="CyberDesk/Windows/CyberMailWindow/MailList/MailEntry_4/VBoxContainer" unique_id=1295626980]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.33333334, 0.33333334, 0.33333334, 1)
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 12
+text = "📎 horarios_octubre.pdf"
+
 [node name="CustomCursor" type="TextureRect" parent="CyberDesk" unique_id=1216835322]
 layout_mode = 0
 offset_right = 24.0
@@ -398,4 +671,7 @@ texture = ExtResource("10_durkf")
 expand_mode = 1
 stretch_mode = 4
 
+[connection signal="gui_input" from="CyberDesk/DesktopIcons/GridContainer/DailySummary Button" to="CyberDesk" method="_on_daily_summary_button_gui_input"]
+[connection signal="pressed" from="CyberDesk/DesktopIcons/GridContainer/DailySummary Button" to="CyberDesk" method="_on_daily_summary_button_pressed"]
 [connection signal="pressed" from="CyberDesk/TaskBar/HBoxContainer/CloseButton" to="CyberDesk" method="_on_close_button_pressed"]
+[connection signal="pressed" from="CyberDesk/Windows/DailySummaryWindow/TitleBar/HBoxContainer/CloseButton" to="CyberDesk" method="_on_close_button_pressed"]
