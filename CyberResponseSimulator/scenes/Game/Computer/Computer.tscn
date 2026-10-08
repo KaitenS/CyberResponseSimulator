@@ -6,6 +6,9 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_1olpp"]
 size = Vector3(10.489136, 5.2304688, 11)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_do4s6"]
+size = Vector3(1, 1, 0.052490234)
+
 [sub_resource type="QuadMesh" id="QuadMesh_1olpp"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1olpp"]
@@ -15,6 +18,11 @@ albedo_color = Color(0.12955844, 0.12955847, 0.12955844, 1)
 
 [sub_resource type="QuadMesh" id="QuadMesh_7f3mm"]
 material = SubResource("StandardMaterial3D_1olpp")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_do4s6"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_f2rsq"]
+material = SubResource("ShaderMaterial_do4s6")
 
 [node name="Computer" type="StaticBody3D" unique_id=1867787470 groups=["computers"]]
 script = ExtResource("3_twvw0")
@@ -28,18 +36,24 @@ shape = SubResource("BoxShape3D_1olpp")
 [node name="CameraPoint" type="Marker3D" parent="." unique_id=538859403]
 transform = Transform3D(-1, -4.5753548e-09, 8.7302965e-08, 0, 0.9986295, 0.05233596, -8.742278e-08, 0.05233596, -0.9986295, 0, 3.2062874, -5.871275)
 
-[node name="ComputerScreen" type="MeshInstance3D" parent="." unique_id=60710393]
-transform = Transform3D(3.492882, 0, 0, 0, 3.4597068, -0.17310023, 0, 0.61003965, 0.9817002, 0, 3.071378, -1.1908376)
+[node name="Area3D" type="Area3D" parent="." unique_id=961422410]
+
+[node name="MonitorContainer" type="CollisionShape3D" parent="Area3D" unique_id=1953014601]
+transform = Transform3D(3.592, 0, 0, 0, 3.5374293, -0.62374425, 0, 0.62374425, 3.5374293, 0, 3.0461726, -1.0965688)
+shape = SubResource("BoxShape3D_do4s6")
+
+[node name="ComputerScreen" type="MeshInstance3D" parent="Area3D/MonitorContainer" unique_id=60710393]
+transform = Transform3D(1.0050112, 0, 0, 0, 1, -7.450581e-09, 0, 2.9802322e-08, 0.27616924, 0, 0.00054848194, -0.027074277)
 mesh = SubResource("QuadMesh_1olpp")
 
-[node name="CyberDeskViewport" type="SubViewport" parent="." unique_id=916516761]
+[node name="CyberDeskViewport" type="SubViewport" parent="Area3D/MonitorContainer" unique_id=916516761]
 size = Vector2i(640, 640)
 render_target_update_mode = 4
 
-[node name="ComputerScreenBlack" type="MeshInstance3D" parent="." unique_id=1740154672]
-transform = Transform3D(3.6095665, 0, 0, 0, 3.5375187, -0.17232916, 0, 0.62376004, 0.97732717, 0, 3.063, -1.1781442)
+[node name="ComputerScreenBlack" type="MeshInstance3D" parent="Area3D/MonitorContainer" unique_id=1740154672]
+transform = Transform3D(1.0048906, 0, 0, 0, 1.0000253, -3.7252903e-09, 0, 1.4901161e-08, 0.27628174, 0, 0.0006699562, -0.023178756)
 mesh = SubResource("QuadMesh_7f3mm")
 
-[node name="ComputerScreenEffect" type="MeshInstance3D" parent="." unique_id=646248157]
-transform = Transform3D(3.493, 0, 0, 0, 3.4044805, -0.17364816, 0, 0.60030174, 0.98480767, 0, 3.063, -1.1858978)
-mesh = SubResource("QuadMesh_7f3mm")
+[node name="ScreenEffect" type="MeshInstance3D" parent="Area3D/MonitorContainer" unique_id=12667477]
+transform = Transform3D(1.0050112, 0, 0, 0, 1, -3.7252903e-09, 0, 1.4901161e-08, 0.27616924, 0, -9.6559525e-05, -0.027525902)
+mesh = SubResource("QuadMesh_f2rsq")
