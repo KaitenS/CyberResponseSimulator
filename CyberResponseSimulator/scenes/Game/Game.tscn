@@ -21,8 +21,11 @@ transform = Transform3D(0.4513888, 0.81627876, -0.36046794, -0.6378497, 0.577658
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=96887587]
 environment = SubResource("Environment_bekgd")
 
-[node name="Computer" parent="." unique_id=1867787470 instance=ExtResource("2_yqgss")]
-transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0.0029226542, 0.01684165, 1.3366933)
+[node name="Computer2" parent="." unique_id=1867787470 instance=ExtResource("2_yqgss")]
+transform = Transform3D(0.0025000002, 0, 0, 0, 0.0025000002, 0, 0, 0, 0.0025000002, 0.0030556128, 0.01827724, 1.4037789)
+
+[node name="Computer" parent="." unique_id=258026606 instance=ExtResource("2_yqgss")]
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0.0029101074, 0.017406896, 1.3369323)
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1624057287]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.2651663)

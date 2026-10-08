@@ -153,6 +153,8 @@ func _input(event: InputEvent) -> void:
 		virtual_click.pressed = event.pressed
 		virtual_click.position = cursor_position
 
+		print("ENVIANDO CLICK AL CYBERDESK: ", cursor_position)
+
 		cyber_desk_viewport.push_input(
 			virtual_click,
 			true

@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://dx3u5dwfddwgy"]
 
+[ext_resource type="Shader" uid="uid://d3rtshi57a47u" path="res://shaders/PC_ScreenEffect.gdshader" id="3_do4s6"]
 [ext_resource type="Script" uid="uid://dla32wdqxa60s" path="res://scripts/Game/Interaction/Computer.gd" id="3_twvw0"]
 [ext_resource type="PackedScene" uid="uid://0pwjijbq1v1s" path="res://assets/Models/Extras/Pc_Model.blend" id="4_qqs5g"]
 
@@ -20,6 +21,8 @@ albedo_color = Color(0.12955844, 0.12955847, 0.12955844, 1)
 material = SubResource("StandardMaterial3D_1olpp")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_do4s6"]
+render_priority = 0
+shader = ExtResource("3_do4s6")
 
 [sub_resource type="QuadMesh" id="QuadMesh_f2rsq"]
 material = SubResource("ShaderMaterial_do4s6")
@@ -55,5 +58,5 @@ transform = Transform3D(1.0048906, 0, 0, 0, 1.0000253, -3.7252903e-09, 0, 1.4901
 mesh = SubResource("QuadMesh_7f3mm")
 
 [node name="ScreenEffect" type="MeshInstance3D" parent="Area3D/MonitorContainer" unique_id=12667477]
-transform = Transform3D(1.0050112, 0, 0, 0, 1, -3.7252903e-09, 0, 1.4901161e-08, 0.27616924, 0, -9.6559525e-05, -0.027525902)
+transform = Transform3D(1.0050112, 0, 0, 0, 1, -7.450581e-09, 0, 2.9802322e-08, 0.27616924, 0, -9.649992e-05, -0.027525902)
 mesh = SubResource("QuadMesh_f2rsq")
