@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dx3u5dwfddwgy" path="res://scenes/Game/Computer/Computer.tscn" id="2_yqgss"]
 [ext_resource type="Script" uid="uid://c3m7r2008afre" path="res://scripts/Game/ui/GameHud.gd" id="5_50swi"]
 [ext_resource type="Script" uid="uid://c70j0s800typg" path="res://scripts/Managers/IncidentFlowManager.gd" id="5_yqgss"]
+[ext_resource type="Resource" uid="uid://bo2iftogxj5vv" path="res://Resources/Incidents/Pishing/Pishing_01.tres" id="6_50swi"]
 
 [sub_resource type="Environment" id="Environment_bekgd"]
 
@@ -82,3 +83,4 @@ Se requiere atención."
 
 [node name="IncidentFlowManager" type="Node" parent="." unique_id=1607234953]
 script = ExtResource("5_yqgss")
+phishing_data = ExtResource("6_50swi")
