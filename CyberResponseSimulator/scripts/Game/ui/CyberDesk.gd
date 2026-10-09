@@ -48,8 +48,42 @@ func _input(event: InputEvent) -> void:
 				if email_rect.has_point(event.position):
 					print("===== CYBERMAIL DETECTADO =====")
 					_on_email_button_pressed()
+					
+			# ==========================================
+			# ARCHIVOS (MALWARE)
+			# ==========================================
+			
+			var files_button: Button = get_node_or_null(
+				"DesktopIcons/GridContainer/Files Button"
+			)
 
+			if files_button != null:
+				var files_rect: Rect2 = files_button.get_global_rect()
 
+				if files_rect.has_point(event.position):
+					print("===== ARCHIVOS DETECTADO =====")
+					_on_files_button_pressed()
+
+			# ==========================================
+			# CERRAR MALWARE
+			# ==========================================
+
+			var malware_window: Control = get_node_or_null(
+				"Windows/MalwareWindow"
+			)
+
+			if malware_window != null and malware_window.visible:
+				var malware_close_zone := Rect2(
+					560.0,
+					118.0,
+					80.0,
+					60.0
+				)
+
+				if malware_close_zone.has_point(event.position):
+					print("===== CERRAR MALWARE =====")
+					close_window(malware_window)
+			
 			# ==========================================
 			# CERRAR CYBERMAIL
 			# ==========================================
@@ -175,3 +209,29 @@ func _on_close_button_pressed() -> void:
 	close_requested.emit()
 
 	print("===== SIGNAL close_requested EMITIDO =====")
+
+var malware_controller: MalwareIncidentController = null
+
+
+func set_malware_controller(controller: MalwareIncidentController) -> void:
+	malware_controller = controller
+	
+# ==========================================
+# ARCHIVOS (MALWARE)
+# ==========================================
+
+func _on_files_button_pressed() -> void:
+	var malware_window: Control = get_node_or_null(
+		"Windows/MalwareWindow"
+	)
+
+	if malware_window == null:
+		print("ERROR: No se encontró MalwareWindow")
+		return
+
+	if malware_controller == null:
+		print("No hay un incidente de Malware activo")
+		return
+
+	malware_window.position = Vector2(22.0, 118.0)
+	malware_window.open_investigation(malware_controller)

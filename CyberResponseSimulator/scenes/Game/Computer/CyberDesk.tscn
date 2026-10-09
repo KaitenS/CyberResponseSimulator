@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://cu3c5x1m5plbc" path="res://assets/CyberDesk/Desktop Icons/Cursor.png" id="10_durkf"]
 [ext_resource type="Texture2D" uid="uid://r3wt6uk2picy" path="res://assets/CyberDesk/Desktop Windows/DailySummary.png" id="12_6nhqd"]
 [ext_resource type="Texture2D" uid="uid://c2oj3nmw47cpo" path="res://assets/Buttons/Close Button.png" id="13_08gl3"]
+[ext_resource type="Script" uid="uid://dkclndxiyec6q" path="res://scripts/Incidents/Malware/malware_window.gd" id="14_fklch"]
 [ext_resource type="Texture2D" uid="uid://br671yjpunmeo" path="res://assets/CyberDesk/Desktop Windows/MailWindow.png" id="14_mryue"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_08gl3"]
@@ -422,6 +423,125 @@ text = "RESUMEN DIARIO
 
 • Cualquier solicitud urgente relacionada con credenciales debe ser reportada."
 
+[node name="MalwareWindow" type="TextureRect" parent="CyberDesk/Windows" unique_id=1844173046]
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -618.0
+offset_top = -242.0
+offset_right = -18.0
+offset_bottom = 158.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("12_6nhqd")
+expand_mode = 1
+script = ExtResource("14_fklch")
+
+[node name="TitleBar" type="ColorRect" parent="CyberDesk/Windows/MalwareWindow" unique_id=649693596]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 4.0
+offset_right = 596.0
+offset_bottom = 39.0
+color = Color(0, 0, 0, 0)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CyberDesk/Windows/MalwareWindow/TitleBar" unique_id=1580696914]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/TitleBar/HBoxContainer" unique_id=769303354]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_1yodp")
+theme_override_font_sizes/font_size = 22
+text = "Archivos - Investigación de Malware"
+vertical_alignment = 1
+
+[node name="TaskbarSpacer" type="Control" parent="CyberDesk/Windows/MalwareWindow/TitleBar/HBoxContainer" unique_id=1532812047]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="TextureButton" parent="CyberDesk/Windows/MalwareWindow/TitleBar/HBoxContainer" unique_id=1634347182]
+layout_mode = 2
+texture_normal = ExtResource("13_08gl3")
+
+[node name="MalwareContent" type="Control" parent="CyberDesk/Windows/MalwareWindow" unique_id=1089999375]
+anchors_preset = 0
+offset_left = 15.0
+offset_top = 45.0
+offset_right = 585.0
+offset_bottom = 385.0
+
+[node name="ProcessList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1793553213]
+layout_mode = 0
+offset_top = 30.0
+offset_right = 280.0
+offset_bottom = 260.0
+
+[node name="FileList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1781873404]
+layout_mode = 1
+offset_left = 290.0
+offset_top = 30.0
+offset_right = 570.0
+offset_bottom = 260.0
+
+[node name="TimeRemainingLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1916045060]
+layout_mode = 1
+offset_right = 570.0
+offset_bottom = 24.0
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+text = "Tiempo: --"
+
+[node name="DecisionButtons" type="HBoxContainer" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1665908056]
+layout_mode = 1
+offset_top = 272.0
+offset_right = 570.0
+offset_bottom = 672.0
+
+[node name="IsolateButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/DecisionButtons" unique_id=1295762919]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Aislar equipo"
+
+[node name="RestartButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/DecisionButtons" unique_id=420009636]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Reiniciar"
+
+[node name="IgnoreButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/DecisionButtons" unique_id=1495335871]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ignorar"
+
+[node name="ResultPanel" type="ColorRect" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1598306369]
+visible = false
+layout_mode = 1
+offset_right = 570.0
+offset_bottom = 340.0
+color = Color(0.24115604, 0.24115604, 0.24115604, 1)
+
+[node name="ResultLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/ResultPanel" unique_id=171568841]
+layout_mode = 1
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 550.0
+offset_bottom = 320.0
+text = "Resultado aqui"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
 [node name="CyberMailWindow" type="TextureRect" parent="CyberDesk/Windows" unique_id=1415927651]
 visible = false
 layout_mode = 0
@@ -675,3 +795,4 @@ stretch_mode = 4
 [connection signal="pressed" from="CyberDesk/DesktopIcons/GridContainer/DailySummary Button" to="CyberDesk" method="_on_daily_summary_button_pressed"]
 [connection signal="pressed" from="CyberDesk/TaskBar/HBoxContainer/CloseButton" to="CyberDesk" method="_on_close_button_pressed"]
 [connection signal="pressed" from="CyberDesk/Windows/DailySummaryWindow/TitleBar/HBoxContainer/CloseButton" to="CyberDesk" method="_on_close_button_pressed"]
+[connection signal="pressed" from="CyberDesk/Windows/MalwareWindow/TitleBar/HBoxContainer/CloseButton" to="CyberDesk" method="_on_close_button_pressed"]

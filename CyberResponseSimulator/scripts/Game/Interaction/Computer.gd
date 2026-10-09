@@ -7,6 +7,10 @@ var phishing_active: bool = false
 var active_incident: IncidentData = null
 var cyber_desk: Control = null
 
+var malware_active: bool = false
+var malware_incident: MalwareIncidentData = null
+var malware_controller: MalwareIncidentController = null
+
 var cursor_position := Vector2(320.0, 320.0)
 var custom_cursor: TextureRect = null
 
@@ -29,6 +33,16 @@ func activate_phishing(incident: IncidentData) -> void:
 	phishing_active = true
 	active_incident = incident
 
+func activate_malware(data: MalwareIncidentData) -> void:
+	malware_active = true
+	malware_incident = data
+
+	var machine := IncidentStateMachine.new()
+	add_child(machine)
+
+	malware_controller = MalwareIncidentController.new()
+	add_child(malware_controller)
+	malware_controller.setup(data, machine)
 
 func has_active_incident() -> bool:
 	return active_incident != null
@@ -53,6 +67,8 @@ func open_cyber_desk() -> void:
 	computer_screen.visible = true
 
 	var cyber_desk_root: Control = cyber_desk.get_node("CyberDesk")
+	
+	cyber_desk_root.set_malware_controller(malware_controller)
 
 	cyber_desk_root.close_requested.connect(
 		_on_cyber_desk_close_requested
