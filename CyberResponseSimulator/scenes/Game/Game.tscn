@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://7w828gjuoce5"]
 
 [ext_resource type="PackedScene" uid="uid://b1rpuf13ck37c" path="res://scenes/Game/Player.tscn" id="1_bekgd"]
-[ext_resource type="PackedScene" uid="uid://dix65o2rc6b2o" path="res://assets/Models/Office.blend" id="2_2k76m"]
+[ext_resource type="PackedScene" uid="uid://dix65o2rc6b2o" path="res://assets/Models/Map/Office.blend" id="2_2k76m"]
 [ext_resource type="Script" uid="uid://c7tui2qbxvtw5" path="res://scripts/Game/Interaction/Interactable.gd" id="3_1asa3"]
-[ext_resource type="PackedScene" uid="uid://0pwjijbq1v1s" path="res://assets/Models/Pc_Model.blend" id="4_yqgss"]
+[ext_resource type="PackedScene" uid="uid://0pwjijbq1v1s" path="res://assets/Models/Extras/Pc_Model.blend" id="4_yqgss"]
 
 [sub_resource type="Environment" id="Environment_bekgd"]
 
