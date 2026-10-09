@@ -47,4 +47,7 @@ files = Array[ExtResource("1_irw1c")]([SubResource("Resource_irw1c"), SubResourc
 malicious_process_ids = Array[String](["proceso_svchost_falso"])
 malicious_file_ids = Array[String](["archivo_factura_exe"])
 correct_containment_strategy = "aislar_equipo"
+incident_id = "malware"
+incident_name = "Malware"
+difficulty = 2
 metadata/_custom_type_script = "uid://cwpqq23dywlpr"

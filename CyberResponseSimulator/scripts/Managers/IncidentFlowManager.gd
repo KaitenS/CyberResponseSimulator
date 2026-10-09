@@ -6,6 +6,7 @@ extends Node
 # ==========================================
 
 @export var first_incident_delay: float = 5.0
+@export var malware_data: MalwareIncidentData
 
 
 # ==========================================
@@ -88,13 +89,10 @@ func setup_incidents() -> void:
 	# MALWARE
 	# ------------------------------------------
 
-	var malware := IncidentData.new()
-
-	malware.incident_id = "malware"
-	malware.incident_name = "Malware"
-	malware.difficulty = 2
-
-	available_incidents.append(malware)
+	if malware_data != null:
+		available_incidents.append(malware_data)
+	else:
+		print("ERROR: Falta asignar los datos del incidente de Malware.")
 
 
 	# ------------------------------------------
@@ -172,8 +170,7 @@ func create_incident() -> void:
 
 	var incident: IncidentData = (
 		available_incidents.pick_random()
-	)
-
+	)	
 
 	# ==========================================
 	# REGISTRAR INCIDENTE
@@ -208,9 +205,7 @@ func create_incident() -> void:
 			computer.activate_phishing(incident)
 
 		"malware":
-			print(
-				"TODO: Activar Malware"
-			)
+			computer.activate_malware(malware_data)
 
 		"ddos":
 			print(
