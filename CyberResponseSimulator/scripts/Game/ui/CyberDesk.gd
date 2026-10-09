@@ -229,9 +229,9 @@ func _on_files_button_pressed() -> void:
 		print("ERROR: No se encontró MalwareWindow")
 		return
 
-	if malware_controller == null:
-		print("No hay un incidente de Malware activo")
-		return
-
 	malware_window.position = Vector2(22.0, 118.0)
-	malware_window.open_investigation(malware_controller)
+
+	if malware_controller == null:
+		malware_window.show_empty()
+	else:
+		malware_window.open_investigation(malware_controller)

@@ -170,7 +170,7 @@ func create_incident() -> void:
 
 	var incident: IncidentData = (
 		available_incidents.pick_random()
-	)	
+	)
 
 	# ==========================================
 	# REGISTRAR INCIDENTE
