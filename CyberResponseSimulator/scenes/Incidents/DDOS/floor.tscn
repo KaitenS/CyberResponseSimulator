@@ -1,0 +1,192 @@
+[gd_scene format=3 uid="uid://dv3gac2h27ymc"]
+
+[ext_resource type="PackedScene" uid="uid://di5nkowwadexl" path="res://player.tscn" id="1_oj3tl"]
+[ext_resource type="Script" uid="uid://dpsmjecem48w1" path="res://floor.gd" id="1_qn07e"]
+[ext_resource type="Script" uid="uid://dhfx534q4n6tm" path="res://terminal_mitigacion.gd" id="2_dgmes"]
+[ext_resource type="PackedScene" uid="uid://dgar6hffx2lre" path="res://servidor_fisico.tscn" id="3_qn07e"]
+[ext_resource type="Script" uid="uid://buo1xusj8xuex" path="res://hud_ddos.gd" id="5_36s4f"]
+[ext_resource type="Script" uid="uid://durv74q2m27md" path="res://pantalla_resultado.gd" id="6_resu1t"]
+[ext_resource type="Script" uid="uid://c12in4qte5lph" path="res://disparador_ddos.gd" id="7_dispar"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ryoud"]
+size = Vector3(20, 0.2, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_oj3tl"]
+size = Vector3(20, 0.2, 20)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_oj3tl"]
+
+[sub_resource type="Sky" id="Sky_cgngl"]
+sky_material = SubResource("ProceduralSkyMaterial_oj3tl")
+
+[sub_resource type="Environment" id="Environment_wd3ws"]
+background_mode = 2
+sky = SubResource("Sky_cgngl")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_desk"]
+size = Vector3(1.5, 1.3, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_madera"]
+albedo_color = Color(0.36, 0.24, 0.14, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="Mesh_tabla"]
+size = Vector3(1.4, 0.06, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="Mat_pata"]
+albedo_color = Color(0.12, 0.12, 0.13, 1)
+metallic = 0.3
+roughness = 0.5
+
+[sub_resource type="BoxMesh" id="Mesh_pata"]
+size = Vector3(0.06, 0.72, 0.06)
+
+[sub_resource type="StandardMaterial3D" id="Mat_plastico"]
+albedo_color = Color(0.84, 0.83, 0.78, 1)
+roughness = 0.55
+
+[sub_resource type="BoxMesh" id="Mesh_monitor_base"]
+size = Vector3(0.3, 0.04, 0.22)
+
+[sub_resource type="BoxMesh" id="Mesh_monitor_cuello"]
+size = Vector3(0.08, 0.12, 0.08)
+
+[sub_resource type="StandardMaterial3D" id="Mat_bisel"]
+albedo_color = Color(0.07, 0.07, 0.08, 1)
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="Mesh_monitor_carcasa"]
+size = Vector3(0.58, 0.42, 0.06)
+
+[sub_resource type="StandardMaterial3D" id="Mat_pantalla"]
+albedo_color = Color(0.05, 0.35, 0.55, 1)
+roughness = 0.2
+emission_enabled = true
+emission = Color(0.15, 0.6, 0.95, 1)
+emission_energy_multiplier = 1.8
+
+[sub_resource type="BoxMesh" id="Mesh_monitor_pantalla"]
+size = Vector3(0.48, 0.33, 0.015)
+
+[sub_resource type="BoxMesh" id="Mesh_torre"]
+size = Vector3(0.22, 0.52, 0.48)
+
+[sub_resource type="StandardMaterial3D" id="Mat_tecla"]
+albedo_color = Color(0.9, 0.89, 0.85, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="Mesh_teclado"]
+size = Vector3(0.5, 0.03, 0.18)
+
+[sub_resource type="BoxMesh" id="Mesh_mouse"]
+size = Vector3(0.08, 0.03, 0.12)
+
+[node name="Floor" type="StaticBody3D" unique_id=1083686445]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9456096, 0)
+script = ExtResource("1_qn07e")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1391924261]
+shape = SubResource("BoxShape3D_ryoud")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=7405604]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.018100977, 0, 0.0088505745)
+mesh = SubResource("BoxMesh_oj3tl")
+
+[node name="Terminal" type="CanvasLayer" parent="." unique_id=648258501]
+script = ExtResource("2_dgmes")
+
+[node name="Alertas" parent="." unique_id=697435599 instance=ExtResource("3_qn07e")]
+transform = Transform3D(1, 0, 0, 0, 0.99940836, -0.034393657, 0, 0.034393657, 0.99940836, -2.9491034, 1.2, 2.0093846)
+
+[node name="Camaras" parent="." unique_id=1100436540 instance=ExtResource("3_qn07e")]
+transform = Transform3D(1, 0, 0, 0, 0.99940836, -0.034393657, 0, 0.034393657, 0.99940836, 2.115345, 1.2, -3.1110954)
+id_servidor = 1
+
+[node name="Monitoreo" parent="." unique_id=2077304409 instance=ExtResource("3_qn07e")]
+transform = Transform3D(1, 0, 0, 0, 0.99940836, -0.034393657, 0, 0.034393657, 0.99940836, -4.8267517, 1.2, -5.1580143)
+id_servidor = 2
+
+[node name="Player" parent="." unique_id=1852440031 instance=ExtResource("1_oj3tl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Player" unique_id=124461240]
+transform = Transform3D(0.8660254, 0.35355344, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123725, 0.6123724, 0, -1.0600224, -8.8381605)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Player/DirectionalLight3D" unique_id=37022325]
+environment = SubResource("Environment_wd3ws")
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=557295893]
+script = ExtResource("5_36s4f")
+
+[node name="TerminalDDoS" type="StaticBody3D" parent="." unique_id=1922858548 groups=["terminal_ddos"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.030941784, 0.12476897, 5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TerminalDDoS" unique_id=1321634101]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, -0.05)
+shape = SubResource("BoxShape3D_desk")
+
+[node name="Escritorio" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634200]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+material_override = SubResource("Mat_madera")
+mesh = SubResource("Mesh_tabla")
+
+[node name="PataFrenteIzq" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634201]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 0.36, 0.3)
+material_override = SubResource("Mat_pata")
+mesh = SubResource("Mesh_pata")
+
+[node name="PataFrenteDer" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634202]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 0.36, 0.3)
+material_override = SubResource("Mat_pata")
+mesh = SubResource("Mesh_pata")
+
+[node name="PataAtrasIzq" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634203]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65, 0.36, -0.3)
+material_override = SubResource("Mat_pata")
+mesh = SubResource("Mesh_pata")
+
+[node name="PataAtrasDer" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634204]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 0.36, -0.3)
+material_override = SubResource("Mat_pata")
+mesh = SubResource("Mesh_pata")
+
+[node name="MonitorBase" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634300]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.18)
+material_override = SubResource("Mat_plastico")
+mesh = SubResource("Mesh_monitor_base")
+
+[node name="MonitorCuello" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634301]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, -0.18)
+material_override = SubResource("Mat_plastico")
+mesh = SubResource("Mesh_monitor_cuello")
+
+[node name="MonitorCarcasa" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634302]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, -0.18)
+material_override = SubResource("Mat_bisel")
+mesh = SubResource("Mesh_monitor_carcasa")
+
+[node name="MonitorPantalla" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634303]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, -0.153)
+material_override = SubResource("Mat_pantalla")
+mesh = SubResource("Mesh_monitor_pantalla")
+
+[node name="Torre" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634400]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 1.04, -0.05)
+material_override = SubResource("Mat_plastico")
+mesh = SubResource("Mesh_torre")
+
+[node name="Teclado" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634500]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05, 0.795, 0.15)
+material_override = SubResource("Mat_tecla")
+mesh = SubResource("Mesh_teclado")
+
+[node name="Mouse" type="MeshInstance3D" parent="TerminalDDoS" unique_id=1321634501]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.28, 0.7925, 0.18)
+material_override = SubResource("Mat_tecla")
+mesh = SubResource("Mesh_mouse")
+
+[node name="Resultado" type="CanvasLayer" parent="." unique_id=810239501]
+script = ExtResource("6_resu1t")
+
+[node name="Disparador" type="Node" parent="." unique_id=810239502]
+script = ExtResource("7_dispar")
