@@ -1,12 +1,11 @@
 [gd_scene format=3 uid="uid://dv3gac2h27ymc"]
 
-[ext_resource type="PackedScene" uid="uid://di5nkowwadexl" path="res://player.tscn" id="1_oj3tl"]
-[ext_resource type="Script" uid="uid://dpsmjecem48w1" path="res://floor.gd" id="1_qn07e"]
-[ext_resource type="Script" uid="uid://dhfx534q4n6tm" path="res://terminal_mitigacion.gd" id="2_dgmes"]
-[ext_resource type="PackedScene" uid="uid://dgar6hffx2lre" path="res://servidor_fisico.tscn" id="3_qn07e"]
-[ext_resource type="Script" uid="uid://buo1xusj8xuex" path="res://hud_ddos.gd" id="5_36s4f"]
-[ext_resource type="Script" uid="uid://durv74q2m27md" path="res://pantalla_resultado.gd" id="6_resu1t"]
-[ext_resource type="Script" uid="uid://c12in4qte5lph" path="res://disparador_ddos.gd" id="7_dispar"]
+[ext_resource type="Script" uid="uid://ntgd8it4388w" path="res://scripts/Incidents/DDOS/terminal_mitigacion.gd" id="1_hctan"]
+[ext_resource type="PackedScene" uid="uid://di5nkowwadexl" path="res://scenes/Incidents/DDOS/player.tscn" id="1_oj3tl"]
+[ext_resource type="PackedScene" uid="uid://dgar6hffx2lre" path="res://scenes/Incidents/DDOS/servidor_fisico.tscn" id="3_qn07e"]
+[ext_resource type="Script" uid="uid://bi5f7uytd3yhj" path="res://scripts/Incidents/DDOS/hud_ddos.gd" id="4_et5l2"]
+[ext_resource type="Script" uid="uid://hd16y62srgmm" path="res://scripts/Incidents/DDOS/pantalla_resultado.gd" id="4_i164k"]
+[ext_resource type="Script" uid="uid://dmygrt4aomr2w" path="res://scripts/Incidents/DDOS/disparador_ddos.gd" id="6_hctan"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ryoud"]
 size = Vector3(20, 0.2, 20)
@@ -83,7 +82,6 @@ size = Vector3(0.08, 0.03, 0.12)
 
 [node name="Floor" type="StaticBody3D" unique_id=1083686445]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9456096, 0)
-script = ExtResource("1_qn07e")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1391924261]
 shape = SubResource("BoxShape3D_ryoud")
@@ -93,7 +91,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.018100977, 0, 0.0088505745
 mesh = SubResource("BoxMesh_oj3tl")
 
 [node name="Terminal" type="CanvasLayer" parent="." unique_id=648258501]
-script = ExtResource("2_dgmes")
+script = ExtResource("1_hctan")
 
 [node name="Alertas" parent="." unique_id=697435599 instance=ExtResource("3_qn07e")]
 transform = Transform3D(1, 0, 0, 0, 0.99940836, -0.034393657, 0, 0.034393657, 0.99940836, -2.9491034, 1.2, 2.0093846)
@@ -106,8 +104,9 @@ id_servidor = 1
 transform = Transform3D(1, 0, 0, 0, 0.99940836, -0.034393657, 0, 0.034393657, 0.99940836, -4.8267517, 1.2, -5.1580143)
 id_servidor = 2
 
-[node name="Player" parent="." unique_id=1852440031 instance=ExtResource("1_oj3tl")]
+[node name="Player" parent="." unique_id=1852440031 node_paths=PackedStringArray("terminal") instance=ExtResource("1_oj3tl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+terminal = NodePath("../Terminal")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Player" unique_id=124461240]
 transform = Transform3D(0.8660254, 0.35355344, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123725, 0.6123724, 0, -1.0600224, -8.8381605)
@@ -116,7 +115,7 @@ transform = Transform3D(0.8660254, 0.35355344, -0.35355338, 0, 0.70710677, 0.707
 environment = SubResource("Environment_wd3ws")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=557295893]
-script = ExtResource("5_36s4f")
+script = ExtResource("4_et5l2")
 
 [node name="TerminalDDoS" type="StaticBody3D" parent="." unique_id=1922858548 groups=["terminal_ddos"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.030941784, 0.12476897, 5)
@@ -186,7 +185,7 @@ material_override = SubResource("Mat_tecla")
 mesh = SubResource("Mesh_mouse")
 
 [node name="Resultado" type="CanvasLayer" parent="." unique_id=810239501]
-script = ExtResource("6_resu1t")
+script = ExtResource("4_i164k")
 
 [node name="Disparador" type="Node" parent="." unique_id=810239502]
-script = ExtResource("7_dispar")
+script = ExtResource("6_hctan")

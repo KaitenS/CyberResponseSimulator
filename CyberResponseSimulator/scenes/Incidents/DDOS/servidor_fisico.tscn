@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dgar6hffx2lre"]
 
-[ext_resource type="Script" uid="uid://donr57a8b5f3j" path="res://servidor_fisico.gd" id="1_d8ixe"]
+[ext_resource type="Script" uid="uid://cgnbxpdo4cgm3" path="res://scripts/Incidents/DDOS/servidor_fisico.gd" id="1_d8ixe"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_gyfej"]
 size = Vector3(0.6, 1.8, 0.5)

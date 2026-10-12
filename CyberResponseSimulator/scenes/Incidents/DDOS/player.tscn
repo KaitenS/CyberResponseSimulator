@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://di5nkowwadexl"]
 
-[ext_resource type="Script" uid="uid://csjsbnl0dg3qr" path="res://player.gd" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://v2btjrs5lpll" path="res://scenes/Incidents/DDOS/player.gd" id="1_4flbx"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sh265"]
 radius = 0.4

@@ -2,6 +2,8 @@ extends CanvasLayer
 class_name HudDDoS
 ## HUD permanente durante el incidente DDoS.
 ## Muestra tiempo, disponibilidad, estado de los tres sistemas y avisos.
+## Tambien da feedback inmediato (flash de pantalla completa + camara)
+## cuando el jugador mitiga bien o mal, y cuando algo cae.
 ## Se construye por codigo: basta con añadirlo a la escena principal.
 
 const COL_OK := Color(0.35, 1.0, 0.6)
@@ -16,6 +18,10 @@ var _aviso: Label
 var _aviso_t := 0.0
 var _parpadeo := 0.0
 
+var _flash: ColorRect
+var _flash_t := 0.0
+var _flash_duracion := 0.35
+
 
 func _ready() -> void:
 	layer = 5
@@ -27,6 +33,7 @@ func _ready() -> void:
 	IncidenteDDoS.incidente_terminado.connect(_on_terminado)
 	IncidenteDDoS.oleada_iniciada.connect(_on_oleada)
 	IncidenteDDoS.servidor_estado_cambiado.connect(_on_servidor)
+	IncidenteDDoS.mitigacion_resultado.connect(_on_mitigacion)
 
 
 func _process(delta: float) -> void:
@@ -47,10 +54,13 @@ func _process(delta: float) -> void:
 		var nombre: String = IncidenteDDoS.NOMBRE_SERVIDOR[id].replace("Servidor de ", "").to_upper()
 		if IncidenteDDoS.esta_online(id):
 			var carga := IncidenteDDoS.carga_de(id)
-			_chips[id].text = "%s  %d%%" % [nombre, int(carga)]
+			# Simbolo + color: no depende solo del color para leerse
+			# (accesibilidad para quienes no distinguen verde/ambar).
+			var simbolo := "OK" if carga < 60.0 else "!"
+			_chips[id].text = "%s  %s %d%%" % [nombre, simbolo, int(carga)]
 			_chips[id].modulate = COL_OK if carga < 60.0 else COL_AVISO
 		else:
-			_chips[id].text = "%s  OFFLINE" % nombre
+			_chips[id].text = "%s  X OFFLINE" % nombre
 			_chips[id].modulate = COL_MAL if fmod(_parpadeo, 0.7) < 0.45 else COL_MAL.darkened(0.6)
 
 	if _aviso_t > 0.0:
@@ -59,10 +69,25 @@ func _process(delta: float) -> void:
 	else:
 		_aviso.visible = false
 
+	if _flash_t > 0.0:
+		_flash_t -= delta
+		_flash.visible = true
+		_flash.modulate.a = clampf(_flash_t / _flash_duracion, 0.0, 1.0) * 0.35
+	else:
+		_flash.visible = false
+
 
 func mostrar_aviso(texto: String, segundos := 4.0) -> void:
 	_aviso.text = texto
 	_aviso_t = segundos
+
+
+## Destello breve de pantalla completa. color=verde para exito, rojo para fallo.
+func destello(color: Color) -> void:
+	_flash.color = color
+	_flash_t = _flash_duracion
+	_flash.visible = true
+	_flash.modulate.a = 0.35
 
 
 # --------------------------------------------------------- SEÑALES
@@ -90,6 +115,7 @@ func _on_oleada(_i: int, _vector: int, objetivos: Array, _t: Dictionary) -> void
 func _on_servidor(id: int, online: bool) -> void:
 	if online:
 		return
+	destello(COL_MAL)
 	match id:
 		IncidenteDDoS.Servidor.ALERTAS:
 			mostrar_aviso("ALERTAS OFFLINE\nNo recibira notificaciones de nuevos incidentes", 4.0)
@@ -99,6 +125,10 @@ func _on_servidor(id: int, online: bool) -> void:
 			mostrar_aviso("MONITOREO OFFLINE\nAlgunas acciones no otorgaran puntaje", 4.0)
 
 
+func _on_mitigacion(exito: bool, _mensaje: String) -> void:
+	destello(COL_OK if exito else COL_MAL)
+
+
 # --------------------------------------------------------- UI
 
 func _construir() -> void:
@@ -106,6 +136,13 @@ func _construir() -> void:
 	_raiz.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_raiz)
+
+	_flash = ColorRect.new()
+	_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_flash.color = COL_OK
+	_flash.visible = false
+	_raiz.add_child(_flash)
 
 	var caja := VBoxContainer.new()
 	caja.position = Vector2(24, 20)
