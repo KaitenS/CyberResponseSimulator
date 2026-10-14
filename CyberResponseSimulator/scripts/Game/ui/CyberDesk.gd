@@ -2,6 +2,12 @@ extends Control
 
 signal close_requested
 
+var malware_controller: MalwareIncidentController = null
+
+
+func set_malware_controller(controller: MalwareIncidentController) -> void:
+	malware_controller = controller
+
 
 func _ready() -> void:
 	print("===== CYBERDESK.GD CARGADO =====")
@@ -14,6 +20,18 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 
+			# Si el click cae sobre la ventana de Malware, los íconos
+			# del escritorio que quedan detrás no deben reaccionar.
+			var malware_window_ref: Control = get_node_or_null(
+				"Windows/MalwareWindow"
+			)
+
+			var click_on_malware: bool = (
+				malware_window_ref != null
+				and malware_window_ref.visible
+				and malware_window_ref.get_global_rect().has_point(event.position)
+			)
+
 			# ==========================================
 			# DAILY SUMMARY
 			# ==========================================
@@ -22,7 +40,7 @@ func _input(event: InputEvent) -> void:
 				"DesktopIcons/GridContainer/DailySummary Button"
 			)
 
-			if daily_summary_button != null:
+			if daily_summary_button != null and not click_on_malware:
 				var daily_summary_rect: Rect2 = (
 					daily_summary_button.get_global_rect()
 				)
@@ -40,7 +58,7 @@ func _input(event: InputEvent) -> void:
 				"DesktopIcons/GridContainer/Email Button"
 			)
 
-			if email_button != null:
+			if email_button != null and not click_on_malware:
 				var email_rect: Rect2 = (
 					email_button.get_global_rect()
 				)
@@ -48,21 +66,23 @@ func _input(event: InputEvent) -> void:
 				if email_rect.has_point(event.position):
 					print("===== CYBERMAIL DETECTADO =====")
 					_on_email_button_pressed()
-					
+
+
 			# ==========================================
 			# ARCHIVOS (MALWARE)
 			# ==========================================
-			
+
 			var files_button: Button = get_node_or_null(
 				"DesktopIcons/GridContainer/Files Button"
 			)
 
-			if files_button != null:
+			if files_button != null and not click_on_malware:
 				var files_rect: Rect2 = files_button.get_global_rect()
 
 				if files_rect.has_point(event.position):
 					print("===== ARCHIVOS DETECTADO =====")
 					_on_files_button_pressed()
+
 
 			# ==========================================
 			# CERRAR MALWARE
@@ -83,7 +103,8 @@ func _input(event: InputEvent) -> void:
 				if malware_close_zone.has_point(event.position):
 					print("===== CERRAR MALWARE =====")
 					close_window(malware_window)
-			
+
+
 			# ==========================================
 			# CERRAR CYBERMAIL
 			# ==========================================
@@ -92,7 +113,7 @@ func _input(event: InputEvent) -> void:
 				"Windows/CyberMailWindow"
 			)
 
-			if cybermail_window != null and cybermail_window.visible:
+			if cybermail_window != null and cybermail_window.visible and not click_on_malware:
 
 				var cybermail_close_zone := Rect2(
 					560.0,
@@ -115,7 +136,7 @@ func _input(event: InputEvent) -> void:
 				"Windows/DailySummaryWindow"
 			)
 
-			if daily_summary_window != null and daily_summary_window.visible:
+			if daily_summary_window != null and daily_summary_window.visible and not click_on_malware:
 
 				# Daily Summary se encuentra aproximadamente
 				# en X = 22
@@ -184,6 +205,27 @@ func _on_email_button_pressed() -> void:
 
 
 # ==========================================
+# ARCHIVOS (MALWARE)
+# ==========================================
+
+func _on_files_button_pressed() -> void:
+	var malware_window: Control = get_node_or_null(
+		"Windows/MalwareWindow"
+	)
+
+	if malware_window == null:
+		print("ERROR: No se encontró MalwareWindow")
+		return
+
+	malware_window.position = Vector2(22.0, 118.0)
+
+	if malware_controller == null:
+		malware_window.show_empty()
+	else:
+		malware_window.open_investigation(malware_controller)
+
+
+# ==========================================
 # CERRAR UNA VENTANA
 # ==========================================
 
@@ -209,29 +251,3 @@ func _on_close_button_pressed() -> void:
 	close_requested.emit()
 
 	print("===== SIGNAL close_requested EMITIDO =====")
-
-var malware_controller: MalwareIncidentController = null
-
-
-func set_malware_controller(controller: MalwareIncidentController) -> void:
-	malware_controller = controller
-	
-# ==========================================
-# ARCHIVOS (MALWARE)
-# ==========================================
-
-func _on_files_button_pressed() -> void:
-	var malware_window: Control = get_node_or_null(
-		"Windows/MalwareWindow"
-	)
-
-	if malware_window == null:
-		print("ERROR: No se encontró MalwareWindow")
-		return
-
-	malware_window.position = Vector2(22.0, 118.0)
-
-	if malware_controller == null:
-		malware_window.show_empty()
-	else:
-		malware_window.open_investigation(malware_controller)
