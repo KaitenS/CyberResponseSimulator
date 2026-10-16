@@ -23,6 +23,8 @@ var _marco: PanelContainer
 var _titulo: Label
 var _puntaje_label: Label
 var _detalle: RichTextLabel
+var _btn_reintentar: Button
+var _btn_cerrar: Button
 
 
 func _ready() -> void:
@@ -31,6 +33,13 @@ func _ready() -> void:
 	_raiz.visible = false
 
 	IncidenteDDoS.incidente_terminado.connect(_on_incidente_terminado)
+
+
+## Lo llama floor.gd cuando el DDoS se juega dentro del flujo del juego:
+## no se puede reintentar y el boton de cierre pasa a ser "Continuar".
+func configurar_modo_integrado() -> void:
+	_btn_reintentar.visible = false
+	_btn_cerrar.text = "Continuar"
 
 
 func abrir() -> void:
@@ -165,14 +174,14 @@ func _construir_ui() -> void:
 	fila_botones.alignment = BoxContainer.ALIGNMENT_CENTER
 	col.add_child(fila_botones)
 
-	var btn_reintentar := Button.new()
-	btn_reintentar.text = "Reintentar incidente"
-	btn_reintentar.custom_minimum_size = Vector2(200, 40)
-	btn_reintentar.pressed.connect(_reintentar)
-	fila_botones.add_child(btn_reintentar)
+	_btn_reintentar = Button.new()
+	_btn_reintentar.text = "Reintentar incidente"
+	_btn_reintentar.custom_minimum_size = Vector2(200, 40)
+	_btn_reintentar.pressed.connect(_reintentar)
+	fila_botones.add_child(_btn_reintentar)
 
-	var btn_cerrar := Button.new()
-	btn_cerrar.text = "Cerrar"
-	btn_cerrar.custom_minimum_size = Vector2(120, 40)
-	btn_cerrar.pressed.connect(cerrar)
-	fila_botones.add_child(btn_cerrar)
+	_btn_cerrar = Button.new()
+	_btn_cerrar.text = "Cerrar"
+	_btn_cerrar.custom_minimum_size = Vector2(120, 40)
+	_btn_cerrar.pressed.connect(cerrar)
+	fila_botones.add_child(_btn_cerrar)
