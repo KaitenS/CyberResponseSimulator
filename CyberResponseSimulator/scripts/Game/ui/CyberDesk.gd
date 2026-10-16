@@ -65,6 +65,21 @@ func _input(event: InputEvent) -> void:
 					_on_files_button_pressed()
 
 			# ==========================================
+			# SERVIDORES (DDOS)
+			# ==========================================
+
+			var server_button: Button = get_node_or_null(
+				"DesktopIcons/GridContainer/Server Button"
+			)
+
+			if server_button != null:
+				var server_rect: Rect2 = server_button.get_global_rect()
+
+				if server_rect.has_point(event.position):
+					print("===== SERVIDORES DETECTADO =====")
+					_on_server_button_pressed()
+
+			# ==========================================
 			# CERRAR MALWARE
 			# ==========================================
 
@@ -235,3 +250,19 @@ func _on_files_button_pressed() -> void:
 		malware_window.show_empty()
 	else:
 		malware_window.open_investigation(malware_controller)
+
+
+# ==========================================
+# SERVIDORES (DDOS)
+# ==========================================
+
+func _on_server_button_pressed() -> void:
+	for incident in IncidentManager.active_incidents:
+		if incident.incident_id == "ddos":
+			print("SERVIDORES: DDoS activo, entrando a la sala.")
+			get_tree().change_scene_to_file(
+				"res://scenes/Incidents/DDOS/floor.tscn"
+			)
+			return
+
+	print("SERVIDORES: sin incidentes DDoS activos.")

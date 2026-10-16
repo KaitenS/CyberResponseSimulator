@@ -208,12 +208,12 @@ func create_incident() -> void:
 			computer.activate_malware(malware_data)
 
 		"ddos":
-			# El DDoS se juega en su propia sala de servidores.
-			# floor.gd cierra el incidente y devuelve al jugador a Game.tscn.
-			get_tree().change_scene_to_file(
-				"res://scenes/Incidents/DDOS/floor.tscn"
+			# El DDoS queda registrado como incidente activo.
+			# El jugador entra a la sala de servidores desde el icono
+			# "Servidores" del computador (ver CyberDesk.gd).
+			print(
+				"DDoS activo: el jugador debe entrar por 'Servidores'."
 			)
-			return
 
 
 	# ==========================================
