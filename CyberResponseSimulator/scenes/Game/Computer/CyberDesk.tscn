@@ -493,9 +493,33 @@ offset_bottom = 24.0
 theme_override_colors/font_color = Color(0.9254902, 0, 0, 1)
 text = "Tiempo: --"
 
+[node name="TabButtons" type="HBoxContainer" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1544825923]
+layout_mode = 1
+offset_top = 26.0
+offset_right = 570.0
+offset_bottom = 52.0
+
+[node name="ProcessTabButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/TabButtons" unique_id=1342236454]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Procesos"
+
+[node name="FileTabButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/TabButtons" unique_id=1844101426]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Archivos"
+
+[node name="LogTabButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/TabButtons" unique_id=818452215]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Registros"
+
 [node name="ProcessList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1793553213]
 layout_mode = 0
-offset_top = 30.0
+offset_top = 54.0
 offset_right = 280.0
 offset_bottom = 140.0
 theme_override_colors/font_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
@@ -504,14 +528,26 @@ theme_override_colors/font_selected_color = Color(0.9411765, 0.9411765, 0.941176
 theme_override_styles/panel = SubResource("StyleBoxFlat_mryue")
 
 [node name="FileList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1781873404]
+visible = false
 layout_mode = 1
-offset_left = 290.0
-offset_top = 30.0
+offset_top = 54.0
 offset_right = 570.0
 offset_bottom = 140.0
 theme_override_colors/font_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
 theme_override_colors/font_hovered_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
 theme_override_colors/font_selected_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_mryue")
+
+[node name="LogList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1960173517]
+visible = false
+layout_mode = 1
+offset_top = 54.0
+offset_right = 570.0
+offset_bottom = 140.0
+theme_override_colors/font_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_colors/font_hovered_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_colors/font_selected_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_font_sizes/font_size = 12
 theme_override_styles/panel = SubResource("StyleBoxFlat_mryue")
 
 [node name="DetailLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1084305360]

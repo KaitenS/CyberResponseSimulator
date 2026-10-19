@@ -7,6 +7,9 @@
 [sub_resource type="Resource" id="Resource_irw1c"]
 script = ExtResource("1_irw1c")
 file_name = "factura_urgente.exe"
+file_path = "C:\\Users\\usuario.finanzas\\Downloads\\factura_urgente.exe"
+file_size = "412KB"
+modified_date = "15/10/2026"
 is_malicious = true
 evidence_id = "archivo_factura_exe"
 metadata/_custom_type_script = "uid://cs1fyu2gc821y"
@@ -14,16 +17,25 @@ metadata/_custom_type_script = "uid://cs1fyu2gc821y"
 [sub_resource type="Resource" id="Resource_t88t2"]
 script = ExtResource("1_irw1c")
 file_name = "informe_ventas.docx"
+file_path = "C:\\Users\\usuario.finanzas\\Documents\\informe_ventas.docx"
+file_size = "86KB"
+modified_date = "30/09/2026"
 metadata/_custom_type_script = "uid://cs1fyu2gc821y"
 
 [sub_resource type="Resource" id="Resource_w1kla"]
 script = ExtResource("1_irw1c")
 file_name = "presupuesto_2026.xlsx"
+file_path = "C:\\Users\\usuario.finanzas\\Documents\\presupuesto_2026.xlsx"
+file_size = "1.2KB"
+modified_date = "12/10/2026"
 metadata/_custom_type_script = "uid://cs1fyu2gc821y"
 
 [sub_resource type="Resource" id="Resource_usism"]
 script = ExtResource("2_t88t2")
 process_name = "svch0st.exe"
+cpu_usage = 2.1
+process_path = "C:\\Users\\Public\\svch0st.exe"
+started_by = "usuario.finanzas"
 is_malicious = true
 evidence_id = "proceso_svchost_falso"
 metadata/_custom_type_script = "uid://c1nih121rphdg"
@@ -31,11 +43,17 @@ metadata/_custom_type_script = "uid://c1nih121rphdg"
 [sub_resource type="Resource" id="Resource_iv606"]
 script = ExtResource("2_t88t2")
 process_name = "chrome.exe"
+cpu_usage = 38.5
+process_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+started_by = "usuario.finanzas"
 metadata/_custom_type_script = "uid://c1nih121rphdg"
 
 [sub_resource type="Resource" id="Resource_e3po3"]
 script = ExtResource("2_t88t2")
 process_name = "explorer.exe"
+cpu_usage = 1.2
+process_path = "C:\\Windows\\explorer.exe"
+started_by = "usuario.finanzas"
 metadata/_custom_type_script = "uid://c1nih121rphdg"
 
 [resource]
@@ -43,6 +61,7 @@ script = ExtResource("3_w1kla")
 title = "Equipo de Finanzas con comportamiento anómalo"
 required_evidence_ids = Array[String](["proceso_svchost_falso", "archivo_factura_exe"])
 processes = Array[ExtResource("2_t88t2")]([SubResource("Resource_usism"), SubResource("Resource_iv606"), SubResource("Resource_e3po3")])
+log_lines = Array[String](["[12/10 17:20] usuario.finanzas modificó presupuesto_2026.xlsx", "[15/10 08:51] chrome.exe descargó factura_urgente.exe desde mail-facturas.net", "[15/10 08:52] usuario.finanzas ejecutó factura_urgente.exe", "[15/10 08:52] svch0st.exe iniciado desde C:\\Users\\Public", "[15/10 08:53] svch0st.exe abrió conexión saliente a 203.0.113.45:443", "[15/10 09:30] explorer.exe accedió a informe_ventas.docx"])
 files = Array[ExtResource("1_irw1c")]([SubResource("Resource_irw1c"), SubResource("Resource_t88t2"), SubResource("Resource_w1kla")])
 malicious_process_ids = Array[String](["proceso_svchost_falso"])
 malicious_file_ids = Array[String](["archivo_factura_exe"])
