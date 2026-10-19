@@ -17,6 +17,9 @@
 [ext_resource type="Script" uid="uid://dkclndxiyec6q" path="res://scripts/Incidents/Malware/malware_window.gd" id="14_fklch"]
 [ext_resource type="Texture2D" uid="uid://br671yjpunmeo" path="res://assets/CyberDesk/Desktop Windows/MailWindow.png" id="14_mryue"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mryue"]
+bg_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_08gl3"]
 bg_color = Color(0.9490196, 0.9490196, 0.9490196, 1)
 border_width_left = 2
@@ -483,19 +486,6 @@ offset_top = 45.0
 offset_right = 585.0
 offset_bottom = 385.0
 
-[node name="ProcessList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1793553213]
-layout_mode = 0
-offset_top = 30.0
-offset_right = 280.0
-offset_bottom = 260.0
-
-[node name="FileList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1781873404]
-layout_mode = 1
-offset_left = 290.0
-offset_top = 30.0
-offset_right = 570.0
-offset_bottom = 260.0
-
 [node name="TimeRemainingLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1916045060]
 layout_mode = 1
 offset_right = 570.0
@@ -503,11 +493,86 @@ offset_bottom = 24.0
 theme_override_colors/font_color = Color(0.9254902, 0, 0, 1)
 text = "Tiempo: --"
 
+[node name="TabButtons" type="HBoxContainer" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1544825923]
+layout_mode = 1
+offset_top = 26.0
+offset_right = 570.0
+offset_bottom = 52.0
+
+[node name="ProcessTabButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/TabButtons" unique_id=1342236454]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Procesos"
+
+[node name="FileTabButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/TabButtons" unique_id=1844101426]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Archivos"
+
+[node name="LogTabButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/TabButtons" unique_id=818452215]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Registros"
+
+[node name="ProcessList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1793553213]
+layout_mode = 0
+offset_top = 54.0
+offset_right = 280.0
+offset_bottom = 140.0
+theme_override_colors/font_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_colors/font_hovered_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_colors/font_selected_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_mryue")
+
+[node name="FileList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1781873404]
+visible = false
+layout_mode = 1
+offset_top = 54.0
+offset_right = 570.0
+offset_bottom = 140.0
+theme_override_colors/font_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_colors/font_hovered_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_colors/font_selected_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_mryue")
+
+[node name="LogList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1960173517]
+visible = false
+layout_mode = 1
+offset_top = 54.0
+offset_right = 570.0
+offset_bottom = 140.0
+theme_override_colors/font_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_colors/font_hovered_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_colors/font_selected_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/panel = SubResource("StyleBoxFlat_mryue")
+
+[node name="DetailLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1084305360]
+layout_mode = 1
+offset_top = 142.0
+offset_right = 570.0
+offset_bottom = 232.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 13
+text = "Selecciona un elemento para ver sus detalles"
+autowrap_mode = 3
+
+[node name="ActionButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=199198456]
+layout_mode = 1
+offset_top = 236.0
+offset_right = 570.0
+offset_bottom = 267.0
+disabled = true
+text = "Terminar o eliminar el seleccionado"
+
 [node name="DecisionButtons" type="HBoxContainer" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1665908056]
 layout_mode = 1
-offset_top = 272.0
+offset_top = 274.0
 offset_right = 570.0
-offset_bottom = 672.0
+offset_bottom = 314.0
 
 [node name="IsolateButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/DecisionButtons" unique_id=1295762919]
 layout_mode = 2
