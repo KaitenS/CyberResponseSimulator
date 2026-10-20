@@ -589,6 +589,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Ignorar"
 
+[node name="NoteLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=801927241]
+layout_mode = 1
+offset_top = 312.0
+offset_right = 570.0
+offset_bottom = 336.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 11
+text = "Actuar sobre un elemento legítimo cuenta como error."
+
 [node name="ResultPanel" type="ColorRect" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1598306369]
 visible = false
 layout_mode = 1
