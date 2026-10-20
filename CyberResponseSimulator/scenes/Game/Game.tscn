@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://c3m7r2008afre" path="res://scripts/Game/ui/GameHud.gd" id="5_50swi"]
 [ext_resource type="Script" uid="uid://c70j0s800typg" path="res://scripts/Managers/IncidentFlowManager.gd" id="5_yqgss"]
 [ext_resource type="Resource" uid="uid://cik5bb381swee" path="res://scripts/Data/computador_finanzas.tres" id="6_50swi"]
+[ext_resource type="PackedScene" uid="uid://dv3gac2h27ymc" path="res://scenes/Incidents/DDOS/floor.tscn" id="7_f8ls4"]
 
 [sub_resource type="Environment" id="Environment_bekgd"]
 
@@ -84,3 +85,6 @@ Se requiere atención."
 [node name="IncidentFlowManager" type="Node" parent="." unique_id=1607234953]
 script = ExtResource("5_yqgss")
 malware_data = ExtResource("6_50swi")
+
+[node name="Floor2" parent="." unique_id=1083686445 instance=ExtResource("7_f8ls4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8652401, 1.9456096, -24.352165)

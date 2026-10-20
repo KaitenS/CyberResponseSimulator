@@ -12,7 +12,7 @@ func start_game():
 	score = 0
 	incidents_completed = 0
 	incidents_failed = 0
-	time_remaining = 60.0
+	time_remaining = 600.0  # SOLO PARA PROBAR: volver a 60.0 antes del commit
 
 
 func _process(delta: float) -> void:

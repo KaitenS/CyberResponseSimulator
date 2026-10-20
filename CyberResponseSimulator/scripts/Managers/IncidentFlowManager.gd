@@ -107,6 +107,9 @@ func setup_incidents() -> void:
 
 	available_incidents.append(ddos)
 
+	available_incidents.clear()      # SOLO PARA PROBAR: borrar antes del commit
+	available_incidents.append(ddos) # SOLO PARA PROBAR: borrar antes del commit
+
 
 	print(
 		"Incidentes disponibles: ",
