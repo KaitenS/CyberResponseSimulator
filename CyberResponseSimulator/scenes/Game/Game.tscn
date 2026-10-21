@@ -6,11 +6,7 @@
 [ext_resource type="Script" uid="uid://c3m7r2008afre" path="res://scripts/Game/ui/GameHud.gd" id="5_50swi"]
 [ext_resource type="Script" uid="uid://c70j0s800typg" path="res://scripts/Managers/IncidentFlowManager.gd" id="5_yqgss"]
 [ext_resource type="Resource" uid="uid://cik5bb381swee" path="res://scripts/Data/computador_finanzas.tres" id="6_50swi"]
-<<<<<<< HEAD
-[ext_resource type="PackedScene" uid="uid://dv3gac2h27ymc" path="res://scenes/Incidents/DDOS/floor.tscn" id="7_f8ls4"]
-=======
 [ext_resource type="PackedScene" uid="uid://dgar6hffx2lre" path="res://scenes/Incidents/DDOS/servidor_fisico.tscn" id="7_f8ls4"]
->>>>>>> c83592509c12000f9bd161ea7220da138444b32b
 
 [sub_resource type="Environment" id="Environment_bekgd"]
 
@@ -90,16 +86,13 @@ Se requiere atención."
 script = ExtResource("5_yqgss")
 malware_data = ExtResource("6_50swi")
 
-<<<<<<< HEAD
-[node name="Floor2" parent="." unique_id=1083686445 instance=ExtResource("7_f8ls4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8652401, 1.9456096, -24.352165)
-=======
 [node name="ServidorFisico" parent="." unique_id=697435599 instance=ExtResource("7_f8ls4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7463794, 0.7142347, -6.091258)
 
 [node name="ServidorFisico2" parent="." unique_id=771668072 instance=ExtResource("7_f8ls4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8963714, 0.9999999, -5.1445384)
+id_servidor = 1
 
 [node name="ServidorFisico3" parent="." unique_id=559667837 instance=ExtResource("7_f8ls4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.370372, 0.9999999, -1.9419436)
->>>>>>> c83592509c12000f9bd161ea7220da138444b32b
+id_servidor = 2
