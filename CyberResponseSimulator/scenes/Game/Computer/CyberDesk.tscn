@@ -563,10 +563,19 @@ autowrap_mode = 3
 [node name="ActionButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=199198456]
 layout_mode = 1
 offset_top = 236.0
-offset_right = 570.0
+offset_right = 400.0
 offset_bottom = 267.0
 disabled = true
 text = "Terminar o eliminar el seleccionado"
+
+[node name="ScanButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1348023167]
+layout_mode = 0
+offset_left = 408.0
+offset_top = 236.0
+offset_right = 570.0
+offset_bottom = 267.0
+disabled = true
+text = "Escanear (-15s)"
 
 [node name="DecisionButtons" type="HBoxContainer" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1665908056]
 layout_mode = 1
