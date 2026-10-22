@@ -107,8 +107,10 @@ func setup_incidents() -> void:
 
 	available_incidents.append(ddos)
 
-	available_incidents.clear()      # SOLO PARA PROBAR: borrar antes del commit
-	available_incidents.append(ddos) # SOLO PARA PROBAR: borrar antes del commit
+	# PARA PROBAR: descomenta estas 2 lineas para que solo salga DDoS.
+	# Volver a comentarlas antes de hacer commit.
+	# available_incidents.clear()
+	# available_incidents.append(ddos)
 
 
 	print(
@@ -211,12 +213,9 @@ func create_incident() -> void:
 			computer.activate_malware(malware_data)
 
 		"ddos":
-			# El DDoS queda registrado como incidente activo.
-			# El jugador entra a la sala de servidores desde el icono
-			# "Servidores" del computador (ver CyberDesk.gd).
-			print(
-				"DDoS activo: el jugador debe entrar por 'Servidores'."
-			)
+			# El DDoS se juega en este mismo mapa: consola en el PC
+			# (icono "Servidores") y racks fisicos. Ver ddos_en_mapa.gd.
+			DDoSEnMapa.iniciar_en_escena(get_parent(), incident)
 
 
 	# ==========================================

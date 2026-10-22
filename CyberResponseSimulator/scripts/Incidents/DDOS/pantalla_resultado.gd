@@ -35,7 +35,7 @@ func _ready() -> void:
 	IncidenteDDoS.incidente_terminado.connect(_on_incidente_terminado)
 
 
-## Lo llama floor.gd cuando el DDoS se juega dentro del flujo del juego:
+## Lo llama DDoSEnMapa cuando el DDoS se juega dentro del flujo del juego:
 ## no se puede reintentar y el boton de cierre pasa a ser "Continuar".
 func configurar_modo_integrado() -> void:
 	_btn_reintentar.visible = false
