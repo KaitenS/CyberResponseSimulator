@@ -704,7 +704,7 @@ func _construir_qte(cuerpo: Control) -> void:
 	_qte_barra.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_qte_barra_fondo.add_child(_qte_barra)
 
-	var ayuda := _etiqueta(_qte_panel, "Flechas del teclado (o WASD).  Un error reinicia la secuencia.",
+	var ayuda := _etiqueta(_qte_panel, "Usa las flechas direccionales.  Un error reinicia la secuencia.",
 		Vector2(10, 160), Vector2(560, 16), 12, COL_TENUE)
 	ayuda.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
@@ -785,13 +785,13 @@ func _procesar_qte(delta: float) -> void:
 
 
 func _leer_direccion() -> int:
-	if _accion("ui_up", "move_forward"):
+	if _accion("ui_up"):
 		return DIR_ARRIBA
-	if _accion("ui_down", "move_back", "move_backward"):
+	if _accion("ui_down"):
 		return DIR_ABAJO
-	if _accion("ui_left", "move_left"):
+	if _accion("ui_left"):
 		return DIR_IZQ
-	if _accion("ui_right", "move_right"):
+	if _accion("ui_right"):
 		return DIR_DER
 	return -1
 
