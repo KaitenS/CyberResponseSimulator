@@ -78,6 +78,8 @@ var _qte_tiempo := 0.0
 var _qte_flash := 0.0
 var _qte_flash_ok := false
 var _qte_pausa := 0.0
+var _qte_bono: Label
+var _qte_bono_t := 0.0
 var _rng := RandomNumberGenerator.new()
 
 var _flujo_sel := -1
@@ -103,6 +105,7 @@ func _ready() -> void:
 
 	_rng.randomize()
 	_construir()
+	IncidenteDDoS.recompensa_secuencia.connect(_on_recompensa)
 
 
 # ================================================================ API
@@ -226,7 +229,7 @@ func _brillo(b: Button, punta: Vector2) -> Color:
 func _refrescar() -> void:
 	if _cerrar == null:
 		return
-	_qte_panel.visible = IncidenteDDoS.siguiente_verificacion() != -1
+	_qte_panel.visible = IncidenteDDoS.siguiente_verificacion() != -1 or _qte_bono_t > 0.0
 	_refrescar_estado()
 	_refrescar_servidores()
 	_refrescar_flujos()
@@ -704,6 +707,10 @@ func _construir_qte(cuerpo: Control) -> void:
 	_qte_barra.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_qte_barra_fondo.add_child(_qte_barra)
 
+	_qte_bono = _etiqueta(_qte_panel, "", Vector2(10, 100), Vector2(560, 18), 14, COL_OK)
+	_qte_bono.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_qte_bono.z_index = 1
+
 	var ayuda := _etiqueta(_qte_panel, "Usa las flechas direccionales.  Un error reinicia la secuencia.",
 		Vector2(10, 160), Vector2(560, 16), 12, COL_TENUE)
 	ayuda.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -722,11 +729,30 @@ func _nuevo_patron() -> void:
 	_qte_tiempo = QTE_TIEMPO
 
 
+func _on_recompensa(_id: int, ganada: float) -> void:
+	_qte_bono.text = "+%d%% DISPONIBILIDAD" % int(ganada)
+	_qte_bono_t = 1.6
+	_qte_bono.visible = true
+
+
 func _procesar_qte(delta: float) -> void:
+	if _qte_bono_t > 0.0:
+		_qte_bono_t -= delta
+		if _qte_bono_t <= 0.0:
+			_qte_bono.text = ""
+
 	var id: int = IncidenteDDoS.siguiente_verificacion()
 	if id == -1:
-		_qte_panel.visible = false
 		_qte_id = -1
+		# Deja ver unos segundos el premio de la ultima secuencia.
+		if _qte_bono_t > 0.0:
+			_qte_panel.visible = true
+			_qte_titulo.text = "REINICIO AUTORIZADO"
+			_qte_sub.text = "Vuelve al rack y mantén E"
+			_qte_flechas.pos = _qte_patron.size()
+			_qte_flechas.queue_redraw()
+		else:
+			_qte_panel.visible = false
 		return
 	_qte_panel.visible = true
 

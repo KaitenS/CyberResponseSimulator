@@ -21,6 +21,8 @@ signal alerta_encolada(cantidad: int)
 signal reinicio_fallido(id: int, secuencias: int)
 signal secuencia_completada(id: int, restantes: int)
 signal reinicio_autorizado(id: int)
+## Recompensa por acertar una secuencia: sube la barra de disponibilidad.
+signal recompensa_secuencia(id: int, disponibilidad_ganada: float)
 ## Emitida para que el jugador (camara) reaccione fisicamente: caida de un
 ## servidor o falso positivo. intensidad va de 0.0 a 1.0, mientras mas
 ## fuerte el golpe, mayor la sacudida esperada.
@@ -102,6 +104,11 @@ var prob_fallo_reinicio: float = 0.45
 ## Cuantas secuencias de flechas pide un reinicio fallido. Se sortea un valor
 ## de esta lista (mas copias = mas probable): casi siempre 1-2, rara vez 5.
 const SECUENCIAS_POSIBLES := [1, 1, 1, 1, 2, 2, 2, 3, 3, 5]
+## Recompensa (puntos de la barra de disponibilidad) por acertar una secuencia
+## y un extra al completar todas y dejar el rack autorizado.
+const RECOMPENSA_SECUENCIA := 4.0
+const RECOMPENSA_AUTORIZACION := 6.0
+const PUNTOS_SECUENCIA := 20
 
 ## Probabilidad de que una oleada nueva sea trafico legitimo (trampa).
 const PROB_LEGITIMA := 0.22
@@ -272,6 +279,13 @@ func completar_secuencia(id: int) -> void:
 	if not activo or verificaciones_pendientes[id] <= 0:
 		return
 	verificaciones_pendientes[id] -= 1
+	var bono := RECOMPENSA_SECUENCIA
+	if verificaciones_pendientes[id] == 0:
+		bono += RECOMPENSA_AUTORIZACION
+	disponibilidad = minf(DISPONIBILIDAD_MAXIMA, disponibilidad + bono)
+	if puede_registrar_puntaje():
+		puntaje += PUNTOS_SECUENCIA
+	emit_signal("recompensa_secuencia", id, bono)
 	emit_signal("secuencia_completada", id, verificaciones_pendientes[id])
 	if verificaciones_pendientes[id] == 0:
 		autorizado[id] = true
