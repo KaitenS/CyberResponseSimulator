@@ -4,21 +4,17 @@ class_name DDoSEnMapa
 ##
 ## Lo crea solo el IncidentFlowManager cuando el flujo del juego elige "DDoS"
 ## (no hace falta agregarlo a mano en el editor). Se encarga de:
-##  - crear la consola de mitigacion, el HUD y la pantalla de resultado
-##  - abrir la consola cuando el jugador hace clic en "Servidores" del PC
+##  - crear el HUD y la pantalla de resultado
+##    (la consola de mitigacion vive dentro del PC: ventana_ddos_pc.gd)
 ##  - dejar reiniciar los racks (3 ServidorFisico en el mapa) manteniendo E
-##  - bloquear al jugador mientras la consola o el resultado estan abiertos
+##  - bloquear al jugador mientras el resultado esta abierto
 ##  - sacudir la camara con los impactos
 ##  - avisar al GameManager / IncidentManager cuando el incidente termina
 
 const SHAKE_DECAIMIENTO := 4.5
 const SHAKE_ESCALA := 0.08
-## Tiempo que se espera para abrir la consola despues de cerrar la vista del
-## PC (la camara tarda 0.6 s en volver a su sitio).
-const RETARDO_DESDE_PC := 0.8
 
 var _incidente: IncidentData = null
-var _terminal: TerminalMitigacion
 var _hud: HudDDoS
 var _resultado: PantallaResultado
 var _prompt: Label
@@ -41,14 +37,8 @@ static func iniciar_en_escena(escena: Node, incidente: IncidentData) -> void:
 func _ready() -> void:
 	add_to_group("ddos_mapa")
 
-	# Se conectan ANTES de crear los hijos para correr primero cuando
-	# el incidente termina (cerramos la consola antes de que la pantalla
-	# de resultado libere el mouse).
 	IncidenteDDoS.incidente_terminado.connect(_on_terminado)
 	IncidenteDDoS.impacto_camara.connect(_on_impacto_camara)
-
-	_terminal = TerminalMitigacion.new()
-	add_child(_terminal)
 
 	_hud = HudDDoS.new()
 	add_child(_hud)
@@ -57,8 +47,6 @@ func _ready() -> void:
 	add_child(_resultado)
 	_resultado.configurar_modo_integrado()
 
-	_terminal.pantalla_abierta.connect(_actualizar_bloqueo)
-	_terminal.pantalla_cerrada.connect(_actualizar_bloqueo)
 	_resultado.pantalla_abierta.connect(_actualizar_bloqueo)
 	_resultado.pantalla_cerrada.connect(_actualizar_bloqueo)
 
@@ -69,19 +57,8 @@ func empezar(incidente: IncidentData) -> void:
 	_incidente = incidente
 	IncidenteDDoS.iniciar()
 	_hud.mostrar_aviso(
-		"ATAQUE DDoS: usa el PC > Servidores y corre a los racks", 6.0
+		"ATAQUE DDoS: abre Servidores en el PC y corre a los racks", 6.0
 	)
-
-
-## La llama CyberDesk.gd cuando el jugador hace clic en "Servidores".
-func abrir_consola(retardo: float = 0.0) -> void:
-	if retardo > 0.0:
-		await get_tree().create_timer(retardo).timeout
-
-	if _terminal.abierta or _resultado.abierta:
-		return
-
-	_terminal.abrir()
 
 
 # ================================================================ LOOP
@@ -140,7 +117,7 @@ func _accion() -> StringName:
 # ============================================================ BLOQUEO
 
 func _actualizar_bloqueo() -> void:
-	var bloquear: bool = _terminal.abierta or _resultado.abierta
+	var bloquear: bool = _resultado.abierta
 	if bloquear == _bloqueado:
 		return
 	_bloqueado = bloquear
@@ -162,9 +139,6 @@ func _actualizar_bloqueo() -> void:
 # ============================================================ RESULTADO
 
 func _on_terminado(exito: bool, _resumen: Dictionary) -> void:
-	if _terminal.abierta:
-		_terminal.cerrar()
-
 	_soltar_rack()
 	_prompt.visible = false
 

@@ -115,6 +115,9 @@ var servidores: Array[Dictionary] = []
 ## vector_extra = -1 cuando la oleada tiene un solo vector (caso normal).
 var oleadas: Array[Dictionary] = []
 
+## Ultimas lineas del registro (para pantallas que se abren a mitad del incidente).
+var historial_log: Array[String] = []
+
 var cooldown_restante: float = 0.0
 var alertas_en_cola: int = 0
 var apagon_restante: float = 0.0
@@ -366,6 +369,7 @@ func _actualizar_disponibilidad(delta: float) -> void:
 # ================================================================ INTERNO
 
 func _reset_estado() -> void:
+	historial_log.clear()
 	servidores.clear()
 	for i in 3:
 		servidores.append({
@@ -497,7 +501,7 @@ func _generar_telemetria(vector: int, intensidad: float) -> Dictionary:
 				"ips_origen": "%d" % _rng.randi_range(600, 1400),
 				"puerto_destino": "80/TCP y 443/TCP",
 				"handshakes_completados": "%d %%" % _rng.randi_range(94, 100),
-				"nota": "Peticiones GET validas y repetidas a /login. Mismo User-Agent en el 89 %% del trafico.",
+				"nota": "Peticiones GET validas y repetidas a /login. Mismo User-Agent en el 89 % del trafico.",
 			}
 		Vector.BOTNET:
 			return {
@@ -561,4 +565,7 @@ func _finalizar(exito: bool) -> void:
 
 
 func _log(texto: String) -> void:
+	historial_log.append(texto)
+	if historial_log.size() > 80:
+		historial_log.pop_front()
 	emit_signal("log_terminal", texto)

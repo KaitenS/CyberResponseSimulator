@@ -109,8 +109,8 @@ func setup_incidents() -> void:
 
 	# PARA PROBAR: descomenta estas 2 lineas para que solo salga DDoS.
 	# Volver a comentarlas antes de hacer commit.
-	# available_incidents.clear()
-	# available_incidents.append(ddos)
+	 available_incidents.clear()
+	 available_incidents.append(ddos)
 
 
 	print(
