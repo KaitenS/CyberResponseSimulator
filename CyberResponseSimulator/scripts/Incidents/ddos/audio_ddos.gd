@@ -43,6 +43,9 @@ func _ready() -> void:
 	IncidenteDDoS.oleada_iniciada.connect(_on_oleada)
 	IncidenteDDoS.servidor_estado_cambiado.connect(_on_servidor_estado)
 	IncidenteDDoS.mitigacion_resultado.connect(_on_mitigacion)
+	IncidenteDDoS.reinicio_fallido.connect(func(_id, _n): _encolar_beep(150.0, 0.35))
+	IncidenteDDoS.secuencia_completada.connect(func(_id, _r): _encolar_beep(760.0, 0.06))
+	IncidenteDDoS.reinicio_autorizado.connect(func(_id): _encolar_beep(990.0, 0.14))
 
 	set_process(false)
 

@@ -39,6 +39,8 @@ func _ready() -> void:
 
 	IncidenteDDoS.incidente_terminado.connect(_on_terminado)
 	IncidenteDDoS.impacto_camara.connect(_on_impacto_camara)
+	IncidenteDDoS.reinicio_fallido.connect(_on_reinicio_fallido)
+	IncidenteDDoS.reinicio_autorizado.connect(_on_reinicio_autorizado)
 
 	_hud = HudDDoS.new()
 	add_child(_hud)
@@ -151,6 +153,17 @@ func _on_terminado(exito: bool, _resumen: Dictionary) -> void:
 	if _incidente != null:
 		IncidentManager.finish_incident(_incidente)
 		_incidente = null
+
+
+func _on_reinicio_fallido(id: int, secuencias: int) -> void:
+	_hud.mostrar_aviso("REINICIO FALLIDO: %s\nVe al PC > Servidores (%d secuencia%s)" % [
+		IncidenteDDoS.NOMBRE_SERVIDOR[id], secuencias, "" if secuencias == 1 else "s"], 5.0)
+	_hud.destello(Color(1.0, 0.3, 0.2))
+
+
+func _on_reinicio_autorizado(id: int) -> void:
+	_hud.mostrar_aviso("AUTORIZADO: vuelve a %s y mantén E" % IncidenteDDoS.NOMBRE_SERVIDOR[id], 4.0)
+	_hud.destello(Color(0.3, 1.0, 0.5))
 
 
 # ================================================================ SHAKE

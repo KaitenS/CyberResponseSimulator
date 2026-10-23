@@ -16,6 +16,11 @@ signal servidor_estado_cambiado(id: int, online: bool)
 signal mitigacion_resultado(exito: bool, mensaje: String)
 signal log_terminal(texto: String)
 signal alerta_encolada(cantidad: int)
+## El reinicio fisico de un rack fallo: hay que autorizarlo en el PC
+## (secuencias de flechas) y volver al rack para reiniciar de nuevo.
+signal reinicio_fallido(id: int, secuencias: int)
+signal secuencia_completada(id: int, restantes: int)
+signal reinicio_autorizado(id: int)
 ## Emitida para que el jugador (camara) reaccione fisicamente: caida de un
 ## servidor o falso positivo. intensidad va de 0.0 a 1.0, mientras mas
 ## fuerte el golpe, mayor la sacudida esperada.
@@ -91,6 +96,13 @@ const PUNTOS_LEGITIMA_IGNORADA := 15   ## Bono por NO tocar una oleada trampa ha
 
 const FACTOR_JORNADA_SIN_CAMARAS := 1.5
 
+## Probabilidad de que un reinicio fisico de rack FALLE y exija verificacion
+## en el PC. (var, no const, para poder tunearla o forzarla en pruebas.)
+var prob_fallo_reinicio: float = 0.45
+## Cuantas secuencias de flechas pide un reinicio fallido. Se sortea un valor
+## de esta lista (mas copias = mas probable): casi siempre 1-2, rara vez 5.
+const SECUENCIAS_POSIBLES := [1, 1, 1, 1, 2, 2, 2, 3, 3, 5]
+
 ## Probabilidad de que una oleada nueva sea trafico legitimo (trampa).
 const PROB_LEGITIMA := 0.22
 ## A partir de que numero de oleada pueden aparecer trampas.
@@ -117,6 +129,11 @@ var oleadas: Array[Dictionary] = []
 
 ## Ultimas lineas del registro (para pantallas que se abren a mitad del incidente).
 var historial_log: Array[String] = []
+
+## Por servidor: cuantas secuencias de flechas faltan antes de poder reiniciar.
+var verificaciones_pendientes: Array[int] = [0, 0, 0]
+## Por servidor: true cuando ya se autorizo en el PC (el proximo reinicio no falla).
+var autorizado: Array[bool] = [false, false, false]
 
 var cooldown_restante: float = 0.0
 var alertas_en_cola: int = 0
@@ -241,11 +258,35 @@ func iniciar_reinicio(id: int) -> bool:
 		return false
 	if servidores[id].reiniciando or apagon_restante > 0.0:
 		return false
+	if verificaciones_pendientes[id] > 0:
+		return false # primero hay que autorizar en el PC
 	servidores[id].reiniciando = true
 	servidores[id].progreso_reinicio = 0.0
 	_set_online(id, false)
 	_log("[SYS] Reiniciando %s..." % NOMBRE_SERVIDOR[id])
 	return true
+
+
+## El PC llama esto cada vez que el jugador completa una secuencia de flechas.
+func completar_secuencia(id: int) -> void:
+	if not activo or verificaciones_pendientes[id] <= 0:
+		return
+	verificaciones_pendientes[id] -= 1
+	emit_signal("secuencia_completada", id, verificaciones_pendientes[id])
+	if verificaciones_pendientes[id] == 0:
+		autorizado[id] = true
+		_log("[OK] Reinicio de %s autorizado. Vuelva al rack y mantenga E." % NOMBRE_SERVIDOR[id])
+		emit_signal("reinicio_autorizado", id)
+
+
+## Primer servidor que espera verificacion en el PC (-1 si ninguno).
+func siguiente_verificacion() -> int:
+	if not activo:
+		return -1
+	for i in 3:
+		if verificaciones_pendientes[i] > 0:
+			return i
+	return -1
 
 
 func cancelar_reinicio(id: int) -> void:
@@ -273,6 +314,9 @@ func reinicio_general() -> void:
 	if not activo or apagon_restante > 0.0:
 		return
 	_usos_reinicio_general += 1
+	for i in 3:
+		verificaciones_pendientes[i] = 0
+		autorizado[i] = false
 	puntaje += PUNTOS_REINICIO_GENERAL
 	apagon_restante = TIEMPO_REINICIO_GENERAL + APAGON_REINICIO_GENERAL
 	for id in servidores.size():
@@ -370,6 +414,8 @@ func _actualizar_disponibilidad(delta: float) -> void:
 
 func _reset_estado() -> void:
 	historial_log.clear()
+	verificaciones_pendientes = [0, 0, 0]
+	autorizado = [false, false, false]
 	servidores.clear()
 	for i in 3:
 		servidores.append({
@@ -405,6 +451,18 @@ func _finalizar_reinicio(id: int) -> void:
 	servidores[id].reiniciando = false
 	servidores[id].progreso_reinicio = 0.0
 	servidores[id].carga = CARGA_TRAS_REINICIO
+
+	# Reinicio fisico fallido (aleatorio). Si ya fue autorizado en el PC, sale bien.
+	if not autorizado[id] and _rng.randf() < prob_fallo_reinicio:
+		var n: int = SECUENCIAS_POSIBLES[_rng.randi_range(0, SECUENCIAS_POSIBLES.size() - 1)]
+		verificaciones_pendientes[id] = n
+		_log("[ERROR] %s no arranco. Autorice el reinicio en el PC > Servidores (%d secuencia%s) y vuelva al rack." % [
+			NOMBRE_SERVIDOR[id], n, "" if n == 1 else "s"])
+		emit_signal("impacto_camara", 0.4)
+		emit_signal("reinicio_fallido", id, n)
+		return # el servidor sigue caido
+
+	autorizado[id] = false
 	_set_online(id, true)
 	_log("[OK] %s restaurado." % NOMBRE_SERVIDOR[id])
 	if id == Servidor.ALERTAS and alertas_en_cola > 0:

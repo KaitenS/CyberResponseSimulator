@@ -55,6 +55,31 @@ var _boton_general: Button
 var _telemetria: RichTextLabel
 var _registro: RichTextLabel
 
+# --- Verificacion de reinicio (secuencias de flechas, estilo Helldivers)
+const QTE_LARGO_MIN := 4
+const QTE_LARGO_MAX := 6
+const QTE_TIEMPO := 8.0          ## Segundos para completar cada secuencia
+const DIR_ARRIBA := 0
+const DIR_ABAJO := 1
+const DIR_IZQ := 2
+const DIR_DER := 3
+
+var _qte_panel: Panel
+var _qte_titulo: Label
+var _qte_sub: Label
+var _qte_flechas: FlechasQte
+var _qte_barra_fondo: ColorRect
+var _qte_barra: ColorRect
+var _qte_id := -1
+var _qte_total := 0
+var _qte_patron: Array[int] = []
+var _qte_pos := 0
+var _qte_tiempo := 0.0
+var _qte_flash := 0.0
+var _qte_flash_ok := false
+var _qte_pausa := 0.0
+var _rng := RandomNumberGenerator.new()
+
 var _flujo_sel := -1
 var _acumulador := 0.0
 var _parpadeo := 0.0
@@ -76,6 +101,7 @@ func _ready() -> void:
 	tema.default_font_size = 12
 	theme = tema
 
+	_rng.randomize()
 	_construir()
 
 
@@ -136,7 +162,7 @@ func _tocar(p: Vector2) -> bool:
 
 	for i in _botones_flujo.size():
 		var b := _botones_flujo[i]
-		if b.visible and b.get_global_rect().has_point(p):
+		if b.visible and not _qte_panel.visible and b.get_global_rect().has_point(p):
 			if i < _indices_flujo.size():
 				_flujo_sel = _indices_flujo[i]
 				_refrescar()
@@ -166,6 +192,7 @@ func _process(delta: float) -> void:
 		return
 	_parpadeo += delta
 	_acumulador += delta
+	_procesar_qte(delta)
 	_actualizar_hover()
 	if _acumulador >= 0.15:
 		_acumulador = 0.0
@@ -199,6 +226,7 @@ func _brillo(b: Button, punta: Vector2) -> Color:
 func _refrescar() -> void:
 	if _cerrar == null:
 		return
+	_qte_panel.visible = IncidenteDDoS.siguiente_verificacion() != -1
 	_refrescar_estado()
 	_refrescar_servidores()
 	_refrescar_flujos()
@@ -228,6 +256,8 @@ func _refrescar_estado() -> void:
 	var txt := "ATAQUE  %02d:%02d" % [int(t / 60.0), int(fmod(t, 60.0))]
 	if IncidenteDDoS.cooldown_restante > 0.0:
 		txt = "OCUPADO %.1fs" % IncidenteDDoS.cooldown_restante
+	if _qte_panel.visible:
+		txt = "VERIFICACION"
 	_lbl_estado.text = txt
 	_lbl_estado.add_theme_color_override("font_color", COL_AVISO if disp >= 35.0 else COL_ALERTA)
 
@@ -248,6 +278,12 @@ func _refrescar_servidores() -> void:
 			col = COL_AVISO
 		elif s.reiniciando:
 			texto = "REINICIANDO RACK..."
+			col = COL_AVISO
+		elif IncidenteDDoS.verificaciones_pendientes[id] > 0:
+			texto = "REQUIERE VERIFICACION (%d)" % IncidenteDDoS.verificaciones_pendientes[id]
+			col = COL_ALERTA
+		elif IncidenteDDoS.autorizado[id]:
+			texto = "AUTORIZADO: reinicia el rack"
 			col = COL_AVISO
 		elif not s.online:
 			var visible_ahora := fmod(_parpadeo, 0.8) < 0.5
@@ -411,7 +447,8 @@ func _texto_manual() -> String:
 [color=#3fe08a]HTTP Flood[/color]: GET validos repetidos -> Rate limit
 [color=#3fe08a]Botnet[/color]: miles de IPs reales, un AS -> Blackhole
 [color=#ff8a5c]Legitimo[/color]: pocas IPs conocidas -> NO actuar
-Combinado: una contramedida por firma.[/color]"""
+Combinado: una contramedida por firma.
+[color=#ffcc55]Rack que no arranca[/color]: autoriza aqui con las flechas y vuelve al rack.[/color]"""
 
 
 # ============================================================ CONSTRUCCION
@@ -530,6 +567,8 @@ func _construir() -> void:
 	_boton_general.add_theme_color_override("font_color", COL_ALERTA)
 	_boton_general.add_theme_color_override("font_disabled_color", COL_ALERTA.darkened(0.55))
 
+	_construir_qte(cuerpo)
+
 	# ---- Registro
 	_registro = RichTextLabel.new()
 	_registro.bbcode_enabled = true
@@ -590,3 +629,175 @@ func _caja(fondo: Color, borde: Color, grosor: int, margen: int = 0) -> StyleBox
 	sb.set_border_width_all(grosor)
 	sb.set_content_margin_all(margen)
 	return sb
+
+
+# ============================================================ VERIFICACION (QTE)
+
+## Dibuja la fila de flechas. Verde = ya acertada, blanca = la que toca,
+## apagada = pendiente. Flash rojo si te equivocas.
+class FlechasQte extends Control:
+	var patron: Array[int] = []
+	var pos := 0
+	var flash := 0.0
+	var flash_ok := false
+
+	const ARROW := [Vector2(0, -20), Vector2(17, 1), Vector2(7, 1), Vector2(7, 20),
+		Vector2(-7, 20), Vector2(-7, 1), Vector2(-17, 1)]
+
+	func _draw() -> void:
+		var n := patron.size()
+		if n == 0:
+			return
+		var paso := 56.0
+		var x0 := size.x / 2.0 - paso * (n - 1) / 2.0
+		for i in n:
+			var c := Vector2(x0 + i * paso, size.y / 2.0)
+			var col := Color(0.35, 0.45, 0.42)
+			var k := 1.0
+			if i < pos:
+				col = Color(0.25, 1.0, 0.45)
+			elif i == pos:
+				col = Color(1, 1, 1)
+				k = 1.15
+			if flash > 0.0:
+				col = Color(0.3, 1.0, 0.5) if flash_ok else Color(1.0, 0.3, 0.25)
+			var ang := 0.0
+			match patron[i]:
+				1: ang = PI
+				2: ang = -PI / 2.0
+				3: ang = PI / 2.0
+			var pts := PackedVector2Array()
+			for v in ARROW:
+				pts.append(c + (v * k).rotated(ang))
+			draw_colored_polygon(pts, col)
+
+
+func _construir_qte(cuerpo: Control) -> void:
+	_qte_panel = Panel.new()
+	_qte_panel.position = Vector2(4, 80)
+	_qte_panel.size = Vector2(580, 190)
+	_qte_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_qte_panel.add_theme_stylebox_override("panel", _caja(Color(0.07, 0.05, 0.03), COL_AVISO, 2))
+	_qte_panel.visible = false
+	cuerpo.add_child(_qte_panel)
+
+	_qte_titulo = _etiqueta(_qte_panel, "AUTORIZAR REINICIO", Vector2(10, 8), Vector2(560, 18), 14, COL_AVISO)
+	_qte_titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_qte_sub = _etiqueta(_qte_panel, "", Vector2(10, 28), Vector2(560, 16), 12, COL_TEXTO)
+	_qte_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	_qte_flechas = FlechasQte.new()
+	_qte_flechas.position = Vector2(10, 56)
+	_qte_flechas.size = Vector2(560, 70)
+	_qte_flechas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_qte_panel.add_child(_qte_flechas)
+
+	_qte_barra_fondo = ColorRect.new()
+	_qte_barra_fondo.color = Color(0.15, 0.12, 0.06)
+	_qte_barra_fondo.position = Vector2(40, 140)
+	_qte_barra_fondo.size = Vector2(500, 10)
+	_qte_barra_fondo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_qte_panel.add_child(_qte_barra_fondo)
+	_qte_barra = ColorRect.new()
+	_qte_barra.color = COL_AVISO
+	_qte_barra.size = _qte_barra_fondo.size
+	_qte_barra.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_qte_barra_fondo.add_child(_qte_barra)
+
+	var ayuda := _etiqueta(_qte_panel, "Flechas del teclado (o WASD).  Un error reinicia la secuencia.",
+		Vector2(10, 160), Vector2(560, 16), 12, COL_TENUE)
+	ayuda.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+
+func _nuevo_patron() -> void:
+	_qte_patron.clear()
+	var largo := _rng.randi_range(QTE_LARGO_MIN, QTE_LARGO_MAX)
+	for i in largo:
+		var d := _rng.randi_range(0, 3)
+		# Evita 3 iguales seguidas para que no sea trivial.
+		while i >= 2 and _qte_patron[i - 1] == d and _qte_patron[i - 2] == d:
+			d = _rng.randi_range(0, 3)
+		_qte_patron.append(d)
+	_qte_pos = 0
+	_qte_tiempo = QTE_TIEMPO
+
+
+func _procesar_qte(delta: float) -> void:
+	var id: int = IncidenteDDoS.siguiente_verificacion()
+	if id == -1:
+		_qte_panel.visible = false
+		_qte_id = -1
+		return
+	_qte_panel.visible = true
+
+	var pendientes: int = IncidenteDDoS.verificaciones_pendientes[id]
+	if id != _qte_id or pendientes > _qte_total:
+		_qte_id = id
+		_qte_total = pendientes
+		_nuevo_patron()
+
+	var hecha := _qte_total - pendientes + 1
+	_qte_titulo.text = "AUTORIZAR REINICIO: %s" % IncidenteDDoS.NOMBRE_SERVIDOR[id].replace("Servidor de ", "Srv. ")
+	_qte_sub.text = "Secuencia %d de %d" % [hecha, _qte_total]
+
+	# Destello tras acertar/fallar
+	if _qte_flash > 0.0:
+		_qte_flash -= delta
+	_qte_flechas.patron = _qte_patron
+	_qte_flechas.pos = _qte_pos
+	_qte_flechas.flash = _qte_flash
+	_qte_flechas.flash_ok = _qte_flash_ok
+	_qte_flechas.queue_redraw()
+
+	_qte_barra.size.x = _qte_barra_fondo.size.x * clampf(_qte_tiempo / QTE_TIEMPO, 0.0, 1.0)
+	_qte_barra.color = COL_AVISO if _qte_tiempo > 2.5 else COL_ALERTA
+
+	# Pausa corta tras completar una secuencia (se ve el verde).
+	if _qte_pausa > 0.0:
+		_qte_pausa -= delta
+		if _qte_pausa <= 0.0:
+			IncidenteDDoS.completar_secuencia(id)
+			if IncidenteDDoS.verificaciones_pendientes[id] > 0:
+				_nuevo_patron()
+		return
+
+	_qte_tiempo -= delta
+	if _qte_tiempo <= 0.0:
+		_qte_flash = 0.25
+		_qte_flash_ok = false
+		_nuevo_patron()
+		return
+
+	var tecla := _leer_direccion()
+	if tecla == -1:
+		return
+
+	if tecla == _qte_patron[_qte_pos]:
+		_qte_pos += 1
+		if _qte_pos >= _qte_patron.size():
+			_qte_flash = 0.35
+			_qte_flash_ok = true
+			_qte_pausa = 0.35
+	else:
+		_qte_pos = 0
+		_qte_flash = 0.2
+		_qte_flash_ok = false
+
+
+func _leer_direccion() -> int:
+	if _accion("ui_up", "move_forward"):
+		return DIR_ARRIBA
+	if _accion("ui_down", "move_back", "move_backward"):
+		return DIR_ABAJO
+	if _accion("ui_left", "move_left"):
+		return DIR_IZQ
+	if _accion("ui_right", "move_right"):
+		return DIR_DER
+	return -1
+
+
+func _accion(a: StringName, b: StringName = &"", c: StringName = &"") -> bool:
+	for n in [a, b, c]:
+		if n != &"" and InputMap.has_action(n) and Input.is_action_just_pressed(n):
+			return true
+	return false

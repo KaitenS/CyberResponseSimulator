@@ -53,6 +53,10 @@ func texto_prompt() -> String:
 		return "%s - operativo" % IncidenteDDoS.NOMBRE_SERVIDOR[id_servidor]
 	if IncidenteDDoS.apagon_restante > 0.0:
 		return "Reinicio general en curso..."
+	if IncidenteDDoS.verificaciones_pendientes[id_servidor] > 0:
+		return "REINICIO FALLIDO: autoriza en el PC > Servidores (%d)" % IncidenteDDoS.verificaciones_pendientes[id_servidor]
+	if IncidenteDDoS.autorizado[id_servidor]:
+		return "[MANTENER E] Reiniciar %s (AUTORIZADO)" % IncidenteDDoS.NOMBRE_SERVIDOR[id_servidor]
 	if IncidenteDDoS.esta_online(id_servidor):
 		return "[MANTENER E] Reiniciar %s  (carga %d%%)" % [
 			IncidenteDDoS.NOMBRE_SERVIDOR[id_servidor],
@@ -126,6 +130,14 @@ func _refrescar_pantalla() -> void:
 	if not IncidenteDDoS.activo:
 		pantalla.text = "%s\n[OK] OPERATIVO" % nombre
 		pantalla.modulate = color_ok
+		return
+
+	if IncidenteDDoS.verificaciones_pendientes[id_servidor] > 0:
+		var parpadea := fmod(_parpadeo, 1.0) < 0.6
+		pantalla.text = "%s\n%s\nVERIFICAR EN PC (%d)" % [
+			nombre, "[!] REINICIO FALLIDO" if parpadea else "",
+			IncidenteDDoS.verificaciones_pendientes[id_servidor]]
+		pantalla.modulate = color_alerta
 		return
 
 	if not IncidenteDDoS.esta_online(id_servidor):
