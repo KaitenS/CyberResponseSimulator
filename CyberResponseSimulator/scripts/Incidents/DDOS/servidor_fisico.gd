@@ -54,6 +54,8 @@ func texto_prompt() -> String:
 	if IncidenteDDoS.apagon_restante > 0.0:
 		return "Reinicio general en curso..."
 	if IncidenteDDoS.verificaciones_pendientes[id_servidor] > 0:
+		if IncidenteDDoS.tipo_verificacion[id_servidor] == IncidenteDDoS.Verificacion.CODIGO:
+			return "REINICIO FALLIDO: memoriza el CODIGO %s y escribelo en el PC > Servidores" % IncidenteDDoS.codigo_rack[id_servidor]
 		return "REINICIO FALLIDO: autoriza en el PC > Servidores (%d)" % IncidenteDDoS.verificaciones_pendientes[id_servidor]
 	if IncidenteDDoS.autorizado[id_servidor]:
 		return "[MANTENER E] Reiniciar %s (AUTORIZADO)" % IncidenteDDoS.NOMBRE_SERVIDOR[id_servidor]
@@ -134,9 +136,14 @@ func _refrescar_pantalla() -> void:
 
 	if IncidenteDDoS.verificaciones_pendientes[id_servidor] > 0:
 		var parpadea := fmod(_parpadeo, 1.0) < 0.6
-		pantalla.text = "%s\n%s\nVERIFICAR EN PC (%d)" % [
-			nombre, "[!] REINICIO FALLIDO" if parpadea else "",
-			IncidenteDDoS.verificaciones_pendientes[id_servidor]]
+		if IncidenteDDoS.tipo_verificacion[id_servidor] == IncidenteDDoS.Verificacion.CODIGO:
+			pantalla.text = "%s\n%s\nCODIGO: %s" % [
+				nombre, "[!] REINICIO FALLIDO" if parpadea else "",
+				IncidenteDDoS.codigo_rack[id_servidor]]
+		else:
+			pantalla.text = "%s\n%s\nVERIFICAR EN PC (%d)" % [
+				nombre, "[!] REINICIO FALLIDO" if parpadea else "",
+				IncidenteDDoS.verificaciones_pendientes[id_servidor]]
 		pantalla.modulate = color_alerta
 		return
 

@@ -43,9 +43,29 @@ func _ready() -> void:
 	IncidenteDDoS.oleada_iniciada.connect(_on_oleada)
 	IncidenteDDoS.servidor_estado_cambiado.connect(_on_servidor_estado)
 	IncidenteDDoS.mitigacion_resultado.connect(_on_mitigacion)
-	IncidenteDDoS.reinicio_fallido.connect(func(_id, _n): _encolar_beep(150.0, 0.35))
+	# Fallo de reinicio: zumbido grave en dos tonos
+	IncidenteDDoS.reinicio_fallido.connect(func(_id, _n):
+		_encolar_beep(150.0, 0.25)
+		_encolar_beep(0.0, 0.04)
+		_encolar_beep(105.0, 0.35))
 	IncidenteDDoS.secuencia_completada.connect(func(_id, _r): _encolar_beep(760.0, 0.06))
-	IncidenteDDoS.reinicio_autorizado.connect(func(_id): _encolar_beep(990.0, 0.14))
+	# Autorizado: arpegio ascendente
+	IncidenteDDoS.reinicio_autorizado.connect(func(_id):
+		_encolar_beep(660.0, 0.08)
+		_encolar_beep(880.0, 0.08)
+		_encolar_beep(1100.0, 0.16))
+	# Racha / rapido: dos notas agudas
+	IncidenteDDoS.recompensa_secuencia.connect(func(_id, _g, detalle):
+		if not detalle.is_empty():
+			_encolar_beep(1320.0, 0.05)
+			_encolar_beep(1760.0, 0.08))
+	IncidenteDDoS.consola_abierta.connect(func(): _encolar_beep(1200.0, 0.03))
+	IncidenteDDoS.reinicio_iniciado.connect(func(_id): _encolar_beep(320.0, 0.06))
+	# Aviso de abandono: tres pitidos urgentes
+	IncidenteDDoS.aviso_abandono.connect(func(_s):
+		for i in 3:
+			_encolar_beep(980.0, 0.1)
+			_encolar_beep(0.0, 0.07))
 
 	set_process(false)
 
@@ -109,6 +129,12 @@ func _on_mitigacion(exito: bool, _mensaje: String) -> void:
 		_encolar_beep(660.0, 0.08)
 	else:
 		_encolar_beep(150.0, 0.28) # tono grave: contramedida equivocada
+
+
+## Tono corto para otros nodos (por ejemplo, la ventana del PC).
+func tono(frecuencia: float, duracion_seg: float) -> void:
+	if IncidenteDDoS.activo:
+		_encolar_beep(frecuencia, duracion_seg)
 
 
 func _encolar_beep(frecuencia: float, duracion_seg: float) -> void:

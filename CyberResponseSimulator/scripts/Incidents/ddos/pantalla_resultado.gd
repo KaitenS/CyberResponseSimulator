@@ -57,50 +57,120 @@ func cerrar() -> void:
 
 
 func _on_incidente_terminado(exito: bool, resumen: Dictionary) -> void:
-	_titulo.text = "INCIDENTE CONTENIDO" if exito else "SERVICIO CAIDO"
+	var abandonado: bool = resumen.get("abandonado", false)
+	var titulo := "INCIDENTE CONTENIDO" if exito else "SERVICIO CAIDO"
+	if abandonado:
+		titulo = "ATAQUE SIN ATENDER"
+	_titulo.text = titulo
 	_titulo.add_theme_color_override("font_color", COL_BORDE_EXITO if exito else COL_BORDE_FALLO)
 	_marco.add_theme_stylebox_override("panel", _estilo_panel(exito))
 
-	_puntaje_label.text = "Puntaje final: %d" % int(resumen.get("puntaje", 0))
+	var puntaje: int = int(resumen.get("puntaje", 0))
+	var mejor: int = int(resumen.get("mejor_anterior", 0))
+	var extra := ""
+	if puntaje > mejor and puntaje > 0:
+		extra = "   [NUEVO RECORD]"
+	_puntaje_label.text = "Calificacion %s   |   Puntaje %d%s" % [_nota(exito, resumen), puntaje, extra]
 
 	var totales: int = resumen.get("oleadas_totales", 0)
 	var mitigadas: int = resumen.get("oleadas_mitigadas", 0)
 	var falsos: int = resumen.get("falsos_positivos", 0)
 	var reinicios: int = resumen.get("reinicios_generales", 0)
 	var alertas: int = resumen.get("alertas_perdidas", 0)
-	var legitimas: int = resumen.get("oleadas_legitimas", 0)
-	var combinadas: int = resumen.get("oleadas_combinadas", 0)
 	var disponibilidad: float = resumen.get("disponibilidad_final", 0.0)
+	var fallidos: int = resumen.get("reinicios_fallidos", 0)
+	var secuencias: int = resumen.get("secuencias_ok", 0)
+	var codigos: int = resumen.get("codigos_ok", 0)
+	var racha: int = resumen.get("racha_max", 0)
+	var legitimas: int = resumen.get("oleadas_legitimas", 0)
 
-	var lineas := PackedStringArray()
-	lineas.append("[b]Disponibilidad final del servicio:[/b] %.0f %%" % disponibilidad)
-	lineas.append("")
-	lineas.append("[b]Flujos detectados:[/b] %d" % totales)
-	lineas.append("[b]Flujos neutralizados correctamente:[/b] %d" % mitigadas)
-	lineas.append("[b]Falsos positivos (trafico legitimo bloqueado):[/b] %d" % falsos)
+	var l := PackedStringArray()
+	l.append("[b]Disponibilidad final:[/b] %.0f %%     [b]Flujos:[/b] %d     [b]Neutralizados:[/b] %d" % [disponibilidad, totales, mitigadas])
+	l.append("[b]Falsos positivos:[/b] %d     [b]Reinicios generales:[/b] %d     [b]Alertas perdidas:[/b] %d" % [falsos, reinicios, alertas])
+	l.append("[b]Reinicios de rack fallidos:[/b] %d     [b]Verificaciones:[/b] %d     [b]Mejor racha:[/b] %d" % [fallidos, secuencias, racha])
+	l.append("")
 
-	if legitimas > 0:
-		lineas.append("[b]Oleadas de trafico legitimo (trampa):[/b] %d" % legitimas)
-	if combinadas > 0:
-		lineas.append("[b]Ataques combinados enfrentados:[/b] %d" % combinadas)
+	# ---- Lo que hiciste bien
+	var bien := PackedStringArray()
+	if totales > 0 and mitigadas == totales:
+		bien.append("Identificaste cada vector de ataque correctamente.")
+	if falsos == 0 and totales > 0:
+		bien.append("No bloqueaste trafico legitimo.")
+	if legitimas > 0 and falsos == 0:
+		bien.append("Reconociste las falsas alarmas y no actuaste sobre ellas.")
+	if secuencias > 0:
+		bien.append("Autorizaste %d verificacion%s en el PC." % [secuencias, "" if secuencias == 1 else "es"])
+	if racha >= 3:
+		bien.append("Racha de %d secuencias sin error." % racha)
+	if disponibilidad >= 70.0 and exito:
+		bien.append("Mantuviste el servicio sobre el 70 %.")
 
-	lineas.append("[b]Reinicios generales usados:[/b] %d" % reinicios)
+	# ---- Que mejorar
+	var mal := PackedStringArray()
+	if abandonado:
+		mal.append("Nadie atendio el ataque. Abre Servidores en el PC en cuanto suene la alerta.")
+	if falsos > 0:
+		mal.append("Aplicaste %d contramedida%s equivocada%s. Compara handshakes, tamano de paquete y origen con el manual." % [falsos, "" if falsos == 1 else "s", "" if falsos == 1 else "s"])
+	if reinicios > 0:
+		mal.append("El reinicio general deja los 3 sistemas caidos 8 s. Es mejor reiniciar solo el rack afectado.")
 	if alertas > 0:
-		lineas.append("[b]Alertas perdidas por caida del sistema:[/b] %d" % alertas)
+		mal.append("Cayo el servidor de Alertas y se perdieron %d aviso%s. Restauralo primero." % [alertas, "" if alertas == 1 else "s"])
+	if fallidos > secuencias + codigos and fallidos > 0:
+		mal.append("Dejaste reinicios fallidos sin autorizar. Despues de un fallo hay que verificar en el PC y volver al rack.")
+	if disponibilidad < 50.0 and not abandonado:
+		mal.append("La disponibilidad bajo mucho. Prioriza los servidores caidos antes de analizar nuevos flujos.")
 
-	lineas.append("")
-	if exito:
-		if falsos == 0 and mitigadas == totales:
-			lineas.append("[color=#3fe08a]Turno impecable: identificaste cada vector correctamente y no bloqueaste trafico legitimo.[/color]")
-		elif falsos > 2:
-			lineas.append("[color=#ffcc55]Sobreviviste el turno, pero varios falsos positivos afectaron a usuarios reales. Revisa el manual del analista antes de actuar.[/color]")
-		else:
-			lineas.append("[color=#3fe08a]Buen trabajo. El servicio se mantuvo en pie durante todo el incidente.[/color]")
-	else:
-		lineas.append("[color=#ff6b55]La disponibilidad llego a cero. Revisa que reinicios y contramedidas coincidan con la telemetria antes de actuar.[/color]")
+	l.append("[color=#3fe08a][b]Bien hecho[/b][/color]")
+	if bien.is_empty():
+		l.append("  - Sobreviviste lo suficiente para aprender del turno.")
+	for t in bien:
+		l.append("  - " + t)
+	l.append("")
+	l.append("[color=#ffcc55][b]A mejorar[/b][/color]")
+	if mal.is_empty():
+		l.append("  - Nada grave. Prueba un turno mas largo o mas rapido.")
+	for t in mal:
+		l.append("  - " + t)
 
-	_detalle.text = "\n".join(lineas)
+	# ---- Historial
+	var historial: Array = resumen.get("historial", [])
+	l.append("")
+	l.append("[b]Mejor puntaje anterior:[/b] %d" % mejor)
+	if not historial.is_empty():
+		var partes := PackedStringArray()
+		for r in historial:
+			partes.append("%d (%s)" % [int(r.get("puntaje", 0)), "gano" if r.get("exito", false) else "perdio"])
+		l.append("[b]Ultimas partidas:[/b] " + ",  ".join(partes))
+
+	_detalle.text = "\n".join(l)
 	abrir()
+
+
+## Calificacion S/A/B/C/D segun el resultado.
+func _nota(exito: bool, r: Dictionary) -> String:
+	if not exito:
+		return "D" if r.get("disponibilidad_final", 0.0) > 0.0 else "E"
+	var puntos := 0
+	var disp: float = r.get("disponibilidad_final", 0.0)
+	if disp >= 85.0:
+		puntos += 3
+	elif disp >= 60.0:
+		puntos += 2
+	elif disp >= 35.0:
+		puntos += 1
+	var falsos: int = r.get("falsos_positivos", 0)
+	puntos += 2 if falsos == 0 else (1 if falsos <= 2 else 0)
+	if r.get("reinicios_generales", 0) == 0:
+		puntos += 1
+	if r.get("racha_max", 0) >= 3:
+		puntos += 1
+	if puntos >= 7:
+		return "S"
+	if puntos >= 5:
+		return "A"
+	if puntos >= 3:
+		return "B"
+	return "C"
 
 
 func _reintentar() -> void:
@@ -134,10 +204,10 @@ func _construir_ui() -> void:
 	_marco.anchor_top = 0.5
 	_marco.anchor_right = 0.5
 	_marco.anchor_bottom = 0.5
-	_marco.offset_left = -320
-	_marco.offset_top = -260
-	_marco.offset_right = 320
-	_marco.offset_bottom = 260
+	_marco.offset_left = -380
+	_marco.offset_top = -320
+	_marco.offset_right = 380
+	_marco.offset_bottom = 320
 	_marco.add_theme_stylebox_override("panel", _estilo_panel(true))
 	_raiz.add_child(_marco)
 
@@ -162,8 +232,10 @@ func _construir_ui() -> void:
 
 	_detalle = RichTextLabel.new()
 	_detalle.bbcode_enabled = true
-	_detalle.fit_content = true
-	_detalle.custom_minimum_size = Vector2(0, 260)
+	_detalle.fit_content = false
+	_detalle.custom_minimum_size = Vector2(0, 400)
+	_detalle.add_theme_font_size_override("normal_font_size", 15)
+	_detalle.add_theme_font_size_override("bold_font_size", 15)
 	_detalle.add_theme_color_override("default_color", COL_TEXTO)
 	col.add_child(_detalle)
 

@@ -22,7 +22,13 @@ signal reinicio_fallido(id: int, secuencias: int)
 signal secuencia_completada(id: int, restantes: int)
 signal reinicio_autorizado(id: int)
 ## Recompensa por acertar una secuencia: sube la barra de disponibilidad.
-signal recompensa_secuencia(id: int, disponibilidad_ganada: float)
+signal recompensa_secuencia(id: int, disponibilidad_ganada: float, detalle: String)
+## El jugador abrio la ventana Servidores del PC (sirve para el tutorial).
+signal consola_abierta()
+## El jugador empezo a reiniciar un rack fisico.
+signal reinicio_iniciado(id: int)
+## Aviso: el ataque sera dado por abandonado si nadie atiende.
+signal aviso_abandono(segundos_restantes: float)
 ## Emitida para que el jugador (camara) reaccione fisicamente: caida de un
 ## servidor o falso positivo. intensidad va de 0.0 a 1.0, mientras mas
 ## fuerte el golpe, mayor la sacudida esperada.
@@ -109,6 +115,32 @@ const SECUENCIAS_POSIBLES := [1, 1, 1, 1, 2, 2, 2, 3, 3, 5]
 const RECOMPENSA_SECUENCIA := 4.0
 const RECOMPENSA_AUTORIZACION := 6.0
 const PUNTOS_SECUENCIA := 20
+## Bonos extra: racha de aciertos sin error y secuencia resuelta rapido.
+const BONO_RACHA_2 := 2.0
+const BONO_RACHA_4 := 4.0
+const BONO_RAPIDO := 2.0
+
+## Dificultad progresiva: cada oleada sube la probabilidad de fallo.
+const PROB_FALLO_POR_OLEADA := 0.04
+const PROB_FALLO_MAXIMA := 0.85
+const SECUENCIAS_AVANZADO := [1, 2, 2, 3, 3, 3, 5, 5]   ## a partir de la oleada 4
+const OLEADA_AVANZADA := 4
+
+## Personalidad de cada rack.
+const PROB_FALLO_EXTRA := {0: 0.0, 1: 0.15, 2: -0.10}       ## Camaras es inestable
+const TIEMPO_REINICIO_SERVIDOR := {0: 5.0, 1: 5.0, 2: 7.0}  ## Monitoreo reinicia lento
+const RASGO_SERVIDOR := {0: "", 1: "inestable", 2: "reinicio lento"}
+
+## Tipo de verificacion que pide un reinicio fallido.
+enum Verificacion { FLECHAS, CODIGO }
+
+## Si nadie atiende el ataque (ventana Servidores cerrada y sin tocar racks)
+## durante este tiempo, se da por abandonado y falla.
+const LIMITE_SIN_ATENCION := 40.0
+const AVISO_SIN_ATENCION := 0.6   ## fraccion del limite en que se avisa
+
+const ARCHIVO_REGISTRO := "user://ddos_registro.json"
+const MAX_REGISTROS := 30
 
 ## Probabilidad de que una oleada nueva sea trafico legitimo (trampa).
 const PROB_LEGITIMA := 0.22
@@ -141,6 +173,24 @@ var historial_log: Array[String] = []
 var verificaciones_pendientes: Array[int] = [0, 0, 0]
 ## Por servidor: true cuando ya se autorizo en el PC (el proximo reinicio no falla).
 var autorizado: Array[bool] = [false, false, false]
+## Por servidor: tipo de verificacion pendiente y codigo (si es de codigo).
+var tipo_verificacion: Array[int] = [0, 0, 0]
+var codigo_rack: Array[String] = ["", "", ""]
+## Probabilidad de que un reinicio fallido pida CODIGO en vez de flechas.
+var prob_codigo: float = 0.35
+
+## Duracion de esta partida del incidente (se adapta al reloj del juego).
+var duracion_total: float = DURACION_INCIDENTE
+var tiempo_sin_atencion: float = 0.0
+var _limite_atencion: float = LIMITE_SIN_ATENCION
+var _aviso_atencion_dado := false
+var _intervalo_oleada: float = INTERVALO_OLEADA
+var _duracion_oleada: float = DURACION_OLEADA
+var _abandonado := false
+var _reinicios_fallidos := 0
+var _secuencias_ok := 0
+var _codigos_ok := 0
+var _racha_max := 0
 
 var cooldown_restante: float = 0.0
 var alertas_en_cola: int = 0
@@ -164,7 +214,12 @@ func _ready() -> void:
 
 # ================================================================ API PUBLICA
 
-func iniciar() -> void:
+func iniciar(duracion: float = DURACION_INCIDENTE) -> void:
+	duracion_total = duracion
+	# Ritmo de oleadas y limite de abandono escalan con la duracion.
+	_intervalo_oleada = clampf(duracion / 6.0, 9.0, INTERVALO_OLEADA)
+	_duracion_oleada = minf(DURACION_OLEADA, _intervalo_oleada * 2.2)
+	_limite_atencion = minf(LIMITE_SIN_ATENCION, duracion * 0.6)
 	_reset_estado()
 	activo = true
 	set_process(true)
@@ -213,6 +268,7 @@ func intentar_emitir_alerta() -> bool:
 func aplicar_mitigacion(m: int) -> void:
 	if not activo:
 		return
+	registrar_atencion()
 	if cooldown_restante > 0.0:
 		emit_signal("mitigacion_resultado", false,
 			"Consola ocupada. Espere %.1f s." % cooldown_restante)
@@ -270,27 +326,74 @@ func iniciar_reinicio(id: int) -> bool:
 	servidores[id].reiniciando = true
 	servidores[id].progreso_reinicio = 0.0
 	_set_online(id, false)
+	registrar_atencion()
 	_log("[SYS] Reiniciando %s..." % NOMBRE_SERVIDOR[id])
+	emit_signal("reinicio_iniciado", id)
 	return true
 
 
 ## El PC llama esto cada vez que el jugador completa una secuencia de flechas.
-func completar_secuencia(id: int) -> void:
+func completar_secuencia(id: int, rapida: bool = false, racha: int = 0) -> void:
 	if not activo or verificaciones_pendientes[id] <= 0:
 		return
+	registrar_atencion()
 	verificaciones_pendientes[id] -= 1
+	_secuencias_ok += 1
+	_racha_max = maxi(_racha_max, racha)
 	var bono := RECOMPENSA_SECUENCIA
+	var detalle := PackedStringArray()
+	if racha >= 4:
+		bono += BONO_RACHA_4
+		detalle.append("RACHA x%d" % racha)
+	elif racha >= 2:
+		bono += BONO_RACHA_2
+		detalle.append("RACHA x%d" % racha)
+	if rapida:
+		bono += BONO_RAPIDO
+		detalle.append("RAPIDO")
 	if verificaciones_pendientes[id] == 0:
 		bono += RECOMPENSA_AUTORIZACION
 	disponibilidad = minf(DISPONIBILIDAD_MAXIMA, disponibilidad + bono)
 	if puede_registrar_puntaje():
 		puntaje += PUNTOS_SECUENCIA
-	emit_signal("recompensa_secuencia", id, bono)
+	emit_signal("recompensa_secuencia", id, bono, " ".join(detalle))
 	emit_signal("secuencia_completada", id, verificaciones_pendientes[id])
 	if verificaciones_pendientes[id] == 0:
 		autorizado[id] = true
 		_log("[OK] Reinicio de %s autorizado. Vuelva al rack y mantenga E." % NOMBRE_SERVIDOR[id])
 		emit_signal("reinicio_autorizado", id)
+
+
+## Verifica un codigo escrito en el PC. True si era correcto.
+func completar_codigo(id: int, texto: String) -> bool:
+	if not activo or verificaciones_pendientes[id] <= 0 or tipo_verificacion[id] != Verificacion.CODIGO:
+		return false
+	registrar_atencion()
+	if texto == codigo_rack[id]:
+		_codigos_ok += 1
+		completar_secuencia(id, false, 0)
+		return true
+	_log("[ERROR] Codigo incorrecto para %s." % NOMBRE_SERVIDOR[id])
+	emit_signal("impacto_camara", 0.15)
+	return false
+
+
+## Llamalo cuando el jugador hace algo util (abrir el PC, mitigar, reiniciar...).
+func registrar_atencion() -> void:
+	tiempo_sin_atencion = 0.0
+	_aviso_atencion_dado = false
+
+
+func tiempo_reinicio(id: int) -> float:
+	return TIEMPO_REINICIO_SERVIDOR.get(id, TIEMPO_REINICIO_INDIVIDUAL)
+
+
+## Probabilidad real de que falle el reinicio de un rack ahora mismo.
+func prob_fallo_actual(id: int) -> float:
+	if prob_fallo_reinicio >= 1.0:
+		return 1.0 # forzado (pruebas)
+	var p: float = prob_fallo_reinicio + PROB_FALLO_POR_OLEADA * float(_contador_oleadas) + PROB_FALLO_EXTRA.get(id, 0.0)
+	return clampf(p, 0.0, PROB_FALLO_MAXIMA)
 
 
 ## Primer servidor que espera verificacion en el PC (-1 si ninguno).
@@ -317,7 +420,7 @@ func avanzar_reinicio(id: int, delta: float) -> float:
 	if not servidores[id].reiniciando:
 		return 0.0
 	servidores[id].progreso_reinicio += delta
-	var p: float = clampf(servidores[id].progreso_reinicio / TIEMPO_REINICIO_INDIVIDUAL, 0.0, 1.0)
+	var p: float = clampf(servidores[id].progreso_reinicio / tiempo_reinicio(id), 0.0, 1.0)
 	if p >= 1.0:
 		_finalizar_reinicio(id)
 	return p
@@ -331,6 +434,9 @@ func reinicio_general() -> void:
 	for i in 3:
 		verificaciones_pendientes[i] = 0
 		autorizado[i] = false
+		tipo_verificacion[i] = Verificacion.FLECHAS
+		codigo_rack[i] = ""
+	registrar_atencion()
 	puntaje += PUNTOS_REINICIO_GENERAL
 	apagon_restante = TIEMPO_REINICIO_GENERAL + APAGON_REINICIO_GENERAL
 	for id in servidores.size():
@@ -350,6 +456,17 @@ func _process(delta: float) -> void:
 	tiempo_restante = maxf(0.0, tiempo_restante - delta)
 	cooldown_restante = maxf(0.0, cooldown_restante - delta)
 
+	tiempo_sin_atencion += delta
+	if tiempo_sin_atencion >= _limite_atencion:
+		_abandonado = true
+		_log("[CRITICO] Nadie atendio el ataque. Servicio dado por perdido.")
+		_finalizar(false)
+		return
+	if not _aviso_atencion_dado and tiempo_sin_atencion >= _limite_atencion * AVISO_SIN_ATENCION:
+		_aviso_atencion_dado = true
+		_log("[ALERTA] Ataque sin atender. Abra Servidores en el PC.")
+		emit_signal("aviso_abandono", _limite_atencion - tiempo_sin_atencion)
+
 	if apagon_restante > 0.0:
 		apagon_restante -= delta
 		if apagon_restante <= 0.0:
@@ -363,7 +480,7 @@ func _process(delta: float) -> void:
 	_actualizar_disponibilidad(delta)
 
 	_temporizador_oleada -= delta
-	if _temporizador_oleada <= 0.0 and tiempo_restante > 12.0:
+	if _temporizador_oleada <= 0.0 and tiempo_restante > minf(12.0, duracion_total * 0.2):
 		_lanzar_oleada()
 
 	if disponibilidad <= 0.0:
@@ -439,13 +556,22 @@ func _reset_estado() -> void:
 			"progreso_reinicio": 0.0,
 		})
 	oleadas.clear()
-	tiempo_restante = DURACION_INCIDENTE
+	tiempo_restante = duracion_total
+	tiempo_sin_atencion = 0.0
+	_aviso_atencion_dado = false
+	_abandonado = false
+	_reinicios_fallidos = 0
+	_secuencias_ok = 0
+	_codigos_ok = 0
+	_racha_max = 0
+	tipo_verificacion = [0, 0, 0]
+	codigo_rack = ["", "", ""]
 	disponibilidad = DISPONIBILIDAD_MAXIMA
 	puntaje = 0.0
 	cooldown_restante = 0.0
 	alertas_en_cola = 0
 	apagon_restante = 0.0
-	_temporizador_oleada = INTERVALO_OLEADA
+	_temporizador_oleada = _intervalo_oleada
 	_contador_oleadas = 0
 	_oleadas_mitigadas = 0
 	_falsos_positivos = 0
@@ -467,11 +593,23 @@ func _finalizar_reinicio(id: int) -> void:
 	servidores[id].carga = CARGA_TRAS_REINICIO
 
 	# Reinicio fisico fallido (aleatorio). Si ya fue autorizado en el PC, sale bien.
-	if not autorizado[id] and _rng.randf() < prob_fallo_reinicio:
-		var n: int = SECUENCIAS_POSIBLES[_rng.randi_range(0, SECUENCIAS_POSIBLES.size() - 1)]
+	if not autorizado[id] and _rng.randf() < prob_fallo_actual(id):
+		_reinicios_fallidos += 1
+		var n: int
+		if _rng.randf() < prob_codigo:
+			# Verificacion por CODIGO: el rack muestra 4 digitos en su pantalla.
+			tipo_verificacion[id] = Verificacion.CODIGO
+			codigo_rack[id] = "%04d" % _rng.randi_range(0, 9999)
+			n = 1
+			_log("[ERROR] %s no arranco. Memorice el codigo de su pantalla e ingreselo en el PC > Servidores." % NOMBRE_SERVIDOR[id])
+		else:
+			tipo_verificacion[id] = Verificacion.FLECHAS
+			codigo_rack[id] = ""
+			var lista: Array = SECUENCIAS_AVANZADO if _contador_oleadas >= OLEADA_AVANZADA else SECUENCIAS_POSIBLES
+			n = lista[_rng.randi_range(0, lista.size() - 1)]
+			_log("[ERROR] %s no arranco. Autorice el reinicio en el PC > Servidores (%d secuencia%s) y vuelva al rack." % [
+				NOMBRE_SERVIDOR[id], n, "" if n == 1 else "s"])
 		verificaciones_pendientes[id] = n
-		_log("[ERROR] %s no arranco. Autorice el reinicio en el PC > Servidores (%d secuencia%s) y vuelva al rack." % [
-			NOMBRE_SERVIDOR[id], n, "" if n == 1 else "s"])
 		emit_signal("impacto_camara", 0.4)
 		emit_signal("reinicio_fallido", id, n)
 		return # el servidor sigue caido
@@ -484,7 +622,7 @@ func _finalizar_reinicio(id: int) -> void:
 
 
 func _lanzar_oleada() -> void:
-	_temporizador_oleada = INTERVALO_OLEADA
+	_temporizador_oleada = _intervalo_oleada
 	var intensidad := 1.0 + ESCALADA_POR_OLEADA * float(_contador_oleadas)
 
 	var vector: int
@@ -521,7 +659,7 @@ func _lanzar_oleada() -> void:
 		"intensidad": intensidad,
 		"mitigada": false,
 		"mitigada_extra": false,
-		"vida": DURACION_OLEADA,
+		"vida": _duracion_oleada,
 		"telemetria": telemetria,
 		"telemetria_extra": telemetria_extra,
 	})
@@ -631,9 +769,67 @@ func _finalizar(exito: bool) -> void:
 		"alertas_perdidas": alertas_en_cola,
 		"oleadas_legitimas": _oleadas_legitimas,
 		"oleadas_combinadas": _oleadas_combinadas,
+		"reinicios_fallidos": _reinicios_fallidos,
+		"secuencias_ok": _secuencias_ok,
+		"codigos_ok": _codigos_ok,
+		"racha_max": _racha_max,
+		"abandonado": _abandonado,
+		"duracion_total": duracion_total,
+		"tiempo_jugado": duracion_total - tiempo_restante,
 	}
+	# Registro de partidas: se compara contra las anteriores y se guarda.
+	var previos := cargar_registro()
+	var mejor := 0
+	for r in previos:
+		mejor = maxi(mejor, int(r.get("puntaje", 0)))
+	resumen["mejor_anterior"] = mejor
+	resumen["historial"] = previos.slice(maxi(0, previos.size() - 3))
+	_guardar_registro(resumen, previos)
+
 	_log("[FIN] Incidente cerrado. Disponibilidad final: %.0f %%" % disponibilidad)
 	emit_signal("incidente_terminado", exito, resumen)
+
+
+# ================================================================ REGISTRO
+
+func cargar_registro() -> Array:
+	if not FileAccess.file_exists(ARCHIVO_REGISTRO):
+		return []
+	var f := FileAccess.open(ARCHIVO_REGISTRO, FileAccess.READ)
+	if f == null:
+		return []
+	var datos = JSON.parse_string(f.get_as_text())
+	if datos is Array:
+		return datos
+	return []
+
+
+func mejor_puntaje() -> int:
+	var mejor := 0
+	for r in cargar_registro():
+		mejor = maxi(mejor, int(r.get("puntaje", 0)))
+	return mejor
+
+
+func _guardar_registro(resumen: Dictionary, previos: Array) -> void:
+	var entrada := {
+		"fecha": Time.get_datetime_string_from_system(false, true),
+		"exito": resumen.exito,
+		"puntaje": resumen.puntaje,
+		"disponibilidad": int(resumen.disponibilidad_final),
+		"oleadas": resumen.oleadas_totales,
+		"mitigadas": resumen.oleadas_mitigadas,
+		"falsos_positivos": resumen.falsos_positivos,
+		"secuencias_ok": resumen.secuencias_ok,
+		"abandonado": resumen.abandonado,
+	}
+	var lista := previos.duplicate()
+	lista.append(entrada)
+	if lista.size() > MAX_REGISTROS:
+		lista = lista.slice(lista.size() - MAX_REGISTROS)
+	var f := FileAccess.open(ARCHIVO_REGISTRO, FileAccess.WRITE)
+	if f != null:
+		f.store_string(JSON.stringify(lista))
 
 
 func _log(texto: String) -> void:

@@ -78,8 +78,14 @@ var _qte_tiempo := 0.0
 var _qte_flash := 0.0
 var _qte_flash_ok := false
 var _qte_pausa := 0.0
+var _qte_rapida := false
 var _qte_bono: Label
 var _qte_bono_t := 0.0
+var _racha := 0
+var _qte_ayuda: Label
+var _cod_label: Label
+var _cod_ingresado := ""
+var _teclas_prev := {}
 var _rng := RandomNumberGenerator.new()
 
 var _flujo_sel := -1
@@ -115,6 +121,9 @@ func abrir() -> void:
 	# estaba abierta, solo se refresca).
 	visible = true
 	_abierta_en_frame = Engine.get_process_frames()
+	if IncidenteDDoS.activo:
+		IncidenteDDoS.registrar_atencion()
+		IncidenteDDoS.consola_abierta.emit()
 	_refrescar()
 
 
@@ -230,6 +239,9 @@ func _refrescar() -> void:
 	if _cerrar == null:
 		return
 	_qte_panel.visible = IncidenteDDoS.siguiente_verificacion() != -1 or _qte_bono_t > 0.0
+	# Mientras la ventana esta abierta el analista esta atendiendo.
+	if IncidenteDDoS.activo:
+		IncidenteDDoS.registrar_atencion()
 	_refrescar_estado()
 	_refrescar_servidores()
 	_refrescar_flujos()
@@ -283,7 +295,10 @@ func _refrescar_servidores() -> void:
 			texto = "REINICIANDO RACK..."
 			col = COL_AVISO
 		elif IncidenteDDoS.verificaciones_pendientes[id] > 0:
-			texto = "REQUIERE VERIFICACION (%d)" % IncidenteDDoS.verificaciones_pendientes[id]
+			if IncidenteDDoS.tipo_verificacion[id] == IncidenteDDoS.Verificacion.CODIGO:
+				texto = "REQUIERE CODIGO DEL RACK"
+			else:
+				texto = "REQUIERE VERIFICACION (%d)" % IncidenteDDoS.verificaciones_pendientes[id]
 			col = COL_ALERTA
 		elif IncidenteDDoS.autorizado[id]:
 			texto = "AUTORIZADO: reinicia el rack"
@@ -451,7 +466,7 @@ func _texto_manual() -> String:
 [color=#3fe08a]Botnet[/color]: miles de IPs reales, un AS -> Blackhole
 [color=#ff8a5c]Legitimo[/color]: pocas IPs conocidas -> NO actuar
 Combinado: una contramedida por firma.
-[color=#ffcc55]Rack que no arranca[/color]: autoriza aqui con las flechas y vuelve al rack.[/color]"""
+[color=#ffcc55]Rack que no arranca[/color]: autoriza aqui (flechas o codigo del rack).[/color]"""
 
 
 # ============================================================ CONSTRUCCION
@@ -510,7 +525,7 @@ func _construir() -> void:
 	_lbl_estado.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 	# ---- Tarjetas de servidores
-	var nombres := ["Alertas", "Camaras", "Monitoreo"]
+	var nombres := ["Alertas", "Camaras", "Monitoreo"]  # (rasgo de cada rack a la derecha)
 	for i in 3:
 		var p := Panel.new()
 		p.position = Vector2(4 + i * 195, 28)
@@ -519,7 +534,11 @@ func _construir() -> void:
 		p.add_theme_stylebox_override("panel", _caja(Color(0.05, 0.09, 0.1), COL_BORDE.darkened(0.55), 1))
 		cuerpo.add_child(p)
 
-		_etiqueta(p, "Srv. " + nombres[i], Vector2(6, 2), Vector2(176, 15), 12, COL_TEXTO)
+		_etiqueta(p, nombres[i], Vector2(6, 2), Vector2(100, 15), 12, COL_TEXTO)
+		var rasgo: String = IncidenteDDoS.RASGO_SERVIDOR.get(i, "")
+		if rasgo != "":
+			var tag := _etiqueta(p, rasgo, Vector2(90, 3), Vector2(92, 13), 11, COL_AVISO.darkened(0.15))
+			tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		var est := _etiqueta(p, "OPERATIVO", Vector2(6, 16), Vector2(176, 14), 12, COL_OK)
 
 		var fondo := ColorRect.new()
@@ -707,13 +726,17 @@ func _construir_qte(cuerpo: Control) -> void:
 	_qte_barra.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_qte_barra_fondo.add_child(_qte_barra)
 
-	_qte_bono = _etiqueta(_qte_panel, "", Vector2(10, 100), Vector2(560, 18), 14, COL_OK)
+	_qte_bono = _etiqueta(_qte_panel, "", Vector2(10, 116), Vector2(560, 18), 14, COL_OK)
 	_qte_bono.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_qte_bono.z_index = 1
 
-	var ayuda := _etiqueta(_qte_panel, "Usa las flechas direccionales.  Un error reinicia la secuencia.",
+	_qte_ayuda = _etiqueta(_qte_panel, "Usa las flechas direccionales.  Un error reinicia la secuencia.",
 		Vector2(10, 160), Vector2(560, 16), 12, COL_TENUE)
-	ayuda.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_qte_ayuda.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	_cod_label = _etiqueta(_qte_panel, "_ _ _ _", Vector2(10, 62), Vector2(560, 50), 40, Color.WHITE)
+	_cod_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_cod_label.visible = false
 
 
 func _nuevo_patron() -> void:
@@ -729,10 +752,19 @@ func _nuevo_patron() -> void:
 	_qte_tiempo = QTE_TIEMPO
 
 
-func _on_recompensa(_id: int, ganada: float) -> void:
-	_qte_bono.text = "+%d%% DISPONIBILIDAD" % int(ganada)
-	_qte_bono_t = 1.6
+func _on_recompensa(_id: int, ganada: float, detalle: String) -> void:
+	var txt := "+%d%% DISPONIBILIDAD" % int(ganada)
+	if detalle != "":
+		txt += "   " + detalle
+	_qte_bono.text = txt
+	_qte_bono_t = 1.8
 	_qte_bono.visible = true
+
+
+func _tono(freq: float, dur: float) -> void:
+	var audio := get_node_or_null("/root/AudioDDoS")
+	if audio != null and audio.has_method("tono"):
+		audio.tono(freq, dur)
 
 
 func _procesar_qte(delta: float) -> void:
@@ -744,6 +776,7 @@ func _procesar_qte(delta: float) -> void:
 	var id: int = IncidenteDDoS.siguiente_verificacion()
 	if id == -1:
 		_qte_id = -1
+		_racha = 0
 		# Deja ver unos segundos el premio de la ultima secuencia.
 		if _qte_bono_t > 0.0:
 			_qte_panel.visible = true
@@ -751,20 +784,33 @@ func _procesar_qte(delta: float) -> void:
 			_qte_sub.text = "Vuelve al rack y mantén E"
 			_qte_flechas.pos = _qte_patron.size()
 			_qte_flechas.queue_redraw()
+			_qte_flechas.visible = not _cod_label.visible
 		else:
 			_qte_panel.visible = false
 		return
 	_qte_panel.visible = true
 
+	var es_codigo: bool = IncidenteDDoS.tipo_verificacion[id] == IncidenteDDoS.Verificacion.CODIGO
 	var pendientes: int = IncidenteDDoS.verificaciones_pendientes[id]
 	if id != _qte_id or pendientes > _qte_total:
 		_qte_id = id
 		_qte_total = pendientes
+		_cod_ingresado = ""
 		_nuevo_patron()
 
+	_cod_label.visible = es_codigo
+	_qte_flechas.visible = not es_codigo
+	_qte_barra_fondo.visible = not es_codigo
+
+	var nombre: String = IncidenteDDoS.NOMBRE_SERVIDOR[id].replace("Servidor de ", "Srv. ")
+	if es_codigo:
+		_procesar_codigo(id, nombre)
+		return
+
 	var hecha := _qte_total - pendientes + 1
-	_qte_titulo.text = "AUTORIZAR REINICIO: %s" % IncidenteDDoS.NOMBRE_SERVIDOR[id].replace("Servidor de ", "Srv. ")
+	_qte_titulo.text = "AUTORIZAR REINICIO: %s" % nombre
 	_qte_sub.text = "Secuencia %d de %d" % [hecha, _qte_total]
+	_qte_ayuda.text = "Usa las flechas direccionales.  Un error reinicia la secuencia."
 
 	# Destello tras acertar/fallar
 	if _qte_flash > 0.0:
@@ -782,7 +828,7 @@ func _procesar_qte(delta: float) -> void:
 	if _qte_pausa > 0.0:
 		_qte_pausa -= delta
 		if _qte_pausa <= 0.0:
-			IncidenteDDoS.completar_secuencia(id)
+			IncidenteDDoS.completar_secuencia(id, _qte_rapida, _racha)
 			if IncidenteDDoS.verificaciones_pendientes[id] > 0:
 				_nuevo_patron()
 		return
@@ -791,6 +837,8 @@ func _procesar_qte(delta: float) -> void:
 	if _qte_tiempo <= 0.0:
 		_qte_flash = 0.25
 		_qte_flash_ok = false
+		_racha = 0
+		_tono(140.0, 0.15)
 		_nuevo_patron()
 		return
 
@@ -800,14 +848,68 @@ func _procesar_qte(delta: float) -> void:
 
 	if tecla == _qte_patron[_qte_pos]:
 		_qte_pos += 1
+		_tono(700.0 + 60.0 * _qte_pos, 0.04)
 		if _qte_pos >= _qte_patron.size():
+			_racha += 1
+			_qte_rapida = _qte_tiempo > QTE_TIEMPO * 0.5
 			_qte_flash = 0.35
 			_qte_flash_ok = true
 			_qte_pausa = 0.35
 	else:
 		_qte_pos = 0
+		_racha = 0
 		_qte_flash = 0.2
 		_qte_flash_ok = false
+		_tono(140.0, 0.15)
+
+
+## Verificacion por codigo: el rack muestra 4 digitos, hay que escribirlos aqui.
+func _procesar_codigo(id: int, nombre: String) -> void:
+	_qte_titulo.text = "CODIGO DE VERIFICACION: %s" % nombre
+	_qte_sub.text = "Escribe el codigo que muestra la pantalla del rack"
+	_qte_ayuda.text = "Teclado numerico o fila de numeros.  Retroceso borra."
+	_qte_barra_fondo.visible = false
+
+	var visibles := ""
+	for i in 4:
+		visibles += (_cod_ingresado[i] if i < _cod_ingresado.length() else "_")
+		if i < 3:
+			visibles += " "
+	_cod_label.text = visibles
+	_cod_label.add_theme_color_override("font_color", COL_AVISO if _qte_flash <= 0.0 else (COL_OK if _qte_flash_ok else COL_ALERTA))
+	if _qte_flash > 0.0:
+		_qte_flash -= get_process_delta_time()
+
+	for d in 10:
+		if _tecla_nueva(KEY_0 + d) or _tecla_nueva(KEY_KP_0 + d):
+			ingresar_digito(d)
+	if _tecla_nueva(KEY_BACKSPACE):
+		_cod_ingresado = _cod_ingresado.substr(0, maxi(0, _cod_ingresado.length() - 1))
+
+
+## Agrega un digito al codigo (publico para poder probarlo).
+func ingresar_digito(d: int) -> void:
+	var id: int = IncidenteDDoS.siguiente_verificacion()
+	if id == -1 or _cod_ingresado.length() >= 4:
+		return
+	_cod_ingresado += str(d)
+	_tono(800.0 + 30.0 * d, 0.03)
+	if _cod_ingresado.length() == 4:
+		if IncidenteDDoS.completar_codigo(id, _cod_ingresado):
+			_qte_flash = 0.5
+			_qte_flash_ok = true
+		else:
+			_qte_flash = 0.4
+			_qte_flash_ok = false
+			_tono(140.0, 0.2)
+		_cod_ingresado = ""
+
+
+func _tecla_nueva(tecla: Key) -> bool:
+	var ahora := Input.is_key_pressed(tecla)
+	var antes: bool = _teclas_prev.get(tecla, false)
+	_teclas_prev[tecla] = ahora
+	return ahora and not antes
 
 
 func _leer_direccion() -> int:
@@ -823,7 +925,15 @@ func _leer_direccion() -> int:
 
 
 func _accion(a: StringName, b: StringName = &"", c: StringName = &"") -> bool:
+	# Deteccion por flanco (pasa de suelta a pulsada). Mas robusta que
+	# is_action_just_pressed, que depende del orden de proceso del frame.
+	var nueva := false
 	for n in [a, b, c]:
-		if n != &"" and InputMap.has_action(n) and Input.is_action_just_pressed(n):
-			return true
-	return false
+		if n == &"" or not InputMap.has_action(n):
+			continue
+		var ahora := Input.is_action_pressed(n)
+		var antes: bool = _teclas_prev.get(n, false)
+		_teclas_prev[n] = ahora
+		if ahora and not antes:
+			nueva = true
+	return nueva
