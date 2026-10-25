@@ -10,6 +10,9 @@ class_name PantallaResultado
 
 signal pantalla_abierta()
 signal pantalla_cerrada()
+## Modo integrado: el jugador pide volver a intentar el incidente / la partida.
+signal reintento_solicitado()
+signal reinicio_partida_solicitado()
 
 const COL_FONDO := Color(0.03, 0.05, 0.06, 0.98)
 const COL_BORDE_EXITO := Color(0.2, 0.85, 0.5)
@@ -25,6 +28,8 @@ var _puntaje_label: Label
 var _detalle: RichTextLabel
 var _btn_reintentar: Button
 var _btn_cerrar: Button
+var _btn_reiniciar: Button
+var _integrado := false
 
 
 func _ready() -> void:
@@ -38,7 +43,9 @@ func _ready() -> void:
 ## Lo llama DDoSEnMapa cuando el DDoS se juega dentro del flujo del juego:
 ## no se puede reintentar y el boton de cierre pasa a ser "Continuar".
 func configurar_modo_integrado() -> void:
-	_btn_reintentar.visible = false
+	_integrado = true
+	_btn_reintentar.visible = false   # solo se muestra al perder
+	_btn_reiniciar.visible = true
 	_btn_cerrar.text = "Continuar"
 
 
@@ -62,6 +69,8 @@ func _on_incidente_terminado(exito: bool, resumen: Dictionary) -> void:
 	if abandonado:
 		titulo = "ATAQUE SIN ATENDER"
 	_titulo.text = titulo
+	_btn_reintentar.visible = (not _integrado) or (not exito)
+	_btn_reintentar.text = "Reintentar incidente"
 	_titulo.add_theme_color_override("font_color", COL_BORDE_EXITO if exito else COL_BORDE_FALLO)
 	_marco.add_theme_stylebox_override("panel", _estilo_panel(exito))
 
@@ -175,7 +184,15 @@ func _nota(exito: bool, r: Dictionary) -> String:
 
 func _reintentar() -> void:
 	cerrar()
-	IncidenteDDoS.iniciar()
+	if _integrado:
+		reintento_solicitado.emit()
+	else:
+		IncidenteDDoS.iniciar()
+
+
+func _reiniciar_partida() -> void:
+	cerrar()
+	reinicio_partida_solicitado.emit()
 
 
 func _estilo_panel(exito: bool) -> StyleBoxFlat:
@@ -251,6 +268,13 @@ func _construir_ui() -> void:
 	_btn_reintentar.custom_minimum_size = Vector2(200, 40)
 	_btn_reintentar.pressed.connect(_reintentar)
 	fila_botones.add_child(_btn_reintentar)
+
+	_btn_reiniciar = Button.new()
+	_btn_reiniciar.text = "Reiniciar partida"
+	_btn_reiniciar.custom_minimum_size = Vector2(180, 40)
+	_btn_reiniciar.pressed.connect(_reiniciar_partida)
+	_btn_reiniciar.visible = false
+	fila_botones.add_child(_btn_reiniciar)
 
 	_btn_cerrar = Button.new()
 	_btn_cerrar.text = "Cerrar"

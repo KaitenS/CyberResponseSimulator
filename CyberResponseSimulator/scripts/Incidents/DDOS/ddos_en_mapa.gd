@@ -24,6 +24,7 @@ const SHAKE_DECAIMIENTO := 4.5
 const SHAKE_ESCALA := 0.08
 
 var _incidente: IncidentData = null
+var _ultimo_incidente: IncidentData = null   ## para poder reintentar
 var _hud: HudDDoS
 var _resultado: PantallaResultado
 var _prompt: Label
@@ -73,6 +74,8 @@ func _ready() -> void:
 	_resultado = PantallaResultado.new()
 	add_child(_resultado)
 	_resultado.configurar_modo_integrado()
+	_resultado.reintento_solicitado.connect(reintentar)
+	_resultado.reinicio_partida_solicitado.connect(reiniciar_partida)
 
 	_resultado.pantalla_abierta.connect(_actualizar_bloqueo)
 	_resultado.pantalla_cerrada.connect(_actualizar_bloqueo)
@@ -82,6 +85,7 @@ func _ready() -> void:
 
 func empezar(incidente: IncidentData) -> void:
 	_incidente = incidente
+	_ultimo_incidente = incidente
 
 	# La duracion se adapta al reloj del juego: el ataque nunca dura mas que
 	# la partida. En practica se alarga el reloj para jugarlo completo.
@@ -204,6 +208,33 @@ func _on_reinicio_fallido(id: int, secuencias: int) -> void:
 func _on_reinicio_autorizado(id: int) -> void:
 	_hud.mostrar_aviso("AUTORIZADO: vuelve a %s y mantén E" % IncidenteDDoS.NOMBRE_SERVIDOR[id], 4.0)
 	_hud.destello(Color(0.3, 1.0, 0.5))
+
+
+## Vuelve a intentar el incidente despues de perder (sin recargar la escena).
+func reintentar() -> void:
+	if _ultimo_incidente == null or IncidenteDDoS.activo:
+		return
+	# Si el reloj de la partida casi se acabo, se da una ventana nueva.
+	if not modo_practica and GameManager.time_remaining < 45.0:
+		GameManager.game_active = true
+		GameManager.time_remaining = 60.0
+	if not IncidentManager.start_incident(_ultimo_incidente):
+		IncidentManager.active_incidents.clear()
+		IncidentManager.start_incident(_ultimo_incidente)
+	_soltar_rack()
+	empezar(_ultimo_incidente)
+
+
+## Reinicia toda la partida (recarga el mapa con el reloj en cero).
+func reiniciar_partida() -> void:
+	if IncidenteDDoS.activo:
+		IncidenteDDoS.abortar()
+	IncidentManager.active_incidents.clear()
+	GameManager.start_game()
+	if modo_practica:
+		forzar_siguiente = "ddos"   # que la practica vuelva a lanzar el DDoS
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	get_tree().reload_current_scene()
 
 
 func _on_mitigacion_tutorial(exito: bool, _mensaje: String) -> void:
