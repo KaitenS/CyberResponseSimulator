@@ -84,6 +84,8 @@ func mostrar_aviso(texto: String, segundos := 4.0) -> void:
 
 ## Destello breve de pantalla completa. color=verde para exito, rojo para fallo.
 func destello(color: Color) -> void:
+	if DDoSEnMapa.reducir_efectos:
+		return
 	_flash.color = color
 	_flash_t = _flash_duracion
 	_flash.visible = true

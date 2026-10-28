@@ -14,6 +14,12 @@ class_name DDoSEnMapa
 ## Para el menu / IncidentFlowManager: forzar que el proximo incidente sea este
 ## ("ddos"). Se consume una sola vez. Sirve para el modo practica.
 static var forzar_siguiente: String = ""
+## Dificultad elegida (0 facil, 1 normal, 2 dificil). Se guarda en user://.
+static var dificultad: int = -1
+## Accesibilidad: sin parpadeos de luz, destellos ni sacudida de camara.
+static var reducir_efectos: bool = false
+static var _ajustes_cargados := false
+
 ## True cuando la partida es de practica (duracion completa, sin reloj de juego).
 static var modo_practica: bool = false
 
@@ -46,6 +52,38 @@ var _luz_energia_base := 1.0
 var _luz_t := 0.0
 
 
+static func cargar_ajustes() -> void:
+	if _ajustes_cargados:
+		return
+	_ajustes_cargados = true
+	var cfg := ConfigFile.new()
+	if cfg.load(ARCHIVO_AJUSTES) == OK:
+		dificultad = int(cfg.get_value("ddos", "dificultad", 1))
+		reducir_efectos = bool(cfg.get_value("ddos", "reducir_efectos", false))
+	if dificultad < 0:
+		dificultad = 1
+
+
+static func guardar_ajuste(clave: String, valor) -> void:
+	var cfg := ConfigFile.new()
+	cfg.load(ARCHIVO_AJUSTES)
+	cfg.set_value("ddos", clave, valor)
+	cfg.save(ARCHIVO_AJUSTES)
+
+
+## Para el menu: pasa a la siguiente dificultad y devuelve su nombre.
+static func ciclar_dificultad() -> String:
+	cargar_ajustes()
+	dificultad = (dificultad + 1) % IncidenteDDoS.DIFICULTADES.size()
+	guardar_ajuste("dificultad", dificultad)
+	return nombre_dificultad()
+
+
+static func nombre_dificultad() -> String:
+	cargar_ajustes()
+	return IncidenteDDoS.DIFICULTADES[dificultad].nombre
+
+
 ## Punto de entrada para el IncidentFlowManager.
 static func iniciar_en_escena(escena: Node, incidente: IncidentData) -> void:
 	var nodo := escena.get_tree().get_first_node_in_group("ddos_mapa") as DDoSEnMapa
@@ -58,12 +96,17 @@ static func iniciar_en_escena(escena: Node, incidente: IncidentData) -> void:
 
 func _ready() -> void:
 	add_to_group("ddos_mapa")
+	cargar_ajustes()
 
 	IncidenteDDoS.incidente_terminado.connect(_on_terminado)
 	IncidenteDDoS.impacto_camara.connect(_on_impacto_camara)
 	IncidenteDDoS.reinicio_fallido.connect(_on_reinicio_fallido)
 	IncidenteDDoS.reinicio_autorizado.connect(_on_reinicio_autorizado)
 	IncidenteDDoS.aviso_abandono.connect(_on_aviso_abandono)
+	IncidenteDDoS.corte_luz_iniciado.connect(_on_corte_luz)
+	IncidenteDDoS.corte_luz_terminado.connect(_on_corte_luz_fin)
+	IncidenteDDoS.infeccion_detectada.connect(_on_infeccion)
+	IncidenteDDoS.servidor_aislado.connect(_on_aislado)
 	IncidenteDDoS.consola_abierta.connect(func(): _marcar_tutorial(0))
 	IncidenteDDoS.mitigacion_resultado.connect(_on_mitigacion_tutorial)
 	IncidenteDDoS.reinicio_iniciado.connect(func(_id): _marcar_tutorial(2))
@@ -94,6 +137,8 @@ func empezar(incidente: IncidentData) -> void:
 		GameManager.time_remaining = maxf(GameManager.time_remaining, duracion + 10.0)
 	elif GameManager.game_active:
 		duracion = clampf(GameManager.time_remaining - 2.0, 30.0, duracion)
+	cargar_ajustes()
+	IncidenteDDoS.aplicar_dificultad(dificultad)
 	IncidenteDDoS.iniciar(duracion)
 
 	_hud.mostrar_aviso(
@@ -107,6 +152,19 @@ func empezar(incidente: IncidentData) -> void:
 
 func _physics_process(delta: float) -> void:
 	_procesar_racks(delta)
+
+
+## M = silenciar sonidos del DDoS.  N = efectos reducidos (sin parpadeos ni sacudidas).
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey) or not event.pressed or event.echo:
+		return
+	if event.keycode == KEY_M:
+		var silencio: bool = AudioDDoS.alternar_silencio()
+		_hud.mostrar_aviso("Sonidos del ataque: %s  (M)" % ("SILENCIADOS" if silencio else "ACTIVADOS"), 2.0)
+	elif event.keycode == KEY_N:
+		reducir_efectos = not reducir_efectos
+		guardar_ajuste("reducir_efectos", reducir_efectos)
+		_hud.mostrar_aviso("Efectos reducidos: %s  (N)" % ("SI" if reducir_efectos else "NO"), 2.0)
 
 
 func _process(delta: float) -> void:
@@ -237,6 +295,24 @@ func reiniciar_partida() -> void:
 	get_tree().reload_current_scene()
 
 
+func _on_corte_luz(_segundos: float) -> void:
+	_hud.mostrar_aviso("CORTE DE ENERGIA\nEl PC no responde: usa los racks", 4.0)
+	_hud.destello(Color(0.0, 0.0, 0.0))
+
+
+func _on_corte_luz_fin() -> void:
+	_hud.mostrar_aviso("Energia restablecida", 2.0)
+
+
+func _on_infeccion(id: int) -> void:
+	_hud.mostrar_aviso("RANSOMWARE en %s\nAislalo desde el PC > Servidores" % IncidenteDDoS.NOMBRE_SERVIDOR[id], 5.0)
+	_hud.destello(Color(1.0, 0.2, 0.9))
+
+
+func _on_aislado(_id: int) -> void:
+	_hud.mostrar_aviso("Servidor aislado: amenaza contenida", 2.5)
+
+
 func _on_mitigacion_tutorial(exito: bool, _mensaje: String) -> void:
 	if exito:
 		_marcar_tutorial(1)
@@ -296,6 +372,11 @@ func _iniciar_tutorial() -> void:
 			l.add_theme_font_size_override("font_size", 15)
 			col.add_child(l)
 			_tutorial_lineas.append(l)
+		var pista := Label.new()
+		pista.text = "M: silenciar sonidos   N: efectos reducidos"
+		pista.add_theme_font_size_override("font_size", 12)
+		pista.add_theme_color_override("font_color", Color(0.55, 0.7, 0.65))
+		col.add_child(pista)
 	_tutorial.visible = true
 	_refrescar_tutorial()
 
@@ -348,6 +429,17 @@ func _procesar_luz(delta: float) -> void:
 	if _luz == null or not is_instance_valid(_luz):
 		return
 	var intensidad := 0.0
+	var corte: bool = IncidenteDDoS.activo and IncidenteDDoS.corte_restante > 0.0
+	if corte:
+		# Apagon: casi oscuro con luz roja de emergencia (sin pulso).
+		_luz_t = move_toward(_luz_t, 1.0, delta * 4.0)
+		_luz.light_color = _luz_color_base.lerp(COL_LUZ_ALARMA, 0.8 * _luz_t)
+		_luz.light_energy = _luz_energia_base * (1.0 - 0.85 * _luz_t)
+		return
+	if reducir_efectos:
+		if _luz_t > 0.0:
+			_restaurar_luz()
+		return
 	if IncidenteDDoS.activo:
 		if IncidenteDDoS.disponibilidad < 35.0:
 			intensidad = 0.75
@@ -384,6 +476,8 @@ func _procesar_shake(delta: float) -> void:
 		return
 	var cam: Camera3D = jugador.camera
 
+	if reducir_efectos:
+		_shake = 0.0
 	if _shake > 0.001:
 		_shake_activo = true
 		cam.h_offset = randf_range(-1.0, 1.0) * _shake * SHAKE_ESCALA

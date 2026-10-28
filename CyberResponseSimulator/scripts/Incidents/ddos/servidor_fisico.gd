@@ -53,6 +53,8 @@ func texto_prompt() -> String:
 		return "%s - operativo" % IncidenteDDoS.NOMBRE_SERVIDOR[id_servidor]
 	if IncidenteDDoS.apagon_restante > 0.0:
 		return "Reinicio general en curso..."
+	if IncidenteDDoS.infectado[id_servidor]:
+		return "SERVIDOR INFECTADO (ransomware): aislalo en el PC > Servidores"
 	if IncidenteDDoS.verificaciones_pendientes[id_servidor] > 0:
 		if IncidenteDDoS.tipo_verificacion[id_servidor] == IncidenteDDoS.Verificacion.CODIGO:
 			return "REINICIO FALLIDO: memoriza el CODIGO %s y escribelo en el PC > Servidores" % IncidenteDDoS.codigo_rack[id_servidor]
@@ -132,6 +134,12 @@ func _refrescar_pantalla() -> void:
 	if not IncidenteDDoS.activo:
 		pantalla.text = "%s\n[OK] OPERATIVO" % nombre
 		pantalla.modulate = color_ok
+		return
+
+	if IncidenteDDoS.infectado[id_servidor]:
+		var parpadea_i := fmod(_parpadeo, 0.6) < 0.35
+		pantalla.text = "%s\n%s\nAISLAR EN PC" % [nombre, "[!!] RANSOMWARE" if parpadea_i else ""]
+		pantalla.modulate = Color(1.0, 0.2, 0.9)
 		return
 
 	if IncidenteDDoS.verificaciones_pendientes[id_servidor] > 0:

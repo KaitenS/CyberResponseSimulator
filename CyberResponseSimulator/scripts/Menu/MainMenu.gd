@@ -149,6 +149,19 @@ func _agregar_boton_practica(play_button: Button) -> void:
 	practica.pressed.connect(_on_practice_ddos_pressed)
 	practica.mouse_entered.connect(_on_button_mouse_entered)
 
+	# Boton de dificultad (cicla Facil / Normal / Dificil y lo recuerda)
+	var dificultad: Button = practica.duplicate()
+	dificultad.name = "DifficultyDDoSButton"
+	dificultad.text = "◈ DIFICULTAD DDoS: %s" % DDoSEnMapa.nombre_dificultad().to_upper()
+	play_button.get_parent().add_child(dificultad)
+	play_button.get_parent().move_child(dificultad, practica.get_index() + 1)
+	for c in dificultad.pressed.get_connections():
+		dificultad.pressed.disconnect(c["callable"])
+	dificultad.pressed.connect(func():
+		dificultad.text = "◈ DIFICULTAD DDoS: %s" % DDoSEnMapa.ciclar_dificultad().to_upper()
+	)
+	dificultad.mouse_entered.connect(_on_button_mouse_entered)
+
 
 func _on_practice_ddos_pressed() -> void:
 	DDoSEnMapa.forzar_siguiente = "ddos"

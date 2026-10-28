@@ -79,7 +79,8 @@ func _on_incidente_terminado(exito: bool, resumen: Dictionary) -> void:
 	var extra := ""
 	if puntaje > mejor and puntaje > 0:
 		extra = "   [NUEVO RECORD]"
-	_puntaje_label.text = "Calificacion %s   |   Puntaje %d%s" % [_nota(exito, resumen), puntaje, extra]
+	_puntaje_label.text = "Calificacion %s   |   Puntaje %d%s   |   %s" % [
+		_nota(exito, resumen), puntaje, extra, resumen.get("dificultad", "Normal")]
 
 	var totales: int = resumen.get("oleadas_totales", 0)
 	var mitigadas: int = resumen.get("oleadas_mitigadas", 0)
@@ -92,6 +93,9 @@ func _on_incidente_terminado(exito: bool, resumen: Dictionary) -> void:
 	var codigos: int = resumen.get("codigos_ok", 0)
 	var racha: int = resumen.get("racha_max", 0)
 	var legitimas: int = resumen.get("oleadas_legitimas", 0)
+	var infecciones: int = resumen.get("infecciones", 0)
+	var aislados: int = resumen.get("aislados", 0)
+	var cortes: int = resumen.get("cortes_luz", 0)
 
 	var l := PackedStringArray()
 	l.append("[b]Disponibilidad final:[/b] %.0f %%     [b]Flujos:[/b] %d     [b]Neutralizados:[/b] %d" % [disponibilidad, totales, mitigadas])
@@ -113,6 +117,10 @@ func _on_incidente_terminado(exito: bool, resumen: Dictionary) -> void:
 		bien.append("Racha de %d secuencias sin error." % racha)
 	if disponibilidad >= 70.0 and exito:
 		bien.append("Mantuviste el servicio sobre el 70 %.")
+	if aislados > 0:
+		bien.append("Aislaste %d servidor%s infectado%s antes de que se propagara." % [aislados, "" if aislados == 1 else "es", "" if aislados == 1 else "s"])
+	if cortes > 0 and exito:
+		bien.append("Superaste un corte de energia trabajando desde los racks.")
 
 	# ---- Que mejorar
 	var mal := PackedStringArray()
@@ -126,6 +134,8 @@ func _on_incidente_terminado(exito: bool, resumen: Dictionary) -> void:
 		mal.append("Cayo el servidor de Alertas y se perdieron %d aviso%s. Restauralo primero." % [alertas, "" if alertas == 1 else "s"])
 	if fallidos > secuencias + codigos and fallidos > 0:
 		mal.append("Dejaste reinicios fallidos sin autorizar. Despues de un fallo hay que verificar en el PC y volver al rack.")
+	if infecciones > aislados:
+		mal.append("No aislaste el ransomware: un servidor infectado sube su carga y drena la disponibilidad. Usa AISLAR en el PC.")
 	if disponibilidad < 50.0 and not abandonado:
 		mal.append("La disponibilidad bajo mucho. Prioriza los servidores caidos antes de analizar nuevos flujos.")
 

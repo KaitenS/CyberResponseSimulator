@@ -52,6 +52,9 @@ var _indices_flujo: Array[int] = []        # indice de oleada de cada boton
 var _botones_mit: Array[Button] = []
 var _mit_ids: Array[int] = []
 var _boton_general: Button
+var _botones_aislar: Array[Button] = []
+var _overlay_corte: ColorRect
+var _lbl_corte: Label
 var _telemetria: RichTextLabel
 var _registro: RichTextLabel
 
@@ -152,6 +155,8 @@ func procesar_click(pos: Vector2) -> bool:
 
 	var puntos: Array[Vector2] = [pos - OFFSET_PUNTA, pos]
 	var rect := rect_global()
+	# Corte de luz: el PC no responde (pero el clic igual cae "sobre la ventana").
+	var sin_energia: bool = IncidenteDDoS.activo and IncidenteDDoS.corte_restante > 0.0
 
 	var dentro := false
 	for p in puntos:
@@ -159,6 +164,9 @@ func procesar_click(pos: Vector2) -> bool:
 			dentro = true
 	if not dentro:
 		return false
+
+	if sin_energia:
+		return true
 
 	# Primero la punta de la flecha, despues el centro.
 	for p in puntos:
@@ -171,6 +179,14 @@ func _tocar(p: Vector2) -> bool:
 	if _cerrar.get_global_rect().grow(2.0).has_point(p):
 		cerrar()
 		return true
+
+	for i in _botones_aislar.size():
+		var b := _botones_aislar[i]
+		if b.visible and b.get_global_rect().has_point(p):
+			if IncidenteDDoS.aislar_servidor(i):
+				_tono(500.0, 0.06)
+				_refrescar()
+			return true
 
 	for i in _botones_flujo.size():
 		var b := _botones_flujo[i]
@@ -204,7 +220,9 @@ func _process(delta: float) -> void:
 		return
 	_parpadeo += delta
 	_acumulador += delta
-	_procesar_qte(delta)
+	_actualizar_corte()
+	if not _overlay_corte.visible:
+		_procesar_qte(delta)
 	_actualizar_hover()
 	if _acumulador >= 0.15:
 		_acumulador = 0.0
@@ -221,10 +239,20 @@ func _actualizar_hover() -> void:
 		b.modulate = _brillo(b, punta)
 	for b in _botones_mit:
 		b.modulate = _brillo(b, punta)
+	for b in _botones_aislar:
+		b.modulate = _brillo(b, punta)
 	_boton_general.modulate = _brillo(_boton_general, punta)
 
 	var sobre_cerrar := _cerrar.get_global_rect().grow(2.0).has_point(punta)
 	_cerrar.modulate = Color(1.3, 1.3, 1.3) if sobre_cerrar else Color.WHITE
+
+
+func _actualizar_corte() -> void:
+	var sin_energia: bool = IncidenteDDoS.activo and IncidenteDDoS.corte_restante > 0.0
+	_overlay_corte.visible = sin_energia
+	if sin_energia:
+		var puntos := ".".repeat(1 + int(_parpadeo * 2.0) % 3)
+		_lbl_corte.text = "SIN ENERGIA\nReconectando%s %d s\n\nUsa los racks fisicos" % [puntos, ceili(IncidenteDDoS.corte_restante)]
 
 
 func _brillo(b: Button, punta: Vector2) -> Color:
@@ -288,6 +316,9 @@ func _refrescar_servidores() -> void:
 		if not IncidenteDDoS.activo:
 			texto = "OPERATIVO"
 			carga = 0.0
+		elif IncidenteDDoS.infectado[id]:
+			texto = "INFECTADO (ransomware)" if fmod(_parpadeo, 0.6) < 0.4 else ""
+			col = Color(1.0, 0.3, 0.9)
 		elif IncidenteDDoS.apagon_restante > 0.0:
 			texto = "REINICIO GENERAL"
 			col = COL_AVISO
@@ -409,6 +440,9 @@ func _bloque(l: PackedStringArray, t: Dictionary) -> void:
 
 
 func _refrescar_botones() -> void:
+	for i in _botones_aislar.size():
+		_botones_aislar[i].visible = IncidenteDDoS.activo and IncidenteDDoS.infectado[i]
+		_botones_aislar[i].disabled = IncidenteDDoS.cooldown_restante > 0.0
 	var libre: bool = IncidenteDDoS.activo and IncidenteDDoS.cooldown_restante <= 0.0
 	for b in _botones_mit:
 		b.disabled = not libre
@@ -466,6 +500,7 @@ func _texto_manual() -> String:
 [color=#3fe08a]Botnet[/color]: miles de IPs reales, un AS -> Blackhole
 [color=#ff8a5c]Legitimo[/color]: pocas IPs conocidas -> NO actuar
 Combinado: una contramedida por firma.
+[color=#ff77ee]Ransomware[/color]: pulsa AISLAR en el servidor.
 [color=#ffcc55]Rack que no arranca[/color]: autoriza aqui (flechas o codigo del rack).[/color]"""
 
 
@@ -555,6 +590,17 @@ func _construir() -> void:
 
 		_tarjetas.append({"panel": p, "estado": est, "fondo": fondo, "barra": barra})
 
+		var ais := _boton(p, "AISLAR", Vector2(120, 29), Vector2(64, 15), 10)
+		ais.custom_minimum_size = Vector2(64, 15)
+		ais.add_theme_color_override("font_color", Color(1.0, 0.5, 0.95))
+		var caja_ais := _caja(Color(0.25, 0.05, 0.22), Color(1.0, 0.3, 0.9), 1, 0)
+		caja_ais.content_margin_top = 0
+		caja_ais.content_margin_bottom = 0
+		ais.add_theme_stylebox_override("normal", caja_ais)
+		ais.add_theme_stylebox_override("disabled", caja_ais)
+		ais.visible = false
+		_botones_aislar.append(ais)
+
 	# ---- Flujos (izquierda) y telemetria (derecha)
 	for i in MAX_FLUJOS:
 		var b := _boton(cuerpo, "", Vector2(4, 80 + i * 47), Vector2(186, 44), 12)
@@ -590,6 +636,18 @@ func _construir() -> void:
 	_boton_general.add_theme_color_override("font_disabled_color", COL_ALERTA.darkened(0.55))
 
 	_construir_qte(cuerpo)
+
+	# ---- Corte de luz: pantalla negra encima de todo
+	_overlay_corte = ColorRect.new()
+	_overlay_corte.color = Color(0.0, 0.0, 0.0, 0.97)
+	_overlay_corte.position = Vector2(2, 28)
+	_overlay_corte.size = Vector2(TAM.x - 4, TAM.y - 30)
+	_overlay_corte.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_overlay_corte.visible = false
+	add_child(_overlay_corte)
+	_lbl_corte = _etiqueta(_overlay_corte, "", Vector2(0, 130), Vector2(_overlay_corte.size.x, 140), 22, Color(1.0, 0.45, 0.3))
+	_lbl_corte.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_lbl_corte.clip_text = false
 
 	# ---- Registro
 	_registro = RichTextLabel.new()

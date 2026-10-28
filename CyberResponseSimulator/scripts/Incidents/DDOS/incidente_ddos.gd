@@ -29,6 +29,11 @@ signal consola_abierta()
 signal reinicio_iniciado(id: int)
 ## Aviso: el ataque sera dado por abandonado si nadie atiende.
 signal aviso_abandono(segundos_restantes: float)
+## Eventos aleatorios.
+signal corte_luz_iniciado(segundos: float)
+signal corte_luz_terminado()
+signal infeccion_detectada(id: int)
+signal servidor_aislado(id: int)
 ## Emitida para que el jugador (camara) reaccione fisicamente: caida de un
 ## servidor o falso positivo. intensidad va de 0.0 a 1.0, mientras mas
 ## fuerte el golpe, mayor la sacudida esperada.
@@ -74,12 +79,13 @@ const CONTRAMEDIDA := {
 const VECTORES_ATAQUE := [Vector.SYN_FLOOD, Vector.UDP_AMP, Vector.HTTP_FLOOD, Vector.BOTNET]
 
 # ---------------------------------------------------------- BALANCE (tunear aqui)
-const DURACION_INCIDENTE := 180.0      ## Duracion total del ataque en segundos
+const DURACION_INCIDENTE := 120.0      ## Duracion maxima (modo practica); en partida se ajusta al reloj
 const INTERVALO_OLEADA := 22.0         ## Cada cuanto entra una oleada nueva
 const DURACION_OLEADA := 30.0          ## Cuanto vive una oleada sin mitigar
 const ESCALADA_POR_OLEADA := 0.22      ## Intensidad += esto por cada oleada
+const INTENSIDAD_MAXIMA := 1.9         ## Tope: en partidas largas no se vuelve imposible
 
-const PRESION_BASE := 6.0              ## Carga/seg que mete una oleada (intensidad 1.0)
+const PRESION_BASE := 7.5              ## Carga/seg que mete una oleada (intensidad 1.0)
 const PRESION_MITIGADA := 0.15         ## Multiplicador de presion tras mitigar bien
 const RECUPERACION_CARGA := 7.0        ## Carga/seg que baja un servidor sin presion
 const CARGA_MAXIMA := 100.0
@@ -123,6 +129,7 @@ const BONO_RAPIDO := 2.0
 ## Dificultad progresiva: cada oleada sube la probabilidad de fallo.
 const PROB_FALLO_POR_OLEADA := 0.04
 const PROB_FALLO_MAXIMA := 0.85
+const PROB_FALLO_AUMENTO_MAXIMO := 0.2   ## lo mas que puede subir por oleadas
 const SECUENCIAS_AVANZADO := [1, 2, 2, 3, 3, 3, 5, 5]   ## a partir de la oleada 4
 const OLEADA_AVANZADA := 4
 
@@ -138,6 +145,24 @@ enum Verificacion { FLECHAS, CODIGO }
 ## durante este tiempo, se da por abandonado y falla.
 const LIMITE_SIN_ATENCION := 40.0
 const AVISO_SIN_ATENCION := 0.6   ## fraccion del limite en que se avisa
+
+## Dificultad: 0 facil, 1 normal, 2 dificil -> {presion, prob_fallo}
+const DIFICULTADES := [
+	{"nombre": "Facil", "presion": 6.0, "prob_fallo": 0.35},
+	{"nombre": "Normal", "presion": 7.5, "prob_fallo": 0.45},
+	{"nombre": "Dificil", "presion": 9.0, "prob_fallo": 0.55},
+]
+
+## Eventos aleatorios (una vez por incidente como maximo).
+const PROB_CORTE_LUZ := 0.6
+const DURACION_CORTE_LUZ := 6.0
+const OLEADA_CORTE_LUZ := 2
+const PROB_INFECCION := 0.55
+const OLEADA_INFECCION := 3
+const PRESION_INFECCION := 5.0         ## carga/seg extra del servidor infectado
+const DRENAJE_INFECCION := 0.8         ## disponibilidad/seg extra por infectado
+const PUNTOS_AISLAR := 40
+const BONO_AISLAR := 3.0
 
 const ARCHIVO_REGISTRO := "user://ddos_registro.json"
 const MAX_REGISTROS := 30
@@ -181,6 +206,19 @@ var prob_codigo: float = 0.35
 
 ## Duracion de esta partida del incidente (se adapta al reloj del juego).
 var duracion_total: float = DURACION_INCIDENTE
+var _presion_base: float = PRESION_BASE
+var nombre_dificultad: String = "Normal"
+
+## Eventos
+var corte_restante: float = 0.0
+var infectado: Array[bool] = [false, false, false]
+var _corte_dado := false
+var _infeccion_dada := false
+var _corte_en_oleada := -1       ## oleada en la que ocurrira (-1 = no habra corte)
+var _infeccion_en_oleada := -1
+var _infecciones := 0
+var _aislados := 0
+var _cortes := 0
 var tiempo_sin_atencion: float = 0.0
 var _limite_atencion: float = LIMITE_SIN_ATENCION
 var _aviso_atencion_dado := false
@@ -266,7 +304,7 @@ func intentar_emitir_alerta() -> bool:
 
 ## El jugador aplica una contramedida desde la terminal.
 func aplicar_mitigacion(m: int) -> void:
-	if not activo:
+	if not activo or corte_restante > 0.0:
 		return
 	registrar_atencion()
 	if cooldown_restante > 0.0:
@@ -323,6 +361,8 @@ func iniciar_reinicio(id: int) -> bool:
 		return false
 	if verificaciones_pendientes[id] > 0:
 		return false # primero hay que autorizar en el PC
+	if infectado[id]:
+		return false # primero hay que aislarlo en el PC
 	servidores[id].reiniciando = true
 	servidores[id].progreso_reinicio = 0.0
 	_set_online(id, false)
@@ -330,6 +370,68 @@ func iniciar_reinicio(id: int) -> bool:
 	_log("[SYS] Reiniciando %s..." % NOMBRE_SERVIDOR[id])
 	emit_signal("reinicio_iniciado", id)
 	return true
+
+
+## Eventos aleatorios: se evaluan al entrar cada oleada.
+func _sortear_eventos() -> void:
+	if duracion_total < 45.0:
+		return
+	var n := _contador_oleadas - 1   # indice de la oleada recien lanzada
+	if not _corte_dado and n == _corte_en_oleada:
+		iniciar_corte_luz()
+	if not _infeccion_dada and n == _infeccion_en_oleada:
+		var candidatos: Array[int] = []
+		for i in 3:
+			if esta_online(i) and not servidores[i].reiniciando:
+				candidatos.append(i)
+		if not candidatos.is_empty():
+			infectar(candidatos[_rng.randi_range(0, candidatos.size() - 1)])
+
+
+func iniciar_corte_luz(segundos: float = DURACION_CORTE_LUZ) -> void:
+	_corte_dado = true
+	_cortes += 1
+	corte_restante = segundos
+	_log("[CRITICO] CORTE DE ENERGIA en la oficina. El PC no responde %d s: use los racks." % int(segundos))
+	emit_signal("impacto_camara", 0.5)
+	emit_signal("corte_luz_iniciado", segundos)
+
+
+func infectar(id: int) -> void:
+	_infeccion_dada = true
+	infectado[id] = true
+	_infecciones += 1
+	_log("[CRITICO] Ransomware detectado en %s. Aislelo desde el PC > Servidores." % NOMBRE_SERVIDOR[id])
+	emit_signal("impacto_camara", 0.4)
+	emit_signal("infeccion_detectada", id)
+
+
+## El PC aisla un servidor infectado (boton AISLAR). Tiene el mismo cooldown que
+## las contramedidas.
+func aislar_servidor(id: int) -> bool:
+	if not activo or not infectado[id] or corte_restante > 0.0:
+		return false
+	if cooldown_restante > 0.0:
+		return false
+	registrar_atencion()
+	infectado[id] = false
+	_aislados += 1
+	cooldown_restante = COOLDOWN_MITIGACION
+	servidores[id].carga = minf(servidores[id].carga, 40.0)
+	disponibilidad = minf(DISPONIBILIDAD_MAXIMA, disponibilidad + BONO_AISLAR)
+	if puede_registrar_puntaje():
+		puntaje += PUNTOS_AISLAR
+	_log("[OK] %s aislado y limpiado. Ransomware contenido." % NOMBRE_SERVIDOR[id])
+	emit_signal("servidor_aislado", id)
+	return true
+
+
+## Aplica una dificultad (0 facil, 1 normal, 2 dificil). Llamar ANTES de iniciar().
+func aplicar_dificultad(nivel: int) -> void:
+	var d: Dictionary = DIFICULTADES[clampi(nivel, 0, DIFICULTADES.size() - 1)]
+	_presion_base = d.presion
+	prob_fallo_reinicio = d.prob_fallo
+	nombre_dificultad = d.nombre
 
 
 ## El PC llama esto cada vez que el jugador completa una secuencia de flechas.
@@ -392,7 +494,8 @@ func tiempo_reinicio(id: int) -> float:
 func prob_fallo_actual(id: int) -> float:
 	if prob_fallo_reinicio >= 1.0:
 		return 1.0 # forzado (pruebas)
-	var p: float = prob_fallo_reinicio + PROB_FALLO_POR_OLEADA * float(_contador_oleadas) + PROB_FALLO_EXTRA.get(id, 0.0)
+	var aumento := minf(PROB_FALLO_AUMENTO_MAXIMO, PROB_FALLO_POR_OLEADA * float(_contador_oleadas))
+	var p: float = prob_fallo_reinicio + aumento + PROB_FALLO_EXTRA.get(id, 0.0)
 	return clampf(p, 0.0, PROB_FALLO_MAXIMA)
 
 
@@ -456,6 +559,16 @@ func _process(delta: float) -> void:
 	tiempo_restante = maxf(0.0, tiempo_restante - delta)
 	cooldown_restante = maxf(0.0, cooldown_restante - delta)
 
+	if corte_restante > 0.0:
+		corte_restante = maxf(0.0, corte_restante - delta)
+		if corte_restante <= 0.0:
+			_log("[SYS] Energia restablecida. El PC vuelve a estar disponible.")
+			emit_signal("corte_luz_terminado")
+			registrar_atencion()
+
+	# Durante un corte el analista no puede usar el PC: no cuenta como abandono.
+	if corte_restante > 0.0:
+		tiempo_sin_atencion = 0.0
 	tiempo_sin_atencion += delta
 	if tiempo_sin_atencion >= _limite_atencion:
 		_abandonado = true
@@ -515,7 +628,10 @@ func _actualizar_servidores(delta: float) -> void:
 			if id in ol.objetivos:
 				var completo: bool = ol.mitigada and (ol.vector_extra == -1 or ol.mitigada_extra)
 				var f: float = PRESION_MITIGADA if completo else 1.0
-				presion += PRESION_BASE * ol.intensidad * f
+				presion += _presion_base * ol.intensidad * f
+
+		if infectado[id]:
+			presion += PRESION_INFECCION
 
 		if presion > 0.0:
 			s.carga = minf(CARGA_MAXIMA, s.carga + presion * delta)
@@ -533,6 +649,13 @@ func _actualizar_disponibilidad(delta: float) -> void:
 	for s in servidores:
 		if not s.online:
 			caidos += 1
+
+	var infectados := 0
+	for i in 3:
+		if infectado[i]:
+			infectados += 1
+	if infectados > 0:
+		disponibilidad = maxf(0.0, disponibilidad - DRENAJE_INFECCION * infectados * delta)
 
 	if caidos > 0:
 		disponibilidad = maxf(0.0, disponibilidad - DRENAJE_POR_CAIDO * caidos * delta)
@@ -566,6 +689,22 @@ func _reset_estado() -> void:
 	_racha_max = 0
 	tipo_verificacion = [0, 0, 0]
 	codigo_rack = ["", "", ""]
+	corte_restante = 0.0
+	infectado = [false, false, false]
+	_corte_dado = false
+	_infeccion_dada = false
+	# Se decide al empezar si habra cada evento (y en que oleada), para que la
+	# probabilidad sea POR INCIDENTE y no por oleada.
+	_corte_en_oleada = -1
+	_infeccion_en_oleada = -1
+	if duracion_total >= 45.0:
+		if _rng.randf() < PROB_CORTE_LUZ:
+			_corte_en_oleada = _rng.randi_range(OLEADA_CORTE_LUZ, OLEADA_CORTE_LUZ + 2)
+		if _rng.randf() < PROB_INFECCION:
+			_infeccion_en_oleada = _rng.randi_range(OLEADA_INFECCION, OLEADA_INFECCION + 2)
+	_infecciones = 0
+	_aislados = 0
+	_cortes = 0
 	disponibilidad = DISPONIBILIDAD_MAXIMA
 	puntaje = 0.0
 	cooldown_restante = 0.0
@@ -623,7 +762,7 @@ func _finalizar_reinicio(id: int) -> void:
 
 func _lanzar_oleada() -> void:
 	_temporizador_oleada = _intervalo_oleada
-	var intensidad := 1.0 + ESCALADA_POR_OLEADA * float(_contador_oleadas)
+	var intensidad := minf(INTENSIDAD_MAXIMA, 1.0 + ESCALADA_POR_OLEADA * float(_contador_oleadas))
 
 	var vector: int
 	var vector_extra: int = -1
@@ -677,6 +816,7 @@ func _lanzar_oleada() -> void:
 
 	emit_signal("oleada_iniciada", _contador_oleadas, vector, objetivos, telemetria)
 	_contador_oleadas += 1
+	_sortear_eventos()
 
 
 ## Firmas de red por vector. Esto es lo que el jugador debe leer para decidir.
@@ -774,6 +914,10 @@ func _finalizar(exito: bool) -> void:
 		"codigos_ok": _codigos_ok,
 		"racha_max": _racha_max,
 		"abandonado": _abandonado,
+		"dificultad": nombre_dificultad,
+		"cortes_luz": _cortes,
+		"infecciones": _infecciones,
+		"aislados": _aislados,
 		"duracion_total": duracion_total,
 		"tiempo_jugado": duracion_total - tiempo_restante,
 	}
