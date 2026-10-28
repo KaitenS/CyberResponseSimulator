@@ -16,6 +16,7 @@ class_name DDoSEnMapa
 static var forzar_siguiente: String = ""
 ## Dificultad elegida (0 facil, 1 normal, 2 dificil). Se guarda en user://.
 static var dificultad: int = -1
+static var nivel_adaptativo: float = 0.5
 ## Accesibilidad: sin parpadeos de luz, destellos ni sacudida de camara.
 static var reducir_efectos: bool = false
 static var _ajustes_cargados := false
@@ -58,10 +59,11 @@ static func cargar_ajustes() -> void:
 	_ajustes_cargados = true
 	var cfg := ConfigFile.new()
 	if cfg.load(ARCHIVO_AJUSTES) == OK:
-		dificultad = int(cfg.get_value("ddos", "dificultad", 1))
+		dificultad = int(cfg.get_value("ddos", "dificultad", IncidenteDDoS.INDICE_ADAPTATIVA))
+		nivel_adaptativo = float(cfg.get_value("ddos", "nivel_adaptativo", 0.5))
 		reducir_efectos = bool(cfg.get_value("ddos", "reducir_efectos", false))
-	if dificultad < 0:
-		dificultad = 1
+	if dificultad < 0 or dificultad >= IncidenteDDoS.DIFICULTADES.size():
+		dificultad = IncidenteDDoS.INDICE_ADAPTATIVA
 
 
 static func guardar_ajuste(clave: String, valor) -> void:
@@ -138,7 +140,7 @@ func empezar(incidente: IncidentData) -> void:
 	elif GameManager.game_active:
 		duracion = clampf(GameManager.time_remaining - 2.0, 30.0, duracion)
 	cargar_ajustes()
-	IncidenteDDoS.aplicar_dificultad(dificultad)
+	IncidenteDDoS.aplicar_dificultad(dificultad, nivel_adaptativo)
 	IncidenteDDoS.iniciar(duracion)
 
 	_hud.mostrar_aviso(
@@ -240,6 +242,9 @@ func _actualizar_bloqueo() -> void:
 # ============================================================ RESULTADO
 
 func _on_terminado(exito: bool, _resumen: Dictionary) -> void:
+	if IncidenteDDoS.adaptativa:
+		nivel_adaptativo = IncidenteDDoS.nivel_adaptativo
+		guardar_ajuste("nivel_adaptativo", nivel_adaptativo)
 	_soltar_rack()
 	_prompt.visible = false
 

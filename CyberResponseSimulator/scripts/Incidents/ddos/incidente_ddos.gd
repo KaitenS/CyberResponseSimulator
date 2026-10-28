@@ -151,7 +151,21 @@ const DIFICULTADES := [
 	{"nombre": "Facil", "presion": 6.0, "prob_fallo": 0.35},
 	{"nombre": "Normal", "presion": 7.5, "prob_fallo": 0.45},
 	{"nombre": "Dificil", "presion": 9.0, "prob_fallo": 0.55},
+	{"nombre": "Adaptativa", "presion": 7.5, "prob_fallo": 0.45, "adaptativa": true},
 ]
+const INDICE_ADAPTATIVA := 3
+
+## Dificultad adaptativa: el nivel (0 = como Facil, 1 = como Dificil) se reevalua
+## cada INTERVALO_ADAPTACION segundos segun como lo hace el jugador.
+const INTERVALO_ADAPTACION := 8.0
+const ADAPT_SUBE := 0.07            ## va muy bien: sube el nivel
+const ADAPT_BAJA := 0.10            ## va mal: baja mas rapido que lo que sube
+const ADAPT_DISP_ALTA := 85.0       ## disponibilidad "va muy bien"
+const ADAPT_DISP_BAJA := 60.0       ## disponibilidad "va mal"
+const PRESION_FACIL := 6.0
+const PRESION_DIFICIL := 9.0
+const FALLO_FACIL := 0.35
+const FALLO_DIFICIL := 0.55
 
 ## Eventos aleatorios (una vez por incidente como maximo).
 const PROB_CORTE_LUZ := 0.6
@@ -208,6 +222,9 @@ var prob_codigo: float = 0.35
 var duracion_total: float = DURACION_INCIDENTE
 var _presion_base: float = PRESION_BASE
 var nombre_dificultad: String = "Normal"
+var adaptativa: bool = false
+var nivel_adaptativo: float = 0.5      ## 0 facil .. 1 dificil (se conserva entre intentos)
+var _t_adaptacion: float = 0.0
 
 ## Eventos
 var corte_restante: float = 0.0
@@ -427,11 +444,45 @@ func aislar_servidor(id: int) -> bool:
 
 
 ## Aplica una dificultad (0 facil, 1 normal, 2 dificil). Llamar ANTES de iniciar().
-func aplicar_dificultad(nivel: int) -> void:
+func aplicar_dificultad(nivel: int, nivel_inicial: float = 0.5) -> void:
 	var d: Dictionary = DIFICULTADES[clampi(nivel, 0, DIFICULTADES.size() - 1)]
 	_presion_base = d.presion
 	prob_fallo_reinicio = d.prob_fallo
 	nombre_dificultad = d.nombre
+	adaptativa = d.get("adaptativa", false)
+	if adaptativa:
+		nivel_adaptativo = clampf(nivel_inicial, 0.0, 1.0)
+		_aplicar_nivel_adaptativo()
+
+
+func _aplicar_nivel_adaptativo() -> void:
+	_presion_base = lerpf(PRESION_FACIL, PRESION_DIFICIL, nivel_adaptativo)
+	prob_fallo_reinicio = lerpf(FALLO_FACIL, FALLO_DIFICIL, nivel_adaptativo)
+
+
+## Etiqueta del nivel actual de la dificultad adaptativa.
+func etiqueta_nivel() -> String:
+	if nivel_adaptativo < 0.34:
+		return "Facil"
+	if nivel_adaptativo < 0.67:
+		return "Normal"
+	return "Dificil"
+
+
+func _evaluar_adaptacion() -> void:
+	var caidos := 0
+	for sv in servidores:
+		if not sv.online:
+			caidos += 1
+	var antes := etiqueta_nivel()
+	if caidos > 0 or disponibilidad < ADAPT_DISP_BAJA:
+		nivel_adaptativo -= ADAPT_BAJA
+	elif disponibilidad >= ADAPT_DISP_ALTA:
+		nivel_adaptativo += ADAPT_SUBE
+	nivel_adaptativo = clampf(nivel_adaptativo, 0.0, 1.0)
+	_aplicar_nivel_adaptativo()
+	if etiqueta_nivel() != antes:
+		_log("[SYS] Dificultad adaptativa: ahora nivel %s." % etiqueta_nivel())
 
 
 ## El PC llama esto cada vez que el jugador completa una secuencia de flechas.
@@ -588,6 +639,12 @@ func _process(delta: float) -> void:
 				_set_online(id, true)
 			_log("[SYS] Sistemas restaurados tras el reinicio general.")
 
+	if adaptativa:
+		_t_adaptacion += delta
+		if _t_adaptacion >= INTERVALO_ADAPTACION:
+			_t_adaptacion = 0.0
+			_evaluar_adaptacion()
+
 	_actualizar_oleadas(delta)
 	_actualizar_servidores(delta)
 	_actualizar_disponibilidad(delta)
@@ -682,6 +739,7 @@ func _reset_estado() -> void:
 	tiempo_restante = duracion_total
 	tiempo_sin_atencion = 0.0
 	_aviso_atencion_dado = false
+	_t_adaptacion = 0.0
 	_abandonado = false
 	_reinicios_fallidos = 0
 	_secuencias_ok = 0
@@ -914,7 +972,8 @@ func _finalizar(exito: bool) -> void:
 		"codigos_ok": _codigos_ok,
 		"racha_max": _racha_max,
 		"abandonado": _abandonado,
-		"dificultad": nombre_dificultad,
+		"dificultad": ("Adaptativa (%s)" % etiqueta_nivel()) if adaptativa else nombre_dificultad,
+		"nivel_adaptativo": nivel_adaptativo,
 		"cortes_luz": _cortes,
 		"infecciones": _infecciones,
 		"aislados": _aislados,
