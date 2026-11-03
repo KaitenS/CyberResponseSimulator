@@ -22,15 +22,16 @@ const OFFSET_PUNTA := Vector2(12.0, 12.0)
 
 const FUENTE_RUTA := "res://assets/Fonts/VCR_OSD_MONO_1.001.ttf"
 
-const COL_MARCO := Color(0.90, 0.90, 0.93)
-const COL_TITULO := Color(0.27, 0.40, 0.78)
-const COL_FONDO := Color(0.03, 0.05, 0.07)
-const COL_BORDE := Color(0.15, 0.85, 0.55)
-const COL_TEXTO := Color(0.75, 1.0, 0.85)
-const COL_TENUE := Color(0.45, 0.62, 0.55)
-const COL_OK := Color(0.25, 1.0, 0.45)
-const COL_AVISO := Color(1.0, 0.8, 0.3)
-const COL_ALERTA := Color(1.0, 0.4, 0.35)
+const COL_MARCO := Color(0.10, 0.12, 0.16)
+const COL_TITULO := Color(0.13, 0.17, 0.24)
+const COL_FONDO := Color(0.055, 0.07, 0.095)
+const COL_PANEL := Color(0.085, 0.105, 0.14)
+const COL_BORDE := Color(0.30, 0.55, 0.65)
+const COL_TEXTO := Color(0.84, 0.90, 0.95)
+const COL_TENUE := Color(0.50, 0.58, 0.66)
+const COL_OK := Color(0.30, 0.92, 0.55)
+const COL_AVISO := Color(1.0, 0.78, 0.30)
+const COL_ALERTA := Color(1.0, 0.40, 0.38)
 
 const MAX_FLUJOS := 4
 const LINEAS_LOG := 5
@@ -339,10 +340,12 @@ func _refrescar_servidores() -> void:
 			texto = "FUERA DE SERVICIO" if visible_ahora else ""
 			col = COL_ALERTA
 		else:
-			texto = "EN LINEA  CARGA %d%%" % int(carga)
+			texto = "EN LINEA" if carga < 60.0 else "CARGA ALTA"
 			if carga >= 60.0:
 				col = COL_AVISO
 
+		var lbl_pct: Label = t.pct
+		lbl_pct.text = ("%d%%" % int(carga)) if (IncidenteDDoS.activo and s.online and not s.reiniciando and not IncidenteDDoS.infectado[id]) else ""
 		var lbl_estado: Label = t.estado
 		lbl_estado.text = texto
 		lbl_estado.add_theme_color_override("font_color", col)
@@ -512,24 +515,33 @@ func _construir() -> void:
 	marco.position = Vector2.ZERO
 	marco.size = TAM
 	marco.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	marco.add_theme_stylebox_override("panel", _caja(COL_MARCO, Color.BLACK, 2))
+	marco.add_theme_stylebox_override("panel", _caja(COL_MARCO, Color(0.35, 0.45, 0.55, 0.6), 1, 0, 8))
 	add_child(marco)
 
 	# Barra de titulo
-	var titulo := ColorRect.new()
-	titulo.color = COL_TITULO
+	var titulo := Panel.new()
 	titulo.position = Vector2(2, 2)
 	titulo.size = Vector2(TAM.x - 4, 24)
 	titulo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sb_titulo := _caja(COL_TITULO, COL_TITULO, 0, 0, 7)
+	sb_titulo.corner_radius_bottom_left = 0
+	sb_titulo.corner_radius_bottom_right = 0
+	titulo.add_theme_stylebox_override("panel", sb_titulo)
 	add_child(titulo)
 
-	_etiqueta(titulo, "Servidores - Monitor de red", Vector2(8, 3), Vector2(400, 18), 14, Color.WHITE)
+	var punto_t := ColorRect.new()
+	punto_t.color = COL_OK
+	punto_t.position = Vector2(10, 9)
+	punto_t.size = Vector2(6, 6)
+	punto_t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	titulo.add_child(punto_t)
+	_etiqueta(titulo, "Servidores  /  Monitor de red", Vector2(24, 3), Vector2(400, 18), 13, COL_TEXTO)
 
 	_cerrar = Panel.new()
 	_cerrar.position = Vector2(TAM.x - 32, 4)
 	_cerrar.size = Vector2(26, 20)
 	_cerrar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_cerrar.add_theme_stylebox_override("panel", _caja(Color(0.8, 0.15, 0.2), Color.WHITE, 1))
+	_cerrar.add_theme_stylebox_override("panel", _caja(Color(0.78, 0.22, 0.26), Color(1, 1, 1, 0.25), 1, 0, 5))
 	add_child(_cerrar)
 	var x := _etiqueta(_cerrar, "X", Vector2(0, 1), Vector2(26, 18), 14, Color.WHITE)
 	x.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -539,15 +551,15 @@ func _construir() -> void:
 	cuerpo.position = Vector2(6, 30)
 	cuerpo.size = Vector2(TAM.x - 12, TAM.y - 36)
 	cuerpo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	cuerpo.add_theme_stylebox_override("panel", _caja(COL_FONDO, COL_BORDE.darkened(0.4), 1))
+	cuerpo.add_theme_stylebox_override("panel", _caja(COL_FONDO, Color(1, 1, 1, 0.07), 1, 0, 6))
 	add_child(cuerpo)
 
 	# ---- Fila de estado
-	_etiqueta(cuerpo, "DISPONIBILIDAD", Vector2(6, 5), Vector2(130, 16), 12, COL_TEXTO)
+	_etiqueta(cuerpo, "DISPONIBILIDAD", Vector2(8, 5), Vector2(130, 16), 12, COL_TENUE)
 	_barra_disp_fondo = ColorRect.new()
-	_barra_disp_fondo.color = Color(0.1, 0.15, 0.16)
-	_barra_disp_fondo.position = Vector2(140, 7)
-	_barra_disp_fondo.size = Vector2(230, 12)
+	_barra_disp_fondo.color = Color(1, 1, 1, 0.08)
+	_barra_disp_fondo.position = Vector2(140, 10)
+	_barra_disp_fondo.size = Vector2(230, 5)
 	_barra_disp_fondo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	cuerpo.add_child(_barra_disp_fondo)
 	_barra_disp = ColorRect.new()
@@ -555,7 +567,7 @@ func _construir() -> void:
 	_barra_disp.size = _barra_disp_fondo.size
 	_barra_disp.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_barra_disp_fondo.add_child(_barra_disp)
-	_lbl_disp = _etiqueta(cuerpo, "100%", Vector2(376, 5), Vector2(44, 16), 12, COL_OK)
+	_lbl_disp = _etiqueta(cuerpo, "100%", Vector2(376, 5), Vector2(44, 16), 11, COL_OK)
 	_lbl_estado = _etiqueta(cuerpo, "SIN ATAQUE ACTIVO", Vector2(424, 5), Vector2(156, 16), 12, COL_OK)
 	_lbl_estado.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
@@ -566,29 +578,31 @@ func _construir() -> void:
 		p.position = Vector2(4 + i * 195, 28)
 		p.size = Vector2(188, 46)
 		p.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		p.add_theme_stylebox_override("panel", _caja(Color(0.05, 0.09, 0.1), COL_BORDE.darkened(0.55), 1))
+		p.add_theme_stylebox_override("panel", _caja(COL_PANEL, Color(1, 1, 1, 0.08), 1, 0, 6))
 		cuerpo.add_child(p)
 
-		_etiqueta(p, nombres[i], Vector2(6, 2), Vector2(100, 15), 12, COL_TEXTO)
+		_etiqueta(p, nombres[i], Vector2(9, 3), Vector2(100, 15), 12, COL_TEXTO)
 		var rasgo: String = IncidenteDDoS.RASGO_SERVIDOR.get(i, "")
 		if rasgo != "":
 			var tag := _etiqueta(p, rasgo, Vector2(90, 3), Vector2(92, 13), 11, COL_AVISO.darkened(0.15))
 			tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		var est := _etiqueta(p, "OPERATIVO", Vector2(6, 16), Vector2(176, 14), 12, COL_OK)
+		var est := _etiqueta(p, "OPERATIVO", Vector2(9, 18), Vector2(140, 14), 11, COL_OK)
+		var pct := _etiqueta(p, "", Vector2(132, 18), Vector2(50, 14), 11, COL_TENUE)
+		pct.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 		var fondo := ColorRect.new()
-		fondo.color = Color(0.1, 0.15, 0.16)
-		fondo.position = Vector2(6, 34)
-		fondo.size = Vector2(176, 7)
+		fondo.color = Color(1, 1, 1, 0.08)
+		fondo.position = Vector2(9, 37)
+		fondo.size = Vector2(170, 4)
 		fondo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		p.add_child(fondo)
 		var barra := ColorRect.new()
 		barra.color = COL_OK
-		barra.size = Vector2(0, 7)
+		barra.size = Vector2(0, 4)
 		barra.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		fondo.add_child(barra)
 
-		_tarjetas.append({"panel": p, "estado": est, "fondo": fondo, "barra": barra})
+		_tarjetas.append({"panel": p, "estado": est, "pct": pct, "fondo": fondo, "barra": barra})
 
 		var ais := _boton(p, "AISLAR", Vector2(120, 29), Vector2(64, 15), 10)
 		ais.custom_minimum_size = Vector2(64, 15)
@@ -616,7 +630,7 @@ func _construir() -> void:
 	_telemetria.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_telemetria.add_theme_font_size_override("normal_font_size", 12)
 	_telemetria.add_theme_font_size_override("bold_font_size", 12)
-	_telemetria.add_theme_stylebox_override("normal", _caja(Color(0.02, 0.04, 0.05), COL_BORDE.darkened(0.5), 1, 5))
+	_telemetria.add_theme_stylebox_override("normal", _caja(COL_PANEL, Color(1, 1, 1, 0.08), 1, 7, 6))
 	cuerpo.add_child(_telemetria)
 
 	# ---- Contramedidas
@@ -657,7 +671,7 @@ func _construir() -> void:
 	_registro.size = Vector2(580, 80)
 	_registro.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_registro.add_theme_font_size_override("normal_font_size", 12)
-	_registro.add_theme_stylebox_override("normal", _caja(Color(0.02, 0.04, 0.05), COL_BORDE.darkened(0.5), 1, 5))
+	_registro.add_theme_stylebox_override("normal", _caja(COL_PANEL, Color(1, 1, 1, 0.08), 1, 7, 6))
 	cuerpo.add_child(_registro)
 
 
@@ -686,24 +700,25 @@ func _boton(padre: Control, texto: String, pos: Vector2, tam: Vector2, fuente: i
 	b.add_theme_color_override("font_color", COL_TEXTO)
 	b.add_theme_color_override("font_disabled_color", COL_TENUE.darkened(0.2))
 	b.add_theme_stylebox_override("normal", _caja_boton(false, {}))
-	b.add_theme_stylebox_override("disabled", _caja(Color(0.06, 0.09, 0.1), COL_BORDE.darkened(0.7), 1, 4))
+	b.add_theme_stylebox_override("disabled", _caja(Color(0.07, 0.085, 0.11), Color(1, 1, 1, 0.05), 1, 4, 5))
 	padre.add_child(b)
 	return b
 
 
 func _caja_boton(seleccionado: bool, ol: Dictionary) -> StyleBoxFlat:
-	var fondo := Color(0.08, 0.17, 0.16)
-	var borde := COL_BORDE.darkened(0.3)
+	var fondo := Color(0.115, 0.15, 0.2)
+	var borde := Color(1, 1, 1, 0.10)
 	if seleccionado:
-		fondo = Color(0.10, 0.30, 0.26)
-		borde = COL_BORDE.lightened(0.2)
+		fondo = Color(0.13, 0.24, 0.31)
+		borde = COL_BORDE
 	if not ol.is_empty() and ol.vector == IncidenteDDoS.Vector.LEGITIMO and not seleccionado:
 		borde = COL_AVISO.darkened(0.3)
-	return _caja(fondo, borde, 1, 4)
+	return _caja(fondo, borde, 1, 4, 5)
 
 
-func _caja(fondo: Color, borde: Color, grosor: int, margen: int = 0) -> StyleBoxFlat:
+func _caja(fondo: Color, borde: Color, grosor: int, margen: int = 0, radio: int = 0) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
+	sb.set_corner_radius_all(radio)
 	sb.bg_color = fondo
 	sb.border_color = borde
 	sb.set_border_width_all(grosor)
