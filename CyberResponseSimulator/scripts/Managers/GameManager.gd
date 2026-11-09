@@ -4,15 +4,18 @@ var game_active: bool = false
 var score: int = 0
 var incidents_completed: int = 0
 var incidents_failed: int = 0
-var time_remaining: float = 60.0
+var time_remaining: float = GAME_DURATION
 
+const GAME_DURATION: float = 60.0
+
+signal game_ended
 
 func start_game():
 	game_active = true
 	score = 0
 	incidents_completed = 0
 	incidents_failed = 0
-	time_remaining = 60.0
+	time_remaining = GAME_DURATION
 
 
 func _process(delta: float) -> void:
@@ -28,3 +31,4 @@ func _process(delta: float) -> void:
 
 func end_game():
 	game_active = false
+	game_ended.emit()
