@@ -83,6 +83,11 @@ move_backward={
 ]
 }
 
+analyst_manual={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":81,"unicode":113)]
+}
+
 [physics]
 
 3d/physics_engine="Jolt Physics"

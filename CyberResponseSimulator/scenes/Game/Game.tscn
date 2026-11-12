@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://7w828gjuoce5"]
 
 [ext_resource type="PackedScene" uid="uid://b1rpuf13ck37c" path="res://scenes/Game/Player.tscn" id="1_bekgd"]
-[ext_resource type="PackedScene" uid="uid://j4wor5h7047f" path="res://assets/Models/Map/Office.blend" id="2_2k76m"]
+[ext_resource type="PackedScene" path="res://scenes/Game/OfficeInterior.tscn" id="2_2k76m"]
 [ext_resource type="PackedScene" uid="uid://dx3u5dwfddwgy" path="res://scenes/Game/Computer/Computer.tscn" id="2_yqgss"]
 [ext_resource type="Script" uid="uid://c3m7r2008afre" path="res://scripts/Game/ui/GameHud.gd" id="5_50swi"]
 [ext_resource type="Script" uid="uid://c70j0s800typg" path="res://scripts/Managers/IncidentFlowManager.gd" id="5_yqgss"]
@@ -10,15 +10,18 @@
 [ext_resource type="PackedScene" uid="uid://dgar6hffx2lre" path="res://scenes/Incidents/DDOS/servidor_fisico.tscn" id="7_f8ls4"]
 [ext_resource type="Script" uid="uid://dxt4rog4bwqxa" path="res://scripts/Game/colisiones_mapa.gd" id="8_lfncv"]
 [ext_resource type="Script" uid="uid://jyct5dvwsh3h" path="res://scripts/Game/ambiente_mapa.gd" id="9_i6kj0"]
-
 [ext_resource type="PackedScene" path="res://scenes/Game/ui/SimulationClock.tscn" id="10_simulation_clock"]
-
 [ext_resource type="PackedScene" path="res://scenes/Game/ui/IncidentAlert.tscn" id="11_incident_alert"]
+[ext_resource type="PackedScene" path="res://scenes/Game/OfficeFurnishing.tscn" id="12_office_furnishing"]
+
+[ext_resource type="PackedScene" path="res://scenes/Game/PauseMenu.tscn" id="13_pause_menu"]
+
+[ext_resource type="PackedScene" path="res://scenes/Game/ui/Manual/AnalystManual.tscn" id="14_analyst_manual"]
 
 [sub_resource type="Environment" id="Environment_bekgd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tt4u6"]
-size = Vector3(35, 0.2, 20)
+size = Vector3(42, 0.2, 24)
 
 [node name="Game" type="Node3D" unique_id=221791749]
 
@@ -31,13 +34,13 @@ transform = Transform3D(0.4513888, 0.81627876, -0.36046794, -0.6378497, 0.577658
 environment = SubResource("Environment_bekgd")
 
 [node name="Computer" parent="." unique_id=258026606 instance=ExtResource("2_yqgss")]
-transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0.0029101074, 0.017406896, 1.3369323)
+transform = Transform3D(0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0.0034921288, 0.791, 1.6043187)
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1624057287]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -6.2651663)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5181994)
 
 [node name="Office" parent="Floor" unique_id=1885051379 instance=ExtResource("2_2k76m")]
-transform = Transform3D(0.9, 0, 0, 0, 0.5, 0, 0, 0, 0.7, -1.131, 0, 1.993)
+transform = Transform3D(1.08, 0, 0, 0, 0.8, 0, 0, 0, 0.84, -1.3572, 0, 2.3916)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=420898150]
 shape = SubResource("BoxShape3D_tt4u6")
@@ -64,7 +67,7 @@ vertical_alignment = 1
 [node name="GameHUD" type="CanvasLayer" parent="." unique_id=1930538261]
 script = ExtResource("5_50swi")
 
-[node name="TimeDisplay" parent="GameHUD" instance=ExtResource("10_simulation_clock")]
+[node name="TimeDisplay" parent="GameHUD" unique_id=1435859569 instance=ExtResource("10_simulation_clock")]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -74,7 +77,7 @@ offset_right = 210.0
 offset_bottom = 50.0
 grow_horizontal = 2
 
-[node name="IncidentNotification" parent="GameHUD" instance=ExtResource("11_incident_alert")]
+[node name="IncidentNotification" parent="GameHUD" unique_id=796597568 instance=ExtResource("11_incident_alert")]
 visible = false
 offset_left = 24.0
 offset_top = 80.0
@@ -87,14 +90,14 @@ phishing_data = ExtResource("6_lfncv")
 malware_data = ExtResource("6_50swi")
 
 [node name="ServidorFisico" parent="." unique_id=697435599 instance=ExtResource("7_f8ls4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7463794, 0.7142347, -6.091258)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2956553, 0.7142347, -7.3095098)
 
 [node name="ServidorFisico2" parent="." unique_id=771668072 instance=ExtResource("7_f8ls4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8963714, 0.9999999, -5.1445384)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8756456, 0.9999999, -6.173446)
 id_servidor = 1
 
 [node name="ServidorFisico3" parent="." unique_id=559667837 instance=ExtResource("7_f8ls4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.370372, 0.9999999, -1.9419436)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.244447, 0.9999999, -2.3303323)
 id_servidor = 2
 
 [node name="ColisionesMapa" type="Node" parent="." unique_id=636990354]
@@ -103,3 +106,10 @@ raiz_mapa = NodePath("../Floor/Office")
 
 [node name="AmbienteMapa" type="Node" parent="." unique_id=536984941]
 script = ExtResource("9_i6kj0")
+
+[node name="OfficeFurnishing" parent="." unique_id=89076 instance=ExtResource("12_office_furnishing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.012480885, -0.008297443, -0.011900544)
+
+[node name="PauseMenu" parent="." instance=ExtResource("13_pause_menu")]
+
+[node name="AnalystManual" parent="." instance=ExtResource("14_analyst_manual")]

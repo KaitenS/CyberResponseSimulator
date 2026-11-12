@@ -184,6 +184,12 @@ func _input(event: InputEvent) -> void:
 	if cyber_desk == null:
 		return
 
+	# Salir del escritorio antes de que Esc libere el cursor del sistema.
+	if event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
+		_on_cyber_desk_close_requested()
+		return
+
 	if event is InputEventMouseMotion:
 		var previous_position := cursor_position
 		move_custom_cursor(event.relative)
@@ -229,6 +235,7 @@ func _input(event: InputEvent) -> void:
 			print("LLAMANDO DIRECTAMENTE A _on_close_button_pressed()")
 
 			cyber_desk_root._on_close_button_pressed()
+			return
 
 		var virtual_click := InputEventMouseButton.new()
 

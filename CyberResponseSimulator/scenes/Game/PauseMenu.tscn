@@ -4,6 +4,9 @@
 [ext_resource type="Shader" uid="uid://nwxyqj6nvl4q" path="res://shaders/blur_dim.gdshader" id="1_h2k4b"]
 [ext_resource type="FontFile" uid="uid://mashn6f4lmra" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_gxovh"]
 
+[ext_resource type="StyleBox" path="res://scenes/Game/ui/PausePanelStyle.tres" id="4_pause_style"]
+[ext_resource type="PackedScene" path="res://scenes/Game/ui/PauseOptions.tscn" id="5_pause_options"]
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_n62i7"]
 shader = ExtResource("1_h2k4b")
 shader_parameter/radius = 3.0
@@ -87,29 +90,29 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="ColorRect" parent="Center" unique_id=33235414]
-custom_minimum_size = Vector2(360, 320)
+[node name="Panel" type="Panel" parent="Center" unique_id=33235414]
+custom_minimum_size = Vector2(500, 445)
 layout_mode = 2
-color = Color(0.95686275, 0.94509804, 0.9098039, 1)
+theme_override_styles/panel = ExtResource("4_pause_style")
 
 [node name="TitleLabel" type="Label" parent="Center/Panel" unique_id=2076415617]
 layout_mode = 1
-offset_left = 20.0
-offset_top = 16.0
-offset_right = 340.0
-offset_bottom = 64.0
-theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+offset_left = 40.0
+offset_top = 36.0
+offset_right = 460.0
+offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.95, 0.96, 1, 1)
 theme_override_fonts/font = ExtResource("2_gxovh")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 28
 text = "PAUSA"
 horizontal_alignment = 1
 
 [node name="Buttons" type="VBoxContainer" parent="Center/Panel" unique_id=1055414352]
 layout_mode = 1
 offset_left = 40.0
-offset_top = 90.0
-offset_right = 320.0
-offset_bottom = 290.0
+offset_top = 130.0
+offset_right = 460.0
+offset_bottom = 390.0
 theme_override_constants/separation = 16
 
 [node name="ContinueButton" type="Button" parent="Center/Panel/Buttons" unique_id=1568461992]
@@ -127,6 +130,21 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_n62i7")
 text = "◈ CONTINUAR"
 text_direction = 1
 
+[node name="OptionsButton" type="Button" parent="Center/Panel/Buttons"]
+custom_minimum_size = Vector2(280, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8392157, 0.8509804, 0.8784314, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(0.65882355, 0.33333334, 0.96862745, 1)
+theme_override_constants/outline_size = 1
+theme_override_fonts/font = ExtResource("2_gxovh")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_h2k4b")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_gxovh")
+theme_override_styles/hover = SubResource("StyleBoxFlat_n62i7")
+text = "OPCIONES"
+text_direction = 1
+
 [node name="MenuButton" type="Button" parent="Center/Panel/Buttons" unique_id=1686861082]
 custom_minimum_size = Vector2(280, 52)
 layout_mode = 2
@@ -142,3 +160,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_1aocv")
 theme_override_styles/hover = SubResource("StyleBoxFlat_m27eb")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_o6k08")
 text = "✗ VOLVER AL MENU"
+
+[node name="OptionsPanel" parent="Center" instance=ExtResource("5_pause_options")]
+visible = false
+layout_mode = 2

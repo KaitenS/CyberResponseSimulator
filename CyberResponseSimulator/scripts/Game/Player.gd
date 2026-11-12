@@ -4,6 +4,10 @@ const SPEED := 5.0
 const GRAVITY := 9.8
 const MOUSE_SENSITIVITY := 0.002
 
+@export_group("Cámara en primera persona")
+@export_range(10.0, 85.0, 1.0) var look_up_limit_degrees: float = 65.0
+@export_range(10.0, 85.0, 1.0) var look_down_limit_degrees: float = 70.0
+
 var camera_pitch := 0.0
 var current_interactable: Interactable = null
 
@@ -25,10 +29,15 @@ var camera_original_rotation := Vector3.ZERO
 
 
 func _ready():
+	camera_pitch = camera.rotation.x
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 func _physics_process(delta):
+	if camera_locked:
+		velocity = Vector3.ZERO
+		return
+
 	# ==========================================
 	# GRAVEDAD
 	# ==========================================
@@ -121,6 +130,10 @@ func check_interaction():
 
 
 func _input(event):
+	# El computador gestiona su cursor y Esc mientras se usa CyberDesk.
+	if camera_locked:
+		return
+
 	# ==========================================
 	# CÁMARA
 	# ==========================================
@@ -138,8 +151,8 @@ func _input(event):
 
 			camera_pitch = clamp(
 				camera_pitch,
-				-1.5,
-				1.5
+				-deg_to_rad(look_down_limit_degrees),
+				deg_to_rad(look_up_limit_degrees)
 			)
 
 			camera.rotation.x = camera_pitch
@@ -185,12 +198,13 @@ func enter_computer_view(camera_point: Marker3D) -> void:
 		return
 
 	camera_locked = true
+	velocity = Vector3.ZERO
 
 	# Guardar posición y rotación actuales de la cámara
 	camera_original_position = camera.position
 	camera_original_rotation = camera.rotation
 
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 	var target_position := camera_point.global_position
 	var target_rotation := camera_point.global_rotation

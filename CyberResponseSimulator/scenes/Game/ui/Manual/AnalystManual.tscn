@@ -1,0 +1,338 @@
+[gd_scene format=3]
+[ext_resource type="Script" path="res://scripts/Game/ui/AnalystManual.gd" id="1"]
+[ext_resource type="Texture2D" path="res://scenes/Game/ui/Manual/analyst_book.svg" id="2"]
+[ext_resource type="Texture2D" path="res://scenes/Game/ui/Manual/analyst_book_icon.svg" id="3"]
+[ext_resource type="FontFile" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="4"]
+[sub_resource type="StyleBoxFlat" id="Badge"]
+bg_color = Color(0.88, 0.73, 0.28, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.91, 0.56, 1)
+corner_radius_top_left = 44
+corner_radius_top_right = 44
+corner_radius_bottom_left = 44
+corner_radius_bottom_right = 44
+[sub_resource type="StyleBoxEmpty" id="Clear"]
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+[sub_resource type="StyleBoxFlat" id="Hover"]
+bg_color = Color(0.77, 0.89, 0.8, 0.65)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+[sub_resource type="Theme" id="BookTheme"]
+default_font = ExtResource("4")
+default_font_size = 18
+Label/colors/font_color = Color(0.18, 0.21, 0.19, 1)
+Button/colors/font_color = Color(0.18, 0.3, 0.28, 1)
+Button/colors/font_hover_color = Color(0.1, 0.25, 0.23, 1)
+Button/colors/font_pressed_color = Color(0.1, 0.25, 0.23, 1)
+Button/styles/normal = SubResource("Clear")
+Button/styles/hover = SubResource("Hover")
+Button/styles/pressed = SubResource("Hover")
+Button/styles/focus = SubResource("Hover")
+[node name="AnalystManual" type="CanvasLayer"]
+process_mode = 3
+layer = 80
+script = ExtResource("1")
+[node name="ManualButton" type="Button" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -112.0
+offset_top = -112.0
+offset_right = -24.0
+offset_bottom = -24.0
+focus_mode = 0
+tooltip_text = "Manual del Analista [Q]"
+theme_override_styles/normal = SubResource("Badge")
+theme_override_styles/hover = SubResource("Badge")
+theme_override_styles/pressed = SubResource("Badge")
+[node name="Icon" type="TextureRect" parent="ManualButton"]
+offset_left = 9.0
+offset_top = 11.0
+offset_right = 79.0
+offset_bottom = 69.0
+texture = ExtResource("3")
+expand_mode = 1
+mouse_filter = 2
+[node name="Shortcut" type="Label" parent="ManualButton"]
+offset_left = -9.0
+offset_top = 61.0
+offset_right = 19.0
+offset_bottom = 89.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("4")
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+text = "Q"
+[node name="Overlay" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = SubResource("BookTheme")
+[node name="Dim" type="ColorRect" parent="Overlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.02, 0.04, 0.06, 0.78)
+[node name="Center" type="CenterContainer" parent="Overlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+[node name="Book" type="Control" parent="Overlay/Center"]
+custom_minimum_size = Vector2(1000, 600)
+layout_mode = 2
+[node name="Paper" type="TextureRect" parent="Overlay/Center/Book"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+[node name="Index" type="VBoxContainer" parent="Overlay/Center/Book"]
+offset_left = 85.0
+offset_top = 70.0
+offset_right = 440.0
+offset_bottom = 490.0
+theme_override_constants/separation = 22
+[node name="Title" type="Label" parent="Overlay/Center/Book/Index"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Manual del\nAnalista"
+[node name="Subtitle" type="Label" parent="Overlay/Center/Book/Index"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.34, 0.43, 0.39, 1)
+text = "OBSERVA · CONTRASTA · DECIDE"
+[node name="Chapters" type="VBoxContainer" parent="Overlay/Center/Book/Index"]
+layout_mode = 2
+theme_override_constants/separation = 12
+[node name="PhishingButton" type="Button" parent="Overlay/Center/Book/Index/Chapters"]
+layout_mode = 2
+toggle_mode = true
+alignment = 0
+text = "01 ........ Phishing"
+[node name="MalwareButton" type="Button" parent="Overlay/Center/Book/Index/Chapters"]
+layout_mode = 2
+toggle_mode = true
+alignment = 0
+text = "02 ........ Malware"
+[node name="DDoSButton" type="Button" parent="Overlay/Center/Book/Index/Chapters"]
+layout_mode = 2
+toggle_mode = true
+alignment = 0
+text = "03 ........ DDoS"
+[node name="Hint" type="Label" parent="Overlay/Center/Book/Index"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Una pista no es una prueba.\nConsulta el contexto antes\nde tomar una decisión."
+[node name="ChapterScroll" type="ScrollContainer" parent="Overlay/Center/Book"]
+offset_left = 540.0
+offset_top = 73.0
+offset_right = 917.0
+offset_bottom = 493.0
+horizontal_scroll_mode = 0
+[node name="Pages" type="VBoxContainer" parent="Overlay/Center/Book/ChapterScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+[node name="PreviousButton" type="Button" parent="Overlay/Center/Book"]
+offset_left = 75.0
+offset_top = 520.0
+offset_right = 135.0
+offset_bottom = 563.0
+text = "<"
+[node name="NextButton" type="Button" parent="Overlay/Center/Book"]
+offset_left = 867.0
+offset_top = 520.0
+offset_right = 927.0
+offset_bottom = 563.0
+text = ">"
+[node name="PageNumber" type="Label" parent="Overlay/Center/Book"]
+offset_left = 550.0
+offset_top = 520.0
+offset_right = 850.0
+offset_bottom = 554.0
+horizontal_alignment = 1
+text = "1 / 3"
+[node name="CloseButton" type="Button" parent="Overlay/Center/Book"]
+offset_left = 888.0
+offset_top = 19.0
+offset_right = 942.0
+offset_bottom = 61.0
+text = "X"
+tooltip_text = "Cerrar [Q / Esc]"
+[node name="PhishingPage" type="VBoxContainer" parent="Overlay/Center/Book/ChapterScroll/Pages"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+[node name="Title" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Phishing"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="DefinitionTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "¿QUÉ ES?"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Definition" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "Es un engaño que suplanta a una persona u organización para obtener datos, dinero o lograr que abras contenido peligroso."
+autowrap_mode = 3
+mouse_filter = 2
+[node name="SignalsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "SEÑALES DE ALERTA"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Signals" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "• Solicitudes de contraseñas o pagos inesperados.\n• Dominios parecidos, pero distintos del habitual.\n• Adjuntos o enlaces que no esperabas.\n• Presión para actuar sin comprobar.\n• Contradicciones con las actividades del día."
+autowrap_mode = 3
+mouse_filter = 2
+[node name="ActionsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "CÓMO INVESTIGAR"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Actions" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "1. Consulta el resumen diario.\n2. Lee la dirección completa y lo que se solicita.\n3. Contrasta el formato del adjunto y el contexto.\n4. Verifica por un canal conocido antes de confiar."
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Note" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Un mensaje bien escrito o una dirección familiar no garantizan que sea seguro."
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="MalwarePage" type="VBoxContainer" parent="Overlay/Center/Book/ChapterScroll/Pages"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+visible = false
+[node name="Title" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Malware"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="DefinitionTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "¿QUÉ ES?"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Definition" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "Es software malicioso que puede alterar un equipo, robar información, cifrar archivos o permitir accesos no autorizados."
+autowrap_mode = 3
+mouse_filter = 2
+[node name="SignalsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "SEÑALES DE ALERTA"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Signals" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "• Procesos o archivos que no reconoces.\n• Comportamientos fuera de lo habitual.\n• Consumo de recursos sin explicación.\n• Cambios inesperados o alertas de seguridad."
+autowrap_mode = 3
+mouse_filter = 2
+[node name="ActionsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "CÓMO INVESTIGAR"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Actions" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "1. Revisa los procesos y archivos disponibles.\n2. Reúne evidencias antes de actuar.\n3. Distingue lo legítimo de lo sospechoso.\n4. Evalúa la contención según la información reunida."
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Note" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Un nombre extraño o un uso elevado de CPU no bastan para confirmar malware. No elimines archivos a ciegas."
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="DDoSPage" type="VBoxContainer" parent="Overlay/Center/Book/ChapterScroll/Pages"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+visible = false
+[node name="Title" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "DDoS"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="DefinitionTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "¿QUÉ ES?"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Definition" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "Un ataque distribuido de denegación de servicio busca saturar un sistema con tráfico desde múltiples orígenes, dificultando el acceso a usuarios legítimos."
+autowrap_mode = 3
+mouse_filter = 2
+[node name="SignalsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "SEÑALES DE ALERTA"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Signals" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "• Aumento inusual de solicitudes.\n• Lentitud, errores o pérdida de disponibilidad.\n• Recursos saturados en uno o varios servidores.\n• Patrones de tráfico diferentes de los habituales."
+autowrap_mode = 3
+mouse_filter = 2
+[node name="ActionsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "CÓMO INVESTIGAR"
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Actions" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "1. Observa las métricas y el estado de los servidores.\n2. Contrasta la demanda con el funcionamiento habitual.\n3. Evalúa la mitigación disponible y sus efectos.\n4. Comprueba que el servicio se recupere para usuarios legítimos."
+autowrap_mode = 3
+mouse_filter = 2
+[node name="Note" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Una caída no demuestra por sí sola un ataque. Un bloqueo excesivo también puede interrumpir tráfico legítimo."
+autowrap_mode = 3
+mouse_filter = 2
+
