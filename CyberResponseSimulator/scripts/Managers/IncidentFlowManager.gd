@@ -1,3 +1,4 @@
+
 extends Node
 
 
@@ -6,6 +7,7 @@ extends Node
 # ==========================================
 
 @export var first_incident_delay: float = 5.0
+@export var phishing_data: PhishingData
 @export var malware_data: MalwareIncidentData
 
 ## Para pruebas: escribe aqui "ddos", "phishing" o "malware" en el Inspector
@@ -16,12 +18,6 @@ extends Node
 
 # ==========================================
 # INCIDENTES DISPONIBLES
-# ==========================================
-#
-# Por ahora los creamos aquí como datos.
-#
-# Más adelante esto puede reemplazarse por
-# recursos .tres sin tener que cambiar el flujo.
 # ==========================================
 
 var available_incidents: Array[IncidentData] = []
@@ -40,7 +36,6 @@ var active_incident: IncidentData = null
 # ==========================================
 
 @onready var notification_panel: Panel = $"../GameHUD/IncidentNotification"
-
 @onready var incident_label: Label = $"../GameHUD/IncidentNotification/IncidentLabel"
 
 
@@ -81,13 +76,10 @@ func setup_incidents() -> void:
 	# PHISHING
 	# ------------------------------------------
 
-	var phishing := IncidentData.new()
-
-	phishing.incident_id = "phishing"
-	phishing.incident_name = "Phishing"
-	phishing.difficulty = 1
-
-	available_incidents.append(phishing)
+	if phishing_data != null:
+		available_incidents.append(phishing_data)
+	else:
+		push_error("Falta asignar los datos del incidente de Phishing.")
 
 
 	# ------------------------------------------
@@ -153,7 +145,7 @@ func setup_incidents() -> void:
 func start_incident_test() -> void:
 
 	await get_tree().create_timer(
-		first_incident_delay
+		first_incident_delay, false
 	).timeout
 
 	if not GameManager.game_active:
@@ -194,6 +186,7 @@ func create_incident() -> void:
 		available_incidents.pick_random()
 	)
 
+
 	# ==========================================
 	# REGISTRAR INCIDENTE
 	# ==========================================
@@ -223,7 +216,7 @@ func create_incident() -> void:
 
 	match incident.incident_id:
 
-		"phishing":
+		"pishing_01":
 			computer.activate_phishing(incident)
 
 		"malware":
@@ -282,7 +275,7 @@ func show_incident_notification(
 	notification_panel.visible = true
 
 	await get_tree().create_timer(
-		4.0
+		4.0, false
 	).timeout
 
 	notification_panel.visible = false

@@ -1,0 +1,194 @@
+[gd_scene format=3 uid="uid://dhvarbgrejemb"]
+
+[ext_resource type="Script" uid="uid://ldc5csfff7f" path="res://scripts/Game/ui/ResultsScreen.gd" id="1_bthji"]
+[ext_resource type="FontFile" uid="uid://mashn6f4lmra" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="1_wrmdb"]
+[ext_resource type="Shader" uid="uid://nwxyqj6nvl4q" path="res://shaders/blur_dim.gdshader" id="2_bthji"]
+[ext_resource type="Shader" uid="uid://cqrn4o046t7p6" path="res://shaders/paper_dirt.gdshader" id="3_eyqmu"]
+
+[ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/phishing_results.tscn" id="5_phishing_results"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1btnd"]
+shader = ExtResource("2_bthji")
+shader_parameter/radius = 3.0
+shader_parameter/darkness = 0.65
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bthji"]
+shader = ExtResource("3_eyqmu")
+shader_parameter/dirtiness = 0.0
+shader_parameter/stain_color = Color(0.42, 0.3, 0.16, 1)
+
+[node name="ResultsScreen" type="CanvasLayer" unique_id=1501641403]
+process_mode = 3
+layer = 50
+script = ExtResource("1_bthji")
+
+[node name="Dim" type="ColorRect" parent="." unique_id=1986735724]
+material = SubResource("ShaderMaterial_1btnd")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7058824)
+
+[node name="Center" type="CenterContainer" parent="." unique_id=1864600569]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Notebook" type="Control" parent="Center" unique_id=2049778103]
+custom_minimum_size = Vector2(900, 520)
+layout_mode = 2
+
+[node name="Paper" type="ColorRect" parent="Center/Notebook" unique_id=1754345772]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.95686275, 0.94509804, 0.9098039, 1)
+
+[node name="Dirt" type="ColorRect" parent="Center/Notebook" unique_id=1300682454]
+material = SubResource("ShaderMaterial_bthji")
+layout_mode = 1
+offset_left = 56.0
+offset_right = 900.0
+offset_bottom = 520.0
+mouse_filter = 2
+
+[node name="SpiralStrip" type="ColorRect" parent="Center/Notebook" unique_id=1152814252]
+layout_mode = 1
+offset_right = 56.0
+offset_bottom = 520.0
+color = Color(0.7882353, 0.7647059, 0.6901961, 1)
+
+[node name="Rings" type="VBoxContainer" parent="Center/Notebook/SpiralStrip" unique_id=1315657287]
+layout_mode = 1
+offset_left = 10.0
+offset_top = 20.0
+offset_right = 46.0
+offset_bottom = 500.0
+theme_override_constants/separation = 52
+
+[node name="Ring1" type="ColorRect" parent="Center/Notebook/SpiralStrip/Rings" unique_id=2130967516]
+custom_minimum_size = Vector2(36, 14)
+layout_mode = 2
+color = Color(0.2901961, 0.2901961, 0.2901961, 1)
+
+[node name="Ring2" type="ColorRect" parent="Center/Notebook/SpiralStrip/Rings" unique_id=1312848173]
+custom_minimum_size = Vector2(36, 14)
+layout_mode = 2
+color = Color(0.2901961, 0.2901961, 0.2901961, 1)
+
+[node name="Ring3" type="ColorRect" parent="Center/Notebook/SpiralStrip/Rings" unique_id=1084013676]
+custom_minimum_size = Vector2(36, 14)
+layout_mode = 2
+color = Color(0.2901961, 0.2901961, 0.2901961, 1)
+
+[node name="Ring4" type="ColorRect" parent="Center/Notebook/SpiralStrip/Rings" unique_id=1630145638]
+custom_minimum_size = Vector2(36, 14)
+layout_mode = 2
+color = Color(0.2901961, 0.2901961, 0.2901961, 1)
+
+[node name="Ring5" type="ColorRect" parent="Center/Notebook/SpiralStrip/Rings" unique_id=122828987]
+custom_minimum_size = Vector2(36, 14)
+layout_mode = 2
+color = Color(0.2901961, 0.2901961, 0.2901961, 1)
+
+[node name="Ring6" type="ColorRect" parent="Center/Notebook/SpiralStrip/Rings" unique_id=42598689]
+custom_minimum_size = Vector2(36, 14)
+layout_mode = 2
+color = Color(0.2901961, 0.2901961, 0.2901961, 1)
+
+[node name="Ring7" type="ColorRect" parent="Center/Notebook/SpiralStrip/Rings" unique_id=1475016572]
+custom_minimum_size = Vector2(36, 14)
+layout_mode = 2
+color = Color(0.2901961, 0.2901961, 0.2901961, 1)
+
+[node name="Ring8" type="ColorRect" parent="Center/Notebook/SpiralStrip/Rings" unique_id=1017018042]
+custom_minimum_size = Vector2(36, 14)
+layout_mode = 2
+color = Color(0.2901961, 0.2901961, 0.2901961, 1)
+
+[node name="TitleLabel" type="Label" parent="Center/Notebook" unique_id=1451839078]
+layout_mode = 1
+offset_left = 90.0
+offset_top = 24.0
+offset_right = 870.0
+offset_bottom = 72.0
+theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+theme_override_fonts/font = ExtResource("1_wrmdb")
+theme_override_font_sizes/font_size = 36
+text = "Resultados del dia"
+
+[node name="Stats" type="VBoxContainer" parent="Center/Notebook" unique_id=723132640]
+layout_mode = 1
+offset_left = 90.0
+offset_top = 100.0
+offset_right = 560.0
+offset_bottom = 360.0
+theme_override_constants/separation = 18
+
+[node name="TotalLabel" type="Label" parent="Center/Notebook/Stats" unique_id=1169397322]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+theme_override_fonts/font = ExtResource("1_wrmdb")
+theme_override_font_sizes/font_size = 24
+text = "Incidentes totales: 0"
+
+[node name="DurationLabel" type="Label" parent="Center/Notebook/Stats" unique_id=901519935]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+theme_override_fonts/font = ExtResource("1_wrmdb")
+theme_override_font_sizes/font_size = 24
+text = "Duración de la partida: 00:00"
+
+[node name="ResolvedLabel" type="Label" parent="Center/Notebook/Stats" unique_id=1322915399]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+theme_override_fonts/font = ExtResource("1_wrmdb")
+theme_override_font_sizes/font_size = 24
+text = "Incidentes resueltos: 0"
+
+[node name="UnresolvedLabel" type="Label" parent="Center/Notebook/Stats" unique_id=1197052656]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+theme_override_fonts/font = ExtResource("1_wrmdb")
+theme_override_font_sizes/font_size = 24
+text = "Incidentes sin resolver: 0"
+
+[node name="GradeTitleLabel" type="Label" parent="Center/Notebook" unique_id=535595830]
+layout_mode = 1
+offset_left = 610.0
+offset_top = 120.0
+offset_right = 860.0
+offset_bottom = 152.0
+theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+theme_override_fonts/font = ExtResource("1_wrmdb")
+theme_override_font_sizes/font_size = 24
+text = "Clasificación"
+horizontal_alignment = 1
+
+[node name="GradeLabel" type="Label" parent="Center/Notebook" unique_id=1720325810]
+layout_mode = 1
+offset_left = 610.0
+offset_top = 170.0
+offset_right = 930.0
+offset_bottom = 330.0
+theme_override_colors/font_color = Color(0.90588236, 0.11764706, 0.11764706, 1)
+theme_override_fonts/font = ExtResource("1_wrmdb")
+theme_override_font_sizes/font_size = 96
+text = "S+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+
+[node name="PhishingResults" parent="Center/Notebook" instance=ExtResource("5_phishing_results")]
+visible = false
+offset_left = 90.0
+offset_top = 370.0
+offset_right = 870.0
+offset_bottom = 500.0

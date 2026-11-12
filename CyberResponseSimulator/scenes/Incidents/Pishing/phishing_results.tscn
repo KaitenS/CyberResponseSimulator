@@ -1,0 +1,91 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/phishing_results.gd" id="1_script"]
+[ext_resource type="FontFile" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_font"]
+
+[sub_resource type="Theme" id="Theme_phishing"]
+default_font = ExtResource("2_font")
+default_font_size = 18
+Label/colors/font_color = Color(0.12, 0.16, 0.23, 1)
+RichTextLabel/colors/default_color = Color(0.12, 0.16, 0.23, 1)
+
+[sub_resource type="StyleBoxFlat" id="Style_panel"]
+bg_color = Color(0.97, 0.96, 0.92, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.36, 0.52, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="Style_button"]
+bg_color = Color(0.94, 0.93, 0.87, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.36, 0.52, 1)
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+
+[node name="PhishingResults" type="Control"]
+offset_right = 780.0
+offset_bottom = 130.0
+mouse_filter = 2
+theme = SubResource("Theme_phishing")
+script = ExtResource("1_script")
+
+[node name="Summary" type="Label" parent="."]
+offset_right = 780.0
+offset_bottom = 48.0
+text = "Phishing: 0 aciertos · 0 errores · 0 sin responder"
+autowrap_mode = 3
+
+[node name="ReviewButton" type="Button" parent="."]
+offset_top = 62.0
+offset_right = 330.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(0.12, 0.16, 0.23, 1)
+theme_override_colors/font_hover_color = Color(0.12, 0.16, 0.23, 1)
+theme_override_styles/normal = SubResource("Style_button")
+theme_override_styles/hover = SubResource("Style_button")
+text = "Revisar decisiones de Phishing"
+
+[node name="DetailPanel" type="Panel" parent="."]
+visible = false
+offset_top = -280.0
+offset_right = 780.0
+offset_bottom = 130.0
+theme_override_styles/panel = SubResource("Style_panel")
+
+[node name="Title" type="Label" parent="DetailPanel"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 764.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 24
+text = "Phishing · Revisión de tus decisiones"
+
+[node name="Details" type="RichTextLabel" parent="DetailPanel"]
+offset_left = 16.0
+offset_top = 56.0
+offset_right = 764.0
+offset_bottom = 350.0
+text = "Aquí aparecerán las decisiones y las pistas de cada correo."
+bbcode_enabled = false
+
+[node name="BackButton" type="Button" parent="DetailPanel"]
+offset_left = 16.0
+offset_top = 365.0
+offset_right = 280.0
+offset_bottom = 398.0
+theme_override_colors/font_color = Color(0.12, 0.16, 0.23, 1)
+theme_override_colors/font_hover_color = Color(0.12, 0.16, 0.23, 1)
+theme_override_styles/normal = SubResource("Style_button")
+theme_override_styles/hover = SubResource("Style_button")
+text = "Volver a resultados"

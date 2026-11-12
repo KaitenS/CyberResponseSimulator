@@ -19,4 +19,5 @@ María"
 attachment_name = "informe_gastos.exe"
 has_attachment = true
 is_phishing = true
+explanation = "El remitente usa empresa-segura.cl en lugar de empresa.cl. Además, el resumen anuncia un PDF y el adjunto es informe_gastos.exe. La urgencia añade presión para no revisar estas diferencias."
 metadata/_custom_type_script = "uid://l3b3e5vup7qn"

@@ -17,4 +17,5 @@ Saludos,
 María"
 attachment_name = "informe_gastos.pdf"
 has_attachment = true
+explanation = "El resumen anuncia un informe mensual de gastos de María, del área de Finanzas, en PDF. El asunto, el dominio empresa.cl y el adjunto informe_gastos.pdf coinciden con lo esperado."
 metadata/_custom_type_script = "uid://l3b3e5vup7qn"
