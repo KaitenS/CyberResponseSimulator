@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://c70j0s800typg" path="res://scripts/Managers/IncidentFlowManager.gd" id="5_yqgss"]
 [ext_resource type="Resource" uid="uid://cik5bb381swee" path="res://scripts/Data/computador_finanzas.tres" id="6_50swi"]
 [ext_resource type="Resource" uid="uid://bo2iftogxj5vv" path="res://Resources/Incidents/Pishing/Pishing_01.tres" id="6_lfncv"]
+[ext_resource type="PackedScene" uid="uid://bpap1btjsmjat" path="res://scenes/Game/PauseMenu.tscn" id="8_lfncv"]
 
 [sub_resource type="Environment" id="Environment_bekgd"]
 
@@ -89,3 +90,5 @@ phishing_data = ExtResource("6_lfncv")
 malware_data = ExtResource("6_50swi")
 
 [node name="ResultsScreen" parent="." unique_id=1501641403 instance=ExtResource("1_f8ls4")]
+
+[node name="PauseMenu" parent="." unique_id=944035655 instance=ExtResource("8_lfncv")]
