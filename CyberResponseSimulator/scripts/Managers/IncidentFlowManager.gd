@@ -1,3 +1,4 @@
+
 extends Node
 
 
@@ -6,17 +7,12 @@ extends Node
 # ==========================================
 
 @export var first_incident_delay: float = 5.0
+@export var phishing_data: PhishingData
 @export var malware_data: MalwareIncidentData
 
 
 # ==========================================
 # INCIDENTES DISPONIBLES
-# ==========================================
-#
-# Por ahora los creamos aquí como datos.
-#
-# Más adelante esto puede reemplazarse por
-# recursos .tres sin tener que cambiar el flujo.
 # ==========================================
 
 var available_incidents: Array[IncidentData] = []
@@ -35,7 +31,6 @@ var active_incident: IncidentData = null
 # ==========================================
 
 @onready var notification_panel: Panel = $"../GameHUD/IncidentNotification"
-
 @onready var incident_label: Label = $"../GameHUD/IncidentNotification/IncidentLabel"
 
 
@@ -76,13 +71,10 @@ func setup_incidents() -> void:
 	# PHISHING
 	# ------------------------------------------
 
-	var phishing := IncidentData.new()
-
-	phishing.incident_id = "phishing"
-	phishing.incident_name = "Phishing"
-	phishing.difficulty = 1
-
-	available_incidents.append(phishing)
+	if phishing_data != null:
+		available_incidents.append(phishing_data)
+	else:
+		push_error("Falta asignar los datos del incidente de Phishing.")
 
 
 	# ------------------------------------------
@@ -172,6 +164,7 @@ func create_incident() -> void:
 		available_incidents.pick_random()
 	)
 
+
 	# ==========================================
 	# REGISTRAR INCIDENTE
 	# ==========================================
@@ -201,7 +194,7 @@ func create_incident() -> void:
 
 	match incident.incident_id:
 
-		"phishing":
+		"pishing_01":
 			computer.activate_phishing(incident)
 
 		"malware":

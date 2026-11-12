@@ -7,6 +7,8 @@ var phishing_active: bool = false
 var active_incident: IncidentData = null
 var cyber_desk: Control = null
 
+var phishing_controller: PishingIncidentController = null
+
 var malware_active: bool = false
 var malware_incident: MalwareIncidentData = null
 var malware_controller: MalwareIncidentController = null
@@ -29,9 +31,50 @@ func _ready() -> void:
 	computer_screen_black.visible = true
 
 
+
 func activate_phishing(incident: IncidentData) -> void:
+	if not incident is PhishingData:
+		push_error("Computer: El incidente no contiene PhishingData.")
+		return
+
+	if phishing_controller != null and phishing_controller.incident_active:
+		return
+
 	phishing_active = true
 	active_incident = incident
+
+	if is_instance_valid(phishing_controller):
+		phishing_controller.queue_free()
+	phishing_controller = PishingIncidentController.new()
+	add_child(phishing_controller)
+
+	phishing_controller.incident_finished.connect(
+		_on_phishing_finished
+	)
+
+	if cyber_desk != null:
+		cyber_desk.get_node("CyberDesk").set_phishing_controller(phishing_controller)
+
+	phishing_controller.start_incident(incident as PhishingData)
+
+
+func _on_phishing_finished(completed: bool) -> void:
+	phishing_active = false
+
+	if completed:
+		GameManager.score += 100
+		GameManager.incidents_completed += 1
+	else:
+		GameManager.incidents_failed += 1
+
+	IncidentManager.finish_incident(active_incident)
+
+	active_incident = null
+
+	# Conservar los correos al reabrir CyberMail tras finalizar.
+
+	print("Computer: Incidente Phishing finalizado.")
+
 
 func activate_malware(data: MalwareIncidentData) -> void:
 	malware_active = true
@@ -79,6 +122,7 @@ func open_cyber_desk() -> void:
 	var cyber_desk_root: Control = cyber_desk.get_node("CyberDesk")
 	
 	cyber_desk_root.set_malware_controller(malware_controller)
+	cyber_desk_root.set_phishing_controller(phishing_controller)
 
 	cyber_desk_root.close_requested.connect(
 		_on_cyber_desk_close_requested

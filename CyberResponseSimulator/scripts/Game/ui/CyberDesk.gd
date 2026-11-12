@@ -9,6 +9,10 @@ func set_malware_controller(controller: MalwareIncidentController) -> void:
 	malware_controller = controller
 
 
+func set_phishing_controller(controller: PishingIncidentController) -> void:
+	$Windows/CyberMailWindow.set_controller(controller)
+
+
 func _ready() -> void:
 	print("===== CYBERDESK.GD CARGADO =====")
 	print("NODO: ", self)

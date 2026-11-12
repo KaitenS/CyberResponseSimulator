@@ -1,0 +1,462 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/CyberDesk/Desktop Windows/DailySummary.png" id="1_errd5"]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/daily_summary_window.gd" id="2_h22nb"]
+[ext_resource type="FontFile" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_vlk44"]
+[ext_resource type="Texture2D" path="res://assets/Buttons/Close Button.png" id="4_322uj"]
+
+[sub_resource type="Theme" id="Theme_errd5"]
+default_font = ExtResource("3_vlk44")
+default_font_size = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h22nb"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0.32941177, 0.8901961, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0.23529412, 0.7294118, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vlk44"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.9254902, 0.9137255, 0.84705883, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.84705883, 0.8235294, 0.7411765, 1)
+
+[sub_resource type="Gradient" id="Gradient_322uj"]
+offsets = PackedFloat32Array(0, 1, 0.2)
+colors = PackedColorArray(0.03137255, 0.4117647, 0.92941177, 1, 0.023529412, 0.28627452, 0.77254903, 1, 0.20784314, 0.58431375, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_gw8e6"]
+gradient = SubResource("Gradient_322uj")
+fill_to = Vector2(0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rkuf4"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(1, 0.99607843, 0.9607843, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7764706, 0.75686276, 0.6862745, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d87na"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(1, 0.99607843, 0.9607843, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7764706, 0.75686276, 0.6862745, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_03msd"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(1, 0.99607843, 0.9607843, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7764706, 0.75686276, 0.6862745, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x010o"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(1, 0.99607843, 0.9607843, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7764706, 0.75686276, 0.6862745, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icey8"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(1, 0.99607843, 0.9607843, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7764706, 0.75686276, 0.6862745, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ancd6"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(1, 0.99607843, 0.9607843, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7764706, 0.75686276, 0.6862745, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iw18o"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(1, 0.99607843, 0.9607843, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7764706, 0.75686276, 0.6862745, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[node name="DailySummaryWindow" type="TextureRect" unique_id=1852926505]
+z_index = 10
+offset_right = 600.0
+offset_bottom = 400.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_errd5")
+texture = ExtResource("1_errd5")
+expand_mode = 1
+script = ExtResource("2_h22nb")
+
+[node name="XPFrame" type="Panel" parent="." unique_id=1639748071]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h22nb")
+
+[node name="Background" type="Panel" parent="." unique_id=1918508563]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 42.0
+offset_right = 595.0
+offset_bottom = 395.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vlk44")
+
+[node name="TitleBar" type="ColorRect" parent="." unique_id=1488702187]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 4.0
+offset_right = 596.0
+offset_bottom = 39.0
+color = Color(0, 0, 0, 0)
+
+[node name="XPTitleGradient" type="TextureRect" parent="TitleBar" unique_id=1451090736]
+expand_mode = 1
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_gw8e6")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TitleBar" unique_id=548972592]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="TitleBar/HBoxContainer" unique_id=1165350519]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.08235294, 0.23529412, 0.5411765, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 22
+text = "Resumen Diario"
+vertical_alignment = 1
+
+[node name="TaskbarSpacer" type="Control" parent="TitleBar/HBoxContainer" unique_id=2112732569]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="TextureButton" parent="TitleBar/HBoxContainer" unique_id=1238352072]
+layout_mode = 2
+texture_normal = ExtResource("4_322uj")
+
+[node name="Eyebrow" type="Label" parent="." unique_id=407124019]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 53.0
+offset_right = 578.0
+offset_bottom = 76.0
+theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 14
+text = "ANTES DE ABRIR TU CORREO"
+autowrap_mode = 3
+
+[node name="Heading" type="Label" parent="." unique_id=1746358162]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 73.0
+offset_right = 578.0
+offset_bottom = 96.0
+theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 22
+text = "Lo que necesitas saber hoy"
+autowrap_mode = 3
+
+[node name="SummaryScroll" type="ScrollContainer" parent="." unique_id=1806055697]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 106.0
+offset_right = 584.0
+offset_bottom = 352.0
+horizontal_scroll_mode = 0
+
+[node name="Cards" type="VBoxContainer" parent="SummaryScroll" unique_id=755685880]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Card_01" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=1103415256]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_rkuf4")
+
+[node name="Content" type="HBoxContainer" parent="SummaryScroll/Cards/Card_01" unique_id=578251312]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Number" type="Label" parent="SummaryScroll/Cards/Card_01/Content" unique_id=1223855403]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.14117648, 0.36862746, 0.85882354, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 18
+text = "01"
+autowrap_mode = 3
+
+[node name="Text" type="Label" parent="SummaryScroll/Cards/Card_01/Content" unique_id=1004771798]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 16
+text = "Se espera recibir durante la mañana un informe de María González, del área de Finanzas."
+autowrap_mode = 3
+
+[node name="Card_02" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=391538769]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_d87na")
+
+[node name="Content" type="HBoxContainer" parent="SummaryScroll/Cards/Card_02" unique_id=1004819955]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Number" type="Label" parent="SummaryScroll/Cards/Card_02/Content" unique_id=353328761]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.14117648, 0.36862746, 0.85882354, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 18
+text = "02"
+autowrap_mode = 3
+
+[node name="Text" type="Label" parent="SummaryScroll/Cards/Card_02/Content" unique_id=201016163]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 16
+text = "El archivo esperado corresponde al informe mensual de gastos."
+autowrap_mode = 3
+
+[node name="Card_03" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=770393544]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_03msd")
+
+[node name="Content" type="HBoxContainer" parent="SummaryScroll/Cards/Card_03" unique_id=1713629821]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Number" type="Label" parent="SummaryScroll/Cards/Card_03/Content" unique_id=1304004781]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.14117648, 0.36862746, 0.85882354, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 18
+text = "03"
+autowrap_mode = 3
+
+[node name="Text" type="Label" parent="SummaryScroll/Cards/Card_03/Content" unique_id=1863025524]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 16
+text = "El archivo esperado debe ser un documento PDF."
+autowrap_mode = 3
+
+[node name="Card_04" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=1386137900]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_x010o")
+
+[node name="Content" type="HBoxContainer" parent="SummaryScroll/Cards/Card_04" unique_id=1413285115]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Number" type="Label" parent="SummaryScroll/Cards/Card_04/Content" unique_id=1470354581]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.14117648, 0.36862746, 0.85882354, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 18
+text = "04"
+autowrap_mode = 3
+
+[node name="Text" type="Label" parent="SummaryScroll/Cards/Card_04/Content" unique_id=1790445655]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 16
+text = "Juan Pérez, del área de Recursos Humanos, se encuentra de vacaciones esta semana."
+autowrap_mode = 3
+
+[node name="Card_05" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=859245829]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_icey8")
+
+[node name="Content" type="HBoxContainer" parent="SummaryScroll/Cards/Card_05" unique_id=1455889665]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Number" type="Label" parent="SummaryScroll/Cards/Card_05/Content" unique_id=1439328877]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.14117648, 0.36862746, 0.85882354, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 18
+text = "05"
+autowrap_mode = 3
+
+[node name="Text" type="Label" parent="SummaryScroll/Cards/Card_05/Content" unique_id=892978233]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 16
+text = "El área de TI no ha anunciado ninguna actualización de software para hoy."
+autowrap_mode = 3
+
+[node name="Card_06" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=333703811]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ancd6")
+
+[node name="Content" type="HBoxContainer" parent="SummaryScroll/Cards/Card_06" unique_id=1809269681]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Number" type="Label" parent="SummaryScroll/Cards/Card_06/Content" unique_id=900637300]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.14117648, 0.36862746, 0.85882354, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 18
+text = "06"
+autowrap_mode = 3
+
+[node name="Text" type="Label" parent="SummaryScroll/Cards/Card_06/Content" unique_id=544085906]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 16
+text = "No se esperan archivos ejecutables ni instaladores enviados por correo."
+autowrap_mode = 3
+
+[node name="Card_07" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=565639712]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_iw18o")
+
+[node name="Content" type="HBoxContainer" parent="SummaryScroll/Cards/Card_07" unique_id=49787489]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Number" type="Label" parent="SummaryScroll/Cards/Card_07/Content" unique_id=1363301352]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.14117648, 0.36862746, 0.85882354, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 18
+text = "07"
+autowrap_mode = 3
+
+[node name="Text" type="Label" parent="SummaryScroll/Cards/Card_07/Content" unique_id=1938312775]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 16
+text = "Cualquier solicitud urgente relacionada con credenciales debe ser reportada."
+autowrap_mode = 3
+
+[node name="Footer" type="Label" parent="." unique_id=311462671]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 367.0
+offset_right = 578.0
+offset_bottom = 390.0
+theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
+theme_override_fonts/font = ExtResource("3_vlk44")
+theme_override_font_sizes/font_size = 13
+text = "CONSULTA ESTE RESUMEN ANTES DE RESPONDER"
+autowrap_mode = 3
