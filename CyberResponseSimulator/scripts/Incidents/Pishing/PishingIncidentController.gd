@@ -3,6 +3,7 @@ class_name PishingIncidentController
 extends Node
 
 signal incident_started(data: PhishingData)
+signal summary_read_changed
 signal email_state_changed(email: PhishingEmail)
 signal email_received(email: PhishingEmail)
 signal email_resolved(email: PhishingEmail, accepted: bool)
@@ -15,6 +16,7 @@ const MAX_EMAIL_INTERVAL: float = 25.0
 const MAX_EMAILS: int = 5
 
 var phishing_data: PhishingData = null
+var summary_read: bool = false
 
 var incident_active: bool = false
 var time_remaining: float = 0.0
@@ -47,6 +49,7 @@ func start_incident(data: PhishingData) -> void:
 			choices.append(variant)
 	phishing_data = choices.pick_random()
 
+	summary_read = false
 	selected_emails.clear()
 	received_emails.clear()
 	resolved_emails.clear()
@@ -261,3 +264,9 @@ func get_unread_count() -> int:
 		if email not in read_emails:
 			count += 1
 	return count
+
+func mark_summary_read() -> void:
+	if phishing_data == null or phishing_data.daily_summary == null or summary_read:
+		return
+	summary_read = true
+	summary_read_changed.emit()

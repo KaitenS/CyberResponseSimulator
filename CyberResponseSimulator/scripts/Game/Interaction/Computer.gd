@@ -15,6 +15,7 @@ var malware_controller: MalwareIncidentController = null
 
 var cursor_position := Vector2(320.0, 320.0)
 var custom_cursor: TextureRect = null
+var _phishing_scroll_dragging: bool = false
 
 const CYBER_DESK_SIZE := Vector2(640.0, 640.0)
 const CURSOR_SIZE := Vector2(24.0, 24.0)
@@ -184,9 +185,28 @@ func _input(event: InputEvent) -> void:
 		return
 
 	if event is InputEventMouseMotion:
+		var previous_position := cursor_position
 		move_custom_cursor(event.relative)
+		if _phishing_scroll_dragging or _cursor_over_phishing_window():
+			var motion := InputEventMouseMotion.new()
+			motion.position = cursor_position
+			motion.global_position = cursor_position
+			motion.relative = cursor_position - previous_position
+			motion.button_mask = event.button_mask
+			cyber_desk_viewport.push_input(motion, true)
 
 	if event is InputEventMouseButton:
+		if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+			if _cursor_over_phishing_window():
+				var wheel := event.duplicate() as InputEventMouseButton
+				wheel.position = cursor_position
+				wheel.global_position = cursor_position
+				cyber_desk_viewport.push_input(wheel, true)
+			return
+
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			_phishing_scroll_dragging = event.pressed and _cursor_over_phishing_window()
+
 		if event.button_index != MOUSE_BUTTON_LEFT:
 			return
 
@@ -273,6 +293,7 @@ func _on_cyber_desk_close_requested() -> void:
 	cyber_desk.queue_free()
 	cyber_desk = null
 	custom_cursor = null
+	_phishing_scroll_dragging = false
 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
@@ -283,3 +304,15 @@ func _on_cyber_desk_close_requested() -> void:
 
 func _on_phishing_email_received(_email: PhishingEmail) -> void:
 	$PhishingMailSound.play()
+
+
+func _cursor_over_phishing_window() -> bool:
+	if not is_instance_valid(cyber_desk):
+		return false
+	var desk := cyber_desk.get_node("CyberDesk")
+	# No enviar eventos adicionales a ventanas de otros incidentes.
+	for window_path in ["Windows/MalwareWindow", "DDoSWindow"]:
+		var other := desk.get_node_or_null(window_path) as Control
+		if other != null and other.is_visible_in_tree() and other.get_global_rect().has_point(cursor_position):
+			return false
+	return desk._is_click_on_phishing_window(cursor_position)

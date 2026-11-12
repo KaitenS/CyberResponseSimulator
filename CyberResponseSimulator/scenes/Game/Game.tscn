@@ -11,6 +11,8 @@
 [ext_resource type="Script" uid="uid://dxt4rog4bwqxa" path="res://scripts/Game/colisiones_mapa.gd" id="8_lfncv"]
 [ext_resource type="Script" uid="uid://jyct5dvwsh3h" path="res://scripts/Game/ambiente_mapa.gd" id="9_i6kj0"]
 
+[ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Pishing_01.tres" id="6_lfncv"]
+
 [sub_resource type="Environment" id="Environment_bekgd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tt4u6"]
