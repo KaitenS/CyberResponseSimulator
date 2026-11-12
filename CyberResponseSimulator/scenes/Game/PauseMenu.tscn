@@ -124,7 +124,7 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_h2k4b")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_gxovh")
 theme_override_styles/hover = SubResource("StyleBoxFlat_n62i7")
-text = "CONTINUAR"
+text = "◈ CONTINUAR"
 text_direction = 1
 
 [node name="MenuButton" type="Button" parent="Center/Panel/Buttons" unique_id=1686861082]
@@ -141,4 +141,4 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_d5k54")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_1aocv")
 theme_override_styles/hover = SubResource("StyleBoxFlat_m27eb")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_o6k08")
-text = "VOLVER AL MENU"
+text = "✗ VOLVER AL MENU"
