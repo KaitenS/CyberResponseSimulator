@@ -5,6 +5,8 @@
 [ext_resource type="Shader" uid="uid://nwxyqj6nvl4q" path="res://shaders/blur_dim.gdshader" id="2_bthji"]
 [ext_resource type="Shader" uid="uid://cqrn4o046t7p6" path="res://shaders/paper_dirt.gdshader" id="3_eyqmu"]
 
+[ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/phishing_results.tscn" id="5_phishing_results"]
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1btnd"]
 shader = ExtResource("2_bthji")
 shader_parameter/radius = 3.0
@@ -182,3 +184,11 @@ theme_override_font_sizes/font_size = 96
 text = "S+"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+
+[node name="PhishingResults" parent="Center/Notebook" instance=ExtResource("5_phishing_results")]
+visible = false
+offset_left = 90.0
+offset_top = 370.0
+offset_right = 870.0
+offset_bottom = 500.0

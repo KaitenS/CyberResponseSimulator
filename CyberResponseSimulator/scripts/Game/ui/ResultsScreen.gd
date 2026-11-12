@@ -48,7 +48,18 @@ func _ready() -> void:
 		build(3, 1, 0, 60.0)
 		visible = true
 		
+func _build_phishing_results() -> void:
+	var reports: Array[Dictionary] = GameManager.phishing_results.duplicate(true)
+	# Los incidentes aún activos ya cuentan como sin resolver en las estadísticas.
+	# Aquí solo consultamos sus decisiones, sin cambiar contadores ni finalizar otros incidentes.
+	for controller in get_tree().get_nodes_in_group("phishing_controllers"):
+		if controller.incident_active:
+			reports.append(controller.get_result())
+	$Center/Notebook/PhishingResults.build(reports)
+
+
 func show_results() -> void:
+	_build_phishing_results()
 	build(
 		GameManager.incidents_completed,
 		GameManager.incidents_failed,

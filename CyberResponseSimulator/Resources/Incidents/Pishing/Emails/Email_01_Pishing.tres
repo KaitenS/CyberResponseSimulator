@@ -19,4 +19,5 @@ Juan"
 attachment_name = "actualizacion.exe"
 has_attachment = true
 is_phishing = true
+explanation = "El resumen indica que Juan está de vacaciones y que no se esperan ejecutables. El archivo actualizacion.exe y la presión por abrirlo contradicen esas indicaciones."
 metadata/_custom_type_script = "uid://l3b3e5vup7qn"

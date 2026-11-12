@@ -36,6 +36,10 @@ func _input(event: InputEvent) -> void:
 				and malware_window_ref.get_global_rect().has_point(event.position)
 			)
 
+			# Las ventanas de Phishing también cubren los iconos del escritorio.
+			# No consumir el evento: sus botones y controles deben seguir recibiéndolo.
+			var click_on_phishing_window := _is_click_on_phishing_window(event.position)
+
 			# ==========================================
 			# DAILY SUMMARY
 			# ==========================================
@@ -44,7 +48,7 @@ func _input(event: InputEvent) -> void:
 				"DesktopIcons/GridContainer/DailySummary Button"
 			)
 
-			if daily_summary_button != null and not click_on_malware:
+			if daily_summary_button != null and not click_on_malware and not click_on_phishing_window:
 				var daily_summary_rect: Rect2 = (
 					daily_summary_button.get_global_rect()
 				)
@@ -62,7 +66,7 @@ func _input(event: InputEvent) -> void:
 				"DesktopIcons/GridContainer/Email Button"
 			)
 
-			if email_button != null and not click_on_malware:
+			if email_button != null and not click_on_malware and not click_on_phishing_window:
 				var email_rect: Rect2 = (
 					email_button.get_global_rect()
 				)
@@ -80,7 +84,7 @@ func _input(event: InputEvent) -> void:
 				"DesktopIcons/GridContainer/Files Button"
 			)
 
-			if files_button != null and not click_on_malware:
+			if files_button != null and not click_on_malware and not click_on_phishing_window:
 				var files_rect: Rect2 = files_button.get_global_rect()
 
 				if files_rect.has_point(event.position):
@@ -255,3 +259,11 @@ func _on_close_button_pressed() -> void:
 	close_requested.emit()
 
 	print("===== SIGNAL close_requested EMITIDO =====")
+
+
+func _is_click_on_phishing_window(position: Vector2) -> bool:
+	for path in ["Windows/CyberMailWindow", "Windows/DailySummaryWindow"]:
+		var window := get_node_or_null(path) as Control
+		if window != null and window.is_visible_in_tree() and window.get_global_rect().has_point(position):
+			return true
+	return false

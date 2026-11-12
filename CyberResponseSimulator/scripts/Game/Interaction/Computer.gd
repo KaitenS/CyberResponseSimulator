@@ -60,9 +60,11 @@ func activate_phishing(incident: IncidentData) -> void:
 
 func _on_phishing_finished(completed: bool) -> void:
 	phishing_active = false
+	var result := phishing_controller.last_result.duplicate(true)
+	GameManager.phishing_results.append(result)
+	GameManager.score += int(result["points"])
 
 	if completed:
-		GameManager.score += 100
 		GameManager.incidents_completed += 1
 	else:
 		GameManager.incidents_failed += 1
