@@ -10,6 +10,11 @@ extends Node
 @export var phishing_data: PhishingData
 @export var malware_data: MalwareIncidentData
 
+## Para pruebas: escribe aqui "ddos", "phishing" o "malware" en el Inspector
+## y siempre saldra ese incidente. Dejalo VACIO para el sorteo normal.
+## (El boton "Practicar DDoS" del menu tambien lo fuerza.)
+@export var forzar_incidente: String = ""
+
 
 # ==========================================
 # INCIDENTES DISPONIBLES
@@ -98,6 +103,23 @@ func setup_incidents() -> void:
 	ddos.difficulty = 3
 
 	available_incidents.append(ddos)
+
+	# Incidente forzado (Inspector o boton "Practicar DDoS"): se consume una vez.
+	var forzado := forzar_incidente
+	if DDoSEnMapa.forzar_siguiente != "":
+		forzado = DDoSEnMapa.forzar_siguiente
+		DDoSEnMapa.forzar_siguiente = ""
+	DDoSEnMapa.modo_practica = (forzado == "ddos")
+
+	if forzado != "":
+		var filtrados: Array[IncidentData] = []
+		for inc in available_incidents:
+			if inc.incident_id == forzado:
+				filtrados.append(inc)
+		if filtrados.is_empty():
+			print("AVISO: no existe el incidente forzado '%s'." % forzado)
+		else:
+			available_incidents = filtrados
 
 
 	print(
@@ -201,9 +223,9 @@ func create_incident() -> void:
 			computer.activate_malware(malware_data)
 
 		"ddos":
-			print(
-				"TODO: Activar DDoS"
-			)
+			# El DDoS se juega en este mismo mapa: consola en el PC
+			# (icono "Servidores") y racks fisicos. Ver ddos_en_mapa.gd.
+			DDoSEnMapa.iniciar_en_escena(get_parent(), incident)
 
 
 	# ==========================================

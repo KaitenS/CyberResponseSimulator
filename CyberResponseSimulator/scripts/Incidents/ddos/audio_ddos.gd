@@ -43,6 +43,44 @@ func _ready() -> void:
 	IncidenteDDoS.oleada_iniciada.connect(_on_oleada)
 	IncidenteDDoS.servidor_estado_cambiado.connect(_on_servidor_estado)
 	IncidenteDDoS.mitigacion_resultado.connect(_on_mitigacion)
+	# Fallo de reinicio: zumbido grave en dos tonos
+	IncidenteDDoS.reinicio_fallido.connect(func(_id, _n):
+		_encolar_beep(150.0, 0.25)
+		_encolar_beep(0.0, 0.04)
+		_encolar_beep(105.0, 0.35))
+	IncidenteDDoS.secuencia_completada.connect(func(_id, _r): _encolar_beep(760.0, 0.06))
+	# Autorizado: arpegio ascendente
+	IncidenteDDoS.reinicio_autorizado.connect(func(_id):
+		_encolar_beep(660.0, 0.08)
+		_encolar_beep(880.0, 0.08)
+		_encolar_beep(1100.0, 0.16))
+	# Racha / rapido: dos notas agudas
+	IncidenteDDoS.recompensa_secuencia.connect(func(_id, _g, detalle):
+		if not detalle.is_empty():
+			_encolar_beep(1320.0, 0.05)
+			_encolar_beep(1760.0, 0.08))
+	IncidenteDDoS.consola_abierta.connect(func(): _encolar_beep(1200.0, 0.03))
+	# Eventos: corte (tono descendente), infeccion (alarma disonante), aislar (confirmacion)
+	IncidenteDDoS.corte_luz_iniciado.connect(func(_s):
+		_encolar_beep(400.0, 0.12)
+		_encolar_beep(260.0, 0.12)
+		_encolar_beep(140.0, 0.3))
+	IncidenteDDoS.corte_luz_terminado.connect(func():
+		_encolar_beep(300.0, 0.08)
+		_encolar_beep(600.0, 0.12))
+	IncidenteDDoS.infeccion_detectada.connect(func(_id):
+		for i in 4:
+			_encolar_beep(520.0, 0.07)
+			_encolar_beep(555.0, 0.07))
+	IncidenteDDoS.servidor_aislado.connect(func(_id):
+		_encolar_beep(500.0, 0.06)
+		_encolar_beep(750.0, 0.12))
+	IncidenteDDoS.reinicio_iniciado.connect(func(_id): _encolar_beep(320.0, 0.06))
+	# Aviso de abandono: tres pitidos urgentes
+	IncidenteDDoS.aviso_abandono.connect(func(_s):
+		for i in 3:
+			_encolar_beep(980.0, 0.1)
+			_encolar_beep(0.0, 0.07))
 
 	set_process(false)
 
@@ -106,6 +144,30 @@ func _on_mitigacion(exito: bool, _mensaje: String) -> void:
 		_encolar_beep(660.0, 0.08)
 	else:
 		_encolar_beep(150.0, 0.28) # tono grave: contramedida equivocada
+
+
+var silenciado := false
+var _volumenes := {}
+
+
+## Silencia o reactiva SOLO los sonidos del DDoS (no toca la musica del juego).
+func alternar_silencio() -> bool:
+	silenciado = not silenciado
+	for pl in [_hum_player, _alarma_player, _beep_player]:
+		if pl == null:
+			continue
+		if silenciado:
+			_volumenes[pl] = pl.volume_db
+			pl.volume_db = -80.0
+		else:
+			pl.volume_db = _volumenes.get(pl, 0.0)
+	return silenciado
+
+
+## Tono corto para otros nodos (por ejemplo, la ventana del PC).
+func tono(frecuencia: float, duracion_seg: float) -> void:
+	if IncidenteDDoS.activo:
+		_encolar_beep(frecuencia, duracion_seg)
 
 
 func _encolar_beep(frecuencia: float, duracion_seg: float) -> void:

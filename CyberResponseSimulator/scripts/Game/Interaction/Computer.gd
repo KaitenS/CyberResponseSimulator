@@ -89,16 +89,6 @@ func activate_malware(data: MalwareIncidentData) -> void:
 	malware_controller = MalwareIncidentController.new()
 	add_child(malware_controller)
 	malware_controller.setup(data, machine)
-	malware_controller.incident_finished.connect(_on_malware_finished)
-	
-func _on_malware_finished(result: Dictionary) -> void:
-	if result["success"]:
-		GameManager.score += 100
-		GameManager.incidents_completed += 1
-	else:
-		GameManager.incidents_failed += 1
-
-	IncidentManager.finish_incident(malware_incident)
 
 func has_active_incident() -> bool:
 	return active_incident != null

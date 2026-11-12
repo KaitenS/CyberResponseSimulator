@@ -4,6 +4,14 @@ signal close_requested
 
 var malware_controller: MalwareIncidentController = null
 
+# Ventana "Servidores" (DDoS). Se crea por codigo, vive dentro de esta pantalla.
+var ddos_window: VentanaDDoSPC = null
+
+## El cursor del PC dibuja la flecha con la punta arriba-izquierda, pero el
+## clic cae en el centro del sprite (24x24). Se acepta el clic si CUALQUIERA
+## de los dos puntos toca el icono.
+const CURSOR_PUNTA := Vector2(12.0, 12.0)
+
 
 func set_malware_controller(controller: MalwareIncidentController) -> void:
 	malware_controller = controller
@@ -21,10 +29,19 @@ func _ready() -> void:
 	print("SCRIPT: ", get_script())
 	print("================================")
 
+	ddos_window = VentanaDDoSPC.new()
+	ddos_window.name = "DDoSWindow"
+	add_child(ddos_window)
+
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+
+			# Si la ventana de Servidores esta abierta y el click cae sobre
+			# ella, la ventana lo atiende y nada de lo que hay detras reacciona.
+			if ddos_window != null and ddos_window.procesar_click(event.position):
+				return
 
 			# Si el click cae sobre la ventana de Malware, los íconos
 			# del escritorio que quedan detrás no deben reaccionar.
@@ -93,6 +110,22 @@ func _input(event: InputEvent) -> void:
 					print("===== ARCHIVOS DETECTADO =====")
 					_on_files_button_pressed()
 
+
+			# ==========================================
+			# SERVIDORES (DDOS)
+			# ==========================================
+
+			var server_button: Button = get_node_or_null(
+				"DesktopIcons/GridContainer/Server Button"
+			)
+
+			if server_button != null and not click_on_malware:
+				var server_rect: Rect2 = server_button.get_global_rect()
+
+				if server_rect.has_point(event.position) \
+				or server_rect.has_point(event.position - CURSOR_PUNTA):
+					print("===== SERVIDORES DETECTADO =====")
+					_on_server_button_pressed()
 
 			# ==========================================
 			# CERRAR MALWARE
@@ -174,6 +207,9 @@ func _input(event: InputEvent) -> void:
 # ==========================================
 
 func _on_daily_summary_button_pressed() -> void:
+	if ddos_window != null:
+		ddos_window.cerrar()
+
 	print("===== DAILY SUMMARY BUTTON PRESSED =====")
 
 	var daily_summary_window: TextureRect = get_node_or_null(
@@ -196,6 +232,9 @@ func _on_daily_summary_button_pressed() -> void:
 # ==========================================
 
 func _on_email_button_pressed() -> void:
+	if ddos_window != null:
+		ddos_window.cerrar()
+
 	print("===== CYBERMAIL BUTTON PRESSED =====")
 
 	var cybermail_window: TextureRect = get_node_or_null(
@@ -219,6 +258,9 @@ func _on_email_button_pressed() -> void:
 # ==========================================
 
 func _on_files_button_pressed() -> void:
+	if ddos_window != null:
+		ddos_window.cerrar()
+
 	var malware_window: Control = get_node_or_null(
 		"Windows/MalwareWindow"
 	)
@@ -263,9 +305,20 @@ func _on_close_button_pressed() -> void:
 	print("===== SIGNAL close_requested EMITIDO =====")
 
 
-func _is_click_on_phishing_window(position: Vector2) -> bool:
-	for path in ["Windows/CyberMailWindow", "Windows/DailySummaryWindow"]:
-		var window := get_node_or_null(path) as Control
-		if window != null and window.is_visible_in_tree() and window.get_global_rect().has_point(position):
-			return true
-	return false
+# ==========================================
+# SERVIDORES (DDOS)
+# ==========================================
+
+func _on_server_button_pressed() -> void:
+	if ddos_window == null:
+		print("ERROR: no existe la ventana de Servidores")
+		return
+
+	# Un solo clic: abre la ventana siempre, haya o no un ataque en curso.
+	# Se esconden las otras ventanas para que no se amontonen.
+	for nombre in ["DailySummaryWindow", "CyberMailWindow", "MalwareWindow"]:
+		var w: Control = get_node_or_null("Windows/" + nombre)
+		if w != null:
+			w.visible = false
+
+	ddos_window.abrir()
