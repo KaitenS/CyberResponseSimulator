@@ -10,7 +10,7 @@ signal email_resolved(email: PhishingEmail, accepted: bool)
 signal incident_finished(completed: bool)
 signal time_updated(time_remaining: float)
 
-const INCIDENT_DURATION: float = 120.0
+const INCIDENT_DURATION: float = 150.0
 const MIN_EMAIL_INTERVAL: float = 10.0
 const MAX_EMAIL_INTERVAL: float = 25.0
 const MAX_EMAILS: int = 5
@@ -60,7 +60,7 @@ func start_incident(data: PhishingData) -> void:
 	var available_emails: Array[PhishingEmail] = []
 
 	for email in phishing_data.emails:
-		if email != null:
+		if email != null and email not in available_emails:
 			available_emails.append(email)
 
 	if available_emails.is_empty():
@@ -74,8 +74,24 @@ func start_incident(data: PhishingData) -> void:
 		mini(MAX_EMAILS, available_emails.size())
 	)
 
-	for i in range(email_count):
-		selected_emails.append(available_emails[i])
+	# Reservar un correo de cada tipo cuando la tanda permita una mezcla.
+	# El orden de llegada vuelve a sortearse para no revelar la clasificación.
+	var legitimate: Array[PhishingEmail] = []
+	var fraudulent: Array[PhishingEmail] = []
+	for email in available_emails:
+		if email.is_phishing:
+			fraudulent.append(email)
+		else:
+			legitimate.append(email)
+	if email_count >= 2 and not legitimate.is_empty() and not fraudulent.is_empty():
+		selected_emails.append(legitimate[0])
+		selected_emails.append(fraudulent[0])
+	for email in available_emails:
+		if selected_emails.size() >= email_count:
+			break
+		if email not in selected_emails:
+			selected_emails.append(email)
+	selected_emails.shuffle()
 
 	time_remaining = INCIDENT_DURATION
 	incident_active = true
