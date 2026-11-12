@@ -1,25 +1,28 @@
 [gd_scene format=3 uid="uid://b1rpuf13ck37c"]
 
-[ext_resource type="PackedScene" uid="uid://wqfmnd7e6nj5" path="res://assets/Models/Player/SC_Model.blend" id="1_bon1s"]
+[ext_resource type="PackedScene" path="res://scenes/Game/FirstPersonModel.tscn" id="1_bon1s"]
 [ext_resource type="Script" uid="uid://dqssy831fvsrn" path="res://scripts/Game/Player.gd" id="1_jja0a"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bon1s"]
-radius = 0.33544922
-height = 1.0332031
+radius = 0.3
+height = 1.7
 
 [node name="Player" type="CharacterBody3D" unique_id=1615212832]
 script = ExtResource("1_jja0a")
 
 [node name="SC_Model" parent="." unique_id=700588945 instance=ExtResource("1_bon1s")]
+scale = Vector3(1.65, 1.65, 1.65)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=202286457]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.516, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
 shape = SubResource("CapsuleShape3D_bon1s")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1939755565]
-transform = Transform3D(-0.997232, 0, -0.07435217, 0, 1, 0, 0.07435217, 0, -0.997232, 0, 0.91571045, 0.022949219)
+transform = Transform3D(-0.997232, 0, -0.07435217, 0, 1, 0, 0.07435217, 0, -0.997232, 0, 1.53, 0.037)
 current = true
-fov = 49.03354
+fov = 62.0
+near = 0.04
+cull_mask = 524287
 
 [node name="InteractionRay" type="RayCast3D" parent="Camera3D" unique_id=490123858]
 transform = Transform3D(0.9999999, 0, 0, 0, -4.3711385e-08, 0.9999999, 0, -0.9999999, -4.3711385e-08, 3.7756981e-06, 0.00028955936, -5.0641596e-05)
