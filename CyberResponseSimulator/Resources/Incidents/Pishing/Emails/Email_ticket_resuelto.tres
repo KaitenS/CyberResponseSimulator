@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "ticket_resuelto"
+sender_name = "Mesa de ayuda"
+sender_address = "soporte@empresa.cl"
+subject = "Tu ticket fue actualizado"
+body = "El ticket de acceso a la impresora fue resuelto. Puedes revisar su estado desde el portal de soporte que utilizas habitualmente."
+attachment_name = ""
+recipient = "empleado@empresa.cl"
+has_attachment = false
+is_phishing = false
+explanation = "Es un seguimiento de soporte esperado y deriva al portal habitual sin pedir datos sensibles."

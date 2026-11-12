@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "agenda_equipo"
+sender_name = "Carlos Ramírez"
+sender_address = "carlos.ramirez@empresa.cl"
+subject = "Agenda para la reunión"
+body = "Comparto los temas de la reunión: coordinación de turnos y próximos hitos. Puedes revisar la agenda antes de asistir."
+attachment_name = "agenda_equipo.pdf"
+recipient = "empleado@empresa.cl"
+has_attachment = true
+is_phishing = false
+explanation = "Comparte información de trabajo sin pedir pagos ni contraseñas. Es coherente con la jornada de coordinación."

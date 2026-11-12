@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "rrhh_clave"
+sender_name = "Gestión de Personas"
+sender_address = "personas@empresa-validacion.cl"
+subject = "Confirma tu asistencia hoy"
+body = "Para conservar tu cupo responde este mensaje con tu usuario y contraseña de la empresa. El plazo vence en una hora."
+attachment_name = ""
+recipient = "empleado@empresa.cl"
+has_attachment = false
+is_phishing = true
+explanation = "El dominio es distinto del habitual y pide una contraseña por correo. La presión por perder el cupo contradice el procedimiento de inscripción."

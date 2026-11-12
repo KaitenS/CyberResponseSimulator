@@ -47,6 +47,7 @@ func activate_phishing(incident: IncidentData) -> void:
 		phishing_controller.queue_free()
 	phishing_controller = PishingIncidentController.new()
 	add_child(phishing_controller)
+	phishing_controller.email_received.connect(_on_phishing_email_received)
 
 	phishing_controller.incident_finished.connect(
 		_on_phishing_finished
@@ -288,3 +289,7 @@ func _on_cyber_desk_close_requested() -> void:
 	print("CYBERDESK CERRADO")
 	print("============================")
 	
+
+
+func _on_phishing_email_received(_email: PhishingEmail) -> void:
+	$PhishingMailSound.play()

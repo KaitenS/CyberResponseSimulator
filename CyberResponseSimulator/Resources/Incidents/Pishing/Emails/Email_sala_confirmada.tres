@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "sala_confirmada"
+sender_name = "Recepción"
+sender_address = "recepcion@empresa.cl"
+subject = "Reserva de sala confirmada"
+body = "La sala Norte quedó reservada para la reunión de las 11:00. Si necesitas un cambio, comunícate con recepción por el canal habitual."
+attachment_name = ""
+recipient = "empleado@empresa.cl"
+has_attachment = false
+is_phishing = false
+explanation = "Es una confirmación de agenda sin adjuntos ni solicitudes sensibles, compatible con la coordinación del día."
