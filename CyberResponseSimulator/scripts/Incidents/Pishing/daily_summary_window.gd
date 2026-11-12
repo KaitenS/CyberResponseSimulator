@@ -4,6 +4,7 @@ var controller: PishingIncidentController = null
 
 func _ready() -> void:
 	$TitleBar/HBoxContainer/CloseButton.pressed.connect(hide)
+	visibility_changed.connect(_mark_if_visible)
 
 
 func set_controller(value: PishingIncidentController) -> void:
@@ -31,3 +32,8 @@ func _show_data(data: PhishingData) -> void:
 		if i < clues.size():
 			cards[i].get_node("Content/Text").text = clues[i]
 	$SummaryScroll.scroll_vertical = 0
+	_mark_if_visible()
+
+func _mark_if_visible() -> void:
+	if is_visible_in_tree() and is_instance_valid(controller):
+		controller.mark_summary_read()

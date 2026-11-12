@@ -21,6 +21,7 @@ func set_phishing_controller(controller: PishingIncidentController) -> void:
 	$Windows/CyberMailWindow.set_controller(controller)
 	$Windows/DailySummaryWindow.set_controller(controller)
 	$"DesktopIcons/GridContainer/Email Button/MailNotice".set_controller(controller)
+	$"DesktopIcons/GridContainer/DailySummary Button/SummaryNotice".set_controller(controller)
 
 
 func _ready() -> void:
@@ -322,3 +323,11 @@ func _on_server_button_pressed() -> void:
 			w.visible = false
 
 	ddos_window.abrir()
+
+
+func _is_click_on_phishing_window(click_position: Vector2) -> bool:
+	for window_path in ["Windows/CyberMailWindow", "Windows/DailySummaryWindow"]:
+		var window := get_node_or_null(window_path) as Control
+		if window != null and window.is_visible_in_tree() and window.get_global_rect().has_point(click_position):
+			return true
+	return false
