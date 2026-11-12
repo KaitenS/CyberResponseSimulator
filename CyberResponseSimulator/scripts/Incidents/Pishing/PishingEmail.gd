@@ -17,3 +17,7 @@ extends Resource
 @export var has_attachment: bool = false
 
 @export var is_phishing: bool = false
+
+
+# Explicación pedagógica que se revela al terminar el día.
+@export_multiline var explanation: String = ""

@@ -18,4 +18,5 @@ Soporte TI"
 attachment_name = "SecurityUpdate.exe"
 has_attachment = true
 is_phishing = true
+explanation = "TI no anunció actualizaciones y el resumen advierte que no se esperan instaladores. SecurityUpdate.exe contradice ambas indicaciones."
 metadata/_custom_type_script = "uid://l3b3e5vup7qn"
