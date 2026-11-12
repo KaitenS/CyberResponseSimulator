@@ -28,6 +28,8 @@ func _ready():
 	if exit_button:
 		exit_button.mouse_entered.connect(_on_button_mouse_entered)
 
+	_agregar_boton_practica(play_button)
+
 
 func _on_button_mouse_entered():
 	print(">>> HOVER DETECTADO <<<")
@@ -124,3 +126,43 @@ func _on_full_screen_check_toggled(toggled_on: bool) -> void:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+
+
+# ==========================================
+# PRACTICA DDOS (boton creado por codigo)
+# ==========================================
+
+func _agregar_boton_practica(play_button: Button) -> void:
+	if play_button == null:
+		return
+
+	# Copia del boton "Iniciar simulacion" (mismo estilo), sin sus conexiones.
+	var practica: Button = play_button.duplicate()
+	practica.name = "PracticeDDoSButton"
+	practica.text = "◈ PRACTICAR DDoS"
+	play_button.get_parent().add_child(practica)
+	play_button.get_parent().move_child(practica, play_button.get_index() + 1)
+
+	for c in practica.pressed.get_connections():
+		practica.pressed.disconnect(c["callable"])
+
+	practica.pressed.connect(_on_practice_ddos_pressed)
+	practica.mouse_entered.connect(_on_button_mouse_entered)
+
+	# Boton de dificultad (cicla Facil / Normal / Dificil y lo recuerda)
+	var dificultad: Button = practica.duplicate()
+	dificultad.name = "DifficultyDDoSButton"
+	dificultad.text = "◈ DIFICULTAD DDoS: %s" % DDoSEnMapa.nombre_dificultad().to_upper()
+	play_button.get_parent().add_child(dificultad)
+	play_button.get_parent().move_child(dificultad, practica.get_index() + 1)
+	for c in dificultad.pressed.get_connections():
+		dificultad.pressed.disconnect(c["callable"])
+	dificultad.pressed.connect(func():
+		dificultad.text = "◈ DIFICULTAD DDoS: %s" % DDoSEnMapa.ciclar_dificultad().to_upper()
+	)
+	dificultad.mouse_entered.connect(_on_button_mouse_entered)
+
+
+func _on_practice_ddos_pressed() -> void:
+	DDoSEnMapa.forzar_siguiente = "ddos"
+	_on_play_button_pressed()

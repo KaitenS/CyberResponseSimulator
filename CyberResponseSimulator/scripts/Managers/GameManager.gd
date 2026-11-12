@@ -17,7 +17,7 @@ func start_game():
 	phishing_results.clear()
 	incidents_completed = 0
 	incidents_failed = 0
-	time_remaining = GAME_DURATION
+	time_remaining = 600.0  # SOLO PARA PROBAR: volver a 60.0 antes del commit
 
 
 func _process(delta: float) -> void:

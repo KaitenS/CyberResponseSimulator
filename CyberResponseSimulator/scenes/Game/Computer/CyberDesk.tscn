@@ -19,33 +19,8 @@
 [ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/cyber_mail_window.tscn" id="16_phishing_mail"]
 [ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/daily_summary_window.tscn" id="17_phishing_summary"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_re7y8"]
-bg_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.22745098, 0.22745098, 0.22745098, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sqpj2"]
-bg_color = Color(0.7882353, 0.7882353, 0.7882353, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_piudu"]
-bg_color = Color(1, 1, 1, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y2pfc"]
-bg_color = Color(0.7882353, 0.7882353, 0.7882353, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3ggmy"]
-bg_color = Color(0.8156863, 0.8156863, 0.8156863, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.5411765, 0.5411765, 0.5411765, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mryue"]
-bg_color = Color(1, 1, 1, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_08gl3"]
+bg_color = Color(0.9490196, 0.9490196, 0.9490196, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -445,133 +420,25 @@ offset_right = 585.0
 offset_bottom = 385.0
 theme = ExtResource("15_fklch")
 
+[node name="ProcessList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1793553213]
+layout_mode = 0
+offset_top = 30.0
+offset_right = 280.0
+offset_bottom = 260.0
+
+[node name="FileList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1781873404]
+layout_mode = 1
+offset_left = 290.0
+offset_top = 30.0
+offset_right = 570.0
+offset_bottom = 260.0
+
 [node name="TimeRemainingLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1916045060]
 layout_mode = 1
 offset_right = 570.0
 offset_bottom = 24.0
 theme_override_colors/font_color = Color(0.9254902, 0, 0, 1)
 text = "Tiempo: --"
-
-[node name="TabButtons" type="HBoxContainer" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1544825923]
-layout_mode = 1
-offset_top = 26.0
-offset_right = 570.0
-offset_bottom = 52.0
-
-[node name="ProcessTabButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/TabButtons" unique_id=1342236454]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_pressed_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_hover_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_disabled_color = Color(0.5411765, 0.5411765, 0.5411765, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_re7y8")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_sqpj2")
-theme_override_styles/hover = SubResource("StyleBoxFlat_piudu")
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_y2pfc")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_3ggmy")
-toggle_mode = true
-text = "Procesos"
-
-[node name="FileTabButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/TabButtons" unique_id=1844101426]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_pressed_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_hover_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_disabled_color = Color(0.5411765, 0.5411765, 0.5411765, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_re7y8")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_sqpj2")
-theme_override_styles/hover = SubResource("StyleBoxFlat_piudu")
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_y2pfc")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_3ggmy")
-toggle_mode = true
-text = "Archivos"
-
-[node name="LogTabButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/TabButtons" unique_id=818452215]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_pressed_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_hover_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_disabled_color = Color(0.5411765, 0.5411765, 0.5411765, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_re7y8")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_sqpj2")
-theme_override_styles/hover = SubResource("StyleBoxFlat_piudu")
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_y2pfc")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_3ggmy")
-toggle_mode = true
-text = "Registros"
-
-[node name="ProcessList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1793553213]
-layout_mode = 0
-offset_top = 54.0
-offset_right = 280.0
-offset_bottom = 140.0
-theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_hovered_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_selected_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_styles/panel = SubResource("StyleBoxFlat_mryue")
-theme_override_styles/selected = SubResource("StyleBoxFlat_fklch")
-theme_override_styles/selected_focus = SubResource("StyleBoxFlat_g61b6")
-
-[node name="FileList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1781873404]
-visible = false
-layout_mode = 1
-offset_top = 54.0
-offset_right = 570.0
-offset_bottom = 140.0
-theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_hovered_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_selected_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_styles/panel = SubResource("StyleBoxFlat_mryue")
-theme_override_styles/selected = SubResource("StyleBoxFlat_fklch")
-theme_override_styles/selected_focus = SubResource("StyleBoxFlat_g61b6")
-
-[node name="LogList" type="ItemList" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1960173517]
-visible = false
-layout_mode = 1
-offset_top = 54.0
-offset_right = 570.0
-offset_bottom = 140.0
-theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_hovered_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_selected_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_font_sizes/font_size = 12
-theme_override_styles/panel = SubResource("StyleBoxFlat_mryue")
-theme_override_styles/selected = SubResource("StyleBoxFlat_fklch")
-theme_override_styles/selected_focus = SubResource("StyleBoxFlat_g61b6")
-
-[node name="DetailLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1084305360]
-layout_mode = 1
-offset_top = 142.0
-offset_right = 570.0
-offset_bottom = 232.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 13
-text = "Selecciona un elemento para ver sus detalles"
-autowrap_mode = 3
-
-[node name="ActionButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=199198456]
-layout_mode = 1
-offset_top = 236.0
-offset_right = 400.0
-offset_bottom = 267.0
-theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_pressed_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_hover_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
-theme_override_colors/font_disabled_color = Color(0.5411765, 0.5411765, 0.5411765, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_re7y8")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_sqpj2")
-theme_override_styles/hover = SubResource("StyleBoxFlat_piudu")
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_y2pfc")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_3ggmy")
-disabled = true
-text = "Terminar o eliminar el seleccionado"
 
 [node name="ScanButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1348023167]
 layout_mode = 0
@@ -594,9 +461,9 @@ text = "Escanear (-15s)"
 
 [node name="DecisionButtons" type="HBoxContainer" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1665908056]
 layout_mode = 1
-offset_top = 274.0
+offset_top = 272.0
 offset_right = 570.0
-offset_bottom = 314.0
+offset_bottom = 672.0
 
 [node name="IsolateButton" type="Button" parent="CyberDesk/Windows/MalwareWindow/MalwareContent/DecisionButtons" unique_id=1295762919]
 layout_mode = 2

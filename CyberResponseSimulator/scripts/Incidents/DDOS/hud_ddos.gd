@@ -12,8 +12,14 @@ const COL_MAL := Color(1.0, 0.35, 0.3)
 
 var _raiz: Control
 var _reloj: Label
-var _barra: ProgressBar
+var _punto: Indicador
+var _barra_fondo: Panel
+var _barra_relleno: Panel
+var _barra_estilo: StyleBoxFlat
+var _disp_visual := 100.0
+var _indicadores: Array[Indicador] = []
 var _chips: Array[Label] = []
+var _aviso_panel: PanelContainer
 var _aviso: Label
 var _aviso_t := 0.0
 var _parpadeo := 0.0
@@ -40,34 +46,41 @@ func _process(delta: float) -> void:
 	_parpadeo += delta
 
 	var t: float = IncidenteDDoS.tiempo_restante
-	_reloj.text = "ATAQUE EN CURSO   %02d:%02d" % [int(t / 60.0), int(fmod(t, 60.0))]
+	_reloj.text = "%02d:%02d" % [int(t / 60.0), int(fmod(t, 60.0))]
+	_punto.visible = true
+	_punto.color = COL_MAL if fmod(_parpadeo, 1.2) < 0.7 or DDoSEnMapa.reducir_efectos else COL_MAL.darkened(0.6)
+	_punto.queue_redraw()
 
-	_barra.value = IncidenteDDoS.disponibilidad
+	# Barra fina que se desliza suavemente hacia el valor real (sin numero).
+	_disp_visual = lerpf(_disp_visual, IncidenteDDoS.disponibilidad, clampf(delta * 6.0, 0.0, 1.0))
 	var c := COL_OK
 	if IncidenteDDoS.disponibilidad < 35.0:
 		c = COL_MAL
 	elif IncidenteDDoS.disponibilidad < 70.0:
 		c = COL_AVISO
-	_barra.modulate = c
+	_barra_estilo.bg_color = c
+	_barra_relleno.size.x = maxf(6.0, _barra_fondo.size.x * clampf(_disp_visual / 100.0, 0.0, 1.0))
 
+	# Cada sistema: forma + color (circulo OK, triangulo carga alta, cruz caido).
 	for id in 3:
-		var nombre: String = IncidenteDDoS.NOMBRE_SERVIDOR[id].replace("Servidor de ", "").to_upper()
+		var ind := _indicadores[id]
 		if IncidenteDDoS.esta_online(id):
-			var carga := IncidenteDDoS.carga_de(id)
-			# Simbolo + color: no depende solo del color para leerse
-			# (accesibilidad para quienes no distinguen verde/ambar).
-			var simbolo := "OK" if carga < 60.0 else "!"
-			_chips[id].text = "%s  %s %d%%" % [nombre, simbolo, int(carga)]
-			_chips[id].modulate = COL_OK if carga < 60.0 else COL_AVISO
+			var alta: bool = IncidenteDDoS.carga_de(id) >= 60.0
+			ind.forma = Indicador.Forma.TRIANGULO if alta else Indicador.Forma.CIRCULO
+			ind.color = COL_AVISO if alta else COL_OK
+			_chips[id].modulate = Color(0.9, 0.93, 0.97)
 		else:
-			_chips[id].text = "%s  X OFFLINE" % nombre
-			_chips[id].modulate = COL_MAL if fmod(_parpadeo, 0.7) < 0.45 else COL_MAL.darkened(0.6)
+			ind.forma = Indicador.Forma.CRUZ
+			var vivo := fmod(_parpadeo, 0.7) < 0.45 or DDoSEnMapa.reducir_efectos
+			ind.color = COL_MAL if vivo else COL_MAL.darkened(0.6)
+			_chips[id].modulate = COL_MAL
+		ind.queue_redraw()
 
 	if _aviso_t > 0.0:
 		_aviso_t -= delta
-		_aviso.visible = true
+		_aviso_panel.visible = true
 	else:
-		_aviso.visible = false
+		_aviso_panel.visible = false
 
 	if _flash_t > 0.0:
 		_flash_t -= delta
@@ -84,6 +97,8 @@ func mostrar_aviso(texto: String, segundos := 4.0) -> void:
 
 ## Destello breve de pantalla completa. color=verde para exito, rojo para fallo.
 func destello(color: Color) -> void:
+	if DDoSEnMapa.reducir_efectos:
+		return
 	_flash.color = color
 	_flash_t = _flash_duracion
 	_flash.visible = true
@@ -144,50 +159,140 @@ func _construir() -> void:
 	_flash.visible = false
 	_raiz.add_child(_flash)
 
+	# --- Tarjeta compacta arriba a la izquierda
+	var tarjeta := PanelContainer.new()
+	tarjeta.position = Vector2(20, 18)
+	tarjeta.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.05, 0.07, 0.1, 0.78)
+	sb.border_color = Color(1, 1, 1, 0.10)
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(10)
+	sb.content_margin_left = 14
+	sb.content_margin_right = 14
+	sb.content_margin_top = 10
+	sb.content_margin_bottom = 12
+	sb.shadow_color = Color(0, 0, 0, 0.35)
+	sb.shadow_size = 8
+	tarjeta.add_theme_stylebox_override("panel", sb)
+	_raiz.add_child(tarjeta)
+
 	var caja := VBoxContainer.new()
-	caja.position = Vector2(24, 20)
-	caja.custom_minimum_size = Vector2(320, 0)
+	caja.custom_minimum_size = Vector2(250, 0)
+	caja.add_theme_constant_override("separation", 8)
 	caja.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_raiz.add_child(caja)
+	tarjeta.add_child(caja)
 
+	# Fila 1: punto parpadeante + titulo + reloj
+	var fila1 := HBoxContainer.new()
+	fila1.add_theme_constant_override("separation", 8)
+	fila1.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	caja.add_child(fila1)
+	_punto = Indicador.new()
+	_punto.custom_minimum_size = Vector2(10, 10)
+	_punto.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	fila1.add_child(_punto)
+	var titulo := Label.new()
+	titulo.text = "ATAQUE DDoS"
+	titulo.add_theme_font_size_override("font_size", 13)
+	titulo.add_theme_color_override("font_color", Color(0.72, 0.78, 0.85))
+	titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fila1.add_child(titulo)
 	_reloj = Label.new()
-	_reloj.add_theme_font_size_override("font_size", 22)
-	_reloj.add_theme_color_override("font_color", COL_MAL)
-	caja.add_child(_reloj)
+	_reloj.add_theme_font_size_override("font_size", 18)
+	_reloj.add_theme_color_override("font_color", Color(0.95, 0.97, 1.0))
+	fila1.add_child(_reloj)
 
-	var sub := Label.new()
-	sub.text = "DISPONIBILIDAD DEL SERVICIO"
-	sub.add_theme_font_size_override("font_size", 12)
-	caja.add_child(sub)
+	# Fila 2: barra de disponibilidad fina y redondeada, sin porcentaje
+	_barra_fondo = Panel.new()
+	_barra_fondo.custom_minimum_size = Vector2(0, 6)
+	_barra_fondo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sbf := StyleBoxFlat.new()
+	sbf.bg_color = Color(1, 1, 1, 0.09)
+	sbf.set_corner_radius_all(3)
+	_barra_fondo.add_theme_stylebox_override("panel", sbf)
+	caja.add_child(_barra_fondo)
+	_barra_relleno = Panel.new()
+	_barra_relleno.position = Vector2.ZERO
+	_barra_relleno.size = Vector2(250, 6)
+	_barra_relleno.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_barra_estilo = StyleBoxFlat.new()
+	_barra_estilo.bg_color = COL_OK
+	_barra_estilo.set_corner_radius_all(3)
+	_barra_relleno.add_theme_stylebox_override("panel", _barra_estilo)
+	_barra_fondo.add_child(_barra_relleno)
+	_barra_fondo.resized.connect(func(): _barra_relleno.size.y = _barra_fondo.size.y)
 
-	_barra = ProgressBar.new()
-	_barra.min_value = 0
-	_barra.max_value = 100
-	_barra.value = 100
-	_barra.show_percentage = true
-	_barra.custom_minimum_size = Vector2(300, 20)
-	caja.add_child(_barra)
-
+	# Fila 3: estado de los 3 sistemas, solo con iconos y nombre corto
 	var fila := HBoxContainer.new()
-	fila.add_theme_constant_override("separation", 10)
+	fila.add_theme_constant_override("separation", 14)
+	fila.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	caja.add_child(fila)
 	for i in 3:
+		var item := HBoxContainer.new()
+		item.add_theme_constant_override("separation", 5)
+		item.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		fila.add_child(item)
+		var ind := Indicador.new()
+		ind.custom_minimum_size = Vector2(10, 10)
+		ind.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		item.add_child(ind)
+		_indicadores.append(ind)
 		var l := Label.new()
-		l.add_theme_font_size_override("font_size", 13)
-		fila.add_child(l)
+		l.text = IncidenteDDoS.NOMBRE_SERVIDOR[i].replace("Servidor de ", "").to_upper()
+		l.add_theme_font_size_override("font_size", 12)
+		item.add_child(l)
 		_chips.append(l)
 
+	# --- Aviso central: pastilla translucida
+	_aviso_panel = PanelContainer.new()
+	_aviso_panel.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_aviso_panel.anchor_left = 0.5
+	_aviso_panel.anchor_right = 0.5
+	_aviso_panel.offset_left = -320
+	_aviso_panel.offset_right = 320
+	_aviso_panel.offset_top = 90
+	_aviso_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_aviso_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sba := StyleBoxFlat.new()
+	sba.bg_color = Color(0.06, 0.07, 0.1, 0.82)
+	sba.border_color = Color(COL_MAL, 0.55)
+	sba.set_border_width_all(1)
+	sba.border_width_left = 4
+	sba.set_corner_radius_all(10)
+	sba.content_margin_left = 18
+	sba.content_margin_right = 18
+	sba.content_margin_top = 10
+	sba.content_margin_bottom = 10
+	_aviso_panel.add_theme_stylebox_override("panel", sba)
+	_aviso_panel.visible = false
+	_raiz.add_child(_aviso_panel)
+
 	_aviso = Label.new()
-	_aviso.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	_aviso.anchor_left = 0.5
-	_aviso.anchor_right = 0.5
-	_aviso.offset_left = -400
-	_aviso.offset_right = 400
-	_aviso.offset_top = 120
 	_aviso.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_aviso.add_theme_font_size_override("font_size", 26)
-	_aviso.add_theme_color_override("font_color", COL_MAL)
-	_aviso.add_theme_color_override("font_outline_color", Color.BLACK)
-	_aviso.add_theme_constant_override("outline_size", 6)
-	_aviso.visible = false
-	_raiz.add_child(_aviso)
+	_aviso.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_aviso.custom_minimum_size = Vector2(560, 0)
+	_aviso.add_theme_font_size_override("font_size", 18)
+	_aviso.add_theme_color_override("font_color", Color(0.97, 0.9, 0.9))
+	_aviso_panel.add_child(_aviso)
+
+
+## Icono pequeno dibujado por codigo (no depende de la fuente).
+## Circulo = OK, triangulo = carga alta, cruz = caido: se distinguen sin color.
+class Indicador extends Control:
+	enum Forma { CIRCULO, TRIANGULO, CRUZ }
+	var forma := Forma.CIRCULO
+	var color := Color(0.35, 1.0, 0.6)
+
+	func _draw() -> void:
+		var c := size / 2.0
+		var r := minf(size.x, size.y) / 2.0
+		match forma:
+			Forma.CIRCULO:
+				draw_circle(c, r, color)
+			Forma.TRIANGULO:
+				draw_colored_polygon(PackedVector2Array([
+					Vector2(c.x, c.y - r), Vector2(c.x + r, c.y + r), Vector2(c.x - r, c.y + r)]), color)
+			Forma.CRUZ:
+				draw_line(c + Vector2(-r, -r), c + Vector2(r, r), color, 2.5)
+				draw_line(c + Vector2(-r, r), c + Vector2(r, -r), color, 2.5)
