@@ -36,7 +36,6 @@ var active_incident: IncidentData = null
 # ==========================================
 
 @onready var notification_panel: Panel = $"../GameHUD/IncidentNotification"
-@onready var incident_label: Label = $"../GameHUD/IncidentNotification/IncidentLabel"
 
 
 # ==========================================
@@ -263,19 +262,6 @@ func create_incident() -> void:
 # NOTIFICACIÓN
 # ==========================================
 
-func show_incident_notification(
-	incident: IncidentData
-) -> void:
-
-	incident_label.text = (
-		"⚠ NUEVO INCIDENTE\n\n%s\n\nSe requiere atención."
-		% incident.incident_name
-	)
-
-	notification_panel.visible = true
-
-	await get_tree().create_timer(
-		4.0, false
-	).timeout
-
-	notification_panel.visible = false
+func show_incident_notification(_incident: IncidentData) -> void:
+	# La alerta orienta sin revelar el diagnóstico ni alterar el incidente.
+	notification_panel.call("show_alert")

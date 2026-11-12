@@ -1,15 +1,7 @@
 extends CanvasLayer
 
-@onready var time_label: Label = $TimeLabel
+@onready var time_display: Control = $TimeDisplay
 
 
 func _process(_delta: float) -> void:
-	if not GameManager.game_active:
-		return
-
-	var total_seconds := int(ceil(GameManager.time_remaining))
-
-	var minutes := total_seconds / 60.0
-	var seconds := total_seconds % 60
-
-	time_label.text = "TIEMPO RESTANTE: %02d:%02d" % [minutes, seconds]
+	time_display.update_time(GameManager.GAME_DURATION, GameManager.time_remaining, GameManager.game_active)
