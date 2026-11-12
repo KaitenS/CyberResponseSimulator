@@ -19,6 +19,8 @@ func set_malware_controller(controller: MalwareIncidentController) -> void:
 
 func set_phishing_controller(controller: PishingIncidentController) -> void:
 	$Windows/CyberMailWindow.set_controller(controller)
+	$Windows/DailySummaryWindow.set_controller(controller)
+	$"DesktopIcons/GridContainer/Email Button/MailNotice".set_controller(controller)
 
 
 func _ready() -> void:

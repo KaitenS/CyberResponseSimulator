@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "datos_proveedor"
+sender_name = "Proveedor de servicios"
+sender_address = "contacto@proveedor-nuevo.cl"
+subject = "Información para el mantenimiento"
+body = "No tenemos una orden anterior, pero necesitamos que envíes la lista completa de empleados y sus accesos para preparar la visita."
+attachment_name = ""
+recipient = "empleado@empresa.cl"
+has_attachment = false
+is_phishing = true
+explanation = "Solicita información interna sensible sin una gestión previa que la respalde. El contexto del día exige comprobar la relación con solicitudes existentes."

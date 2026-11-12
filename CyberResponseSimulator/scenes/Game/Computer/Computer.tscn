@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dla32wdqxa60s" path="res://scripts/Game/Interaction/Computer.gd" id="3_twvw0"]
 [ext_resource type="PackedScene" uid="uid://0pwjijbq1v1s" path="res://assets/Models/Extras/Pc_Model.blend" id="4_qqs5g"]
 
+[ext_resource type="AudioStream" path="res://assets/Audio/Phishing/new_mail.wav" id="5_phishing_mail_sound"]
 [sub_resource type="BoxShape3D" id="BoxShape3D_1olpp"]
 size = Vector3(10.489136, 5.2304688, 11)
 
@@ -60,3 +61,8 @@ mesh = SubResource("QuadMesh_7f3mm")
 [node name="ScreenEffect" type="MeshInstance3D" parent="Area3D/MonitorContainer" unique_id=12667477]
 transform = Transform3D(1.0050112, 0, 0, 0, 1, -7.450581e-09, 0, 2.9802322e-08, 0.27616924, 0, -9.649992e-05, -0.027525902)
 mesh = SubResource("QuadMesh_f2rsq")
+
+
+[node name="PhishingMailSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_phishing_mail_sound")
+volume_db = -10.0

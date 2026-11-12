@@ -252,7 +252,7 @@ offset_bottom = 96.0
 theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
 theme_override_fonts/font = ExtResource("3_vlk44")
 theme_override_font_sizes/font_size = 22
-text = "Lo que necesitas saber hoy"
+text = "Cierre de período"
 autowrap_mode = 3
 
 [node name="SummaryScroll" type="ScrollContainer" parent="." unique_id=1806055697]
@@ -291,7 +291,7 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
 theme_override_fonts/font = ExtResource("3_vlk44")
 theme_override_font_sizes/font_size = 16
-text = "Se espera recibir durante la mañana un informe de María González, del área de Finanzas."
+text = "Finanzas está cerrando el período; es habitual que circulen reportes entre las áreas."
 autowrap_mode = 3
 
 [node name="Card_02" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=391538769]
@@ -317,7 +317,7 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
 theme_override_fonts/font = ExtResource("3_vlk44")
 theme_override_font_sizes/font_size = 16
-text = "El archivo esperado corresponde al informe mensual de gastos."
+text = "Los documentos de consulta se comparten en formatos de lectura, no como instaladores."
 autowrap_mode = 3
 
 [node name="Card_03" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=770393544]
@@ -343,7 +343,7 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
 theme_override_fonts/font = ExtResource("3_vlk44")
 theme_override_font_sizes/font_size = 16
-text = "El archivo esperado debe ser un documento PDF."
+text = "Hay personal ausente esta semana; algunas solicitudes poco habituales podrían necesitar confirmación."
 autowrap_mode = 3
 
 [node name="Card_04" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=1386137900]
@@ -369,7 +369,7 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
 theme_override_fonts/font = ExtResource("3_vlk44")
 theme_override_font_sizes/font_size = 16
-text = "Juan Pérez, del área de Recursos Humanos, se encuentra de vacaciones esta semana."
+text = "Las reuniones de equipo mantienen sus horarios habituales."
 autowrap_mode = 3
 
 [node name="Card_05" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=859245829]
@@ -395,7 +395,7 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
 theme_override_fonts/font = ExtResource("3_vlk44")
 theme_override_font_sizes/font_size = 16
-text = "El área de TI no ha anunciado ninguna actualización de software para hoy."
+text = "TI conserva sus canales de distribución de software; hoy no hay una campaña de actualización anunciada."
 autowrap_mode = 3
 
 [node name="Card_06" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=333703811]
@@ -421,7 +421,7 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
 theme_override_fonts/font = ExtResource("3_vlk44")
 theme_override_font_sizes/font_size = 16
-text = "No se esperan archivos ejecutables ni instaladores enviados por correo."
+text = "Una dirección familiar no basta para confiar: considera también lo que se solicita."
 autowrap_mode = 3
 
 [node name="Card_07" type="PanelContainer" parent="SummaryScroll/Cards" unique_id=565639712]
@@ -447,7 +447,7 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
 theme_override_fonts/font = ExtResource("3_vlk44")
 theme_override_font_sizes/font_size = 16
-text = "Cualquier solicitud urgente relacionada con credenciales debe ser reportada."
+text = "Las peticiones de información sensible deben seguir los procedimientos internos."
 autowrap_mode = 3
 
 [node name="Footer" type="Label" parent="." unique_id=311462671]

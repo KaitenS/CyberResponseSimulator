@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "pago_excepcional"
+sender_name = "Dirección"
+sender_address = "direccion@empresa-pagos.cl"
+subject = "Transferencia confidencial"
+body = "Necesito que autorices una transferencia excepcional ahora. No contactes a Finanzas porque retrasaría el trámite. Los datos están adjuntos."
+attachment_name = "instrucciones_pago.pdf"
+recipient = "empleado@empresa.cl"
+has_attachment = true
+is_phishing = true
+explanation = "Pide saltarse la segunda confirmación, usa otro dominio y exige confidencialidad. Un PDF por sí solo no convierte una solicitud en legítima."

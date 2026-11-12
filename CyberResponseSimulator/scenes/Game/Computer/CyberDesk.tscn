@@ -19,8 +19,34 @@
 [ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/cyber_mail_window.tscn" id="16_phishing_mail"]
 [ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/daily_summary_window.tscn" id="17_phishing_summary"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_08gl3"]
-bg_color = Color(0.9490196, 0.9490196, 0.9490196, 1)
+[ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/phishing_mail_notice.tscn" id="18_mail_notice"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_re7y8"]
+bg_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.22745098, 0.22745098, 0.22745098, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sqpj2"]
+bg_color = Color(0.7882353, 0.7882353, 0.7882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_piudu"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y2pfc"]
+bg_color = Color(0.7882353, 0.7882353, 0.7882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3ggmy"]
+bg_color = Color(0.8156863, 0.8156863, 0.8156863, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5411765, 0.5411765, 0.5411765, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mryue"]
+bg_color = Color(1, 1, 1, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -558,3 +584,5 @@ stretch_mode = 4
 [connection signal="pressed" from="CyberDesk/DesktopIcons/GridContainer/DailySummary Button" to="CyberDesk" method="_on_daily_summary_button_pressed"]
 [connection signal="pressed" from="CyberDesk/TaskBar/HBoxContainer/CloseButton" to="CyberDesk" method="_on_close_button_pressed"]
 [connection signal="pressed" from="CyberDesk/Windows/MalwareWindow/TitleBar/HBoxContainer/CloseButton" to="CyberDesk" method="_on_close_button_pressed"]
+
+[node name="MailNotice" parent="CyberDesk/DesktopIcons/GridContainer/Email Button" instance=ExtResource("18_mail_notice")]

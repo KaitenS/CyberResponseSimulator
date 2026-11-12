@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="DailySummary" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/DailySummary.gd" id="1"]
+[resource]
+script = ExtResource("1")
+summary_id = "pishing_03"
+title = "Jornada de soporte"
+content = "• TI está realizando tareas de mantenimiento; algunas comunicaciones de seguimiento son esperables.\n• Las instalaciones se distribuyen desde el portal corporativo, no mediante programas adjuntos.\n• Soporte puede confirmar el estado de un ticket, pero no necesita conocer tu contraseña.\n• Las consultas de proveedores deben relacionarse con solicitudes que ya estaban en curso.\n• Antes de compartir información interna, comprueba quién la solicita y para qué.\n• El formato del archivo y la dirección completa del remitente aportan más contexto que el logotipo."

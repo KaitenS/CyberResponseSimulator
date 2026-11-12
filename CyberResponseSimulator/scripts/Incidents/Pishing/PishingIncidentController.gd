@@ -2,6 +2,8 @@
 class_name PishingIncidentController
 extends Node
 
+signal incident_started(data: PhishingData)
+signal email_state_changed(email: PhishingEmail)
 signal email_received(email: PhishingEmail)
 signal email_resolved(email: PhishingEmail, accepted: bool)
 signal incident_finished(completed: bool)
@@ -23,6 +25,7 @@ var resolved_emails: Array[PhishingEmail] = []
 
 var next_email_timer: float = 0.0
 var decisions: Array[Dictionary] = []
+var read_emails: Array[PhishingEmail] = []
 var last_result: Dictionary = {}
 
 
@@ -38,12 +41,17 @@ func start_incident(data: PhishingData) -> void:
 		push_error("Phishing: No hay correos disponibles.")
 		return
 
-	phishing_data = data
+	var choices: Array[PhishingData] = [data]
+	for variant in data.variants:
+		if variant != null and not variant.emails.is_empty():
+			choices.append(variant)
+	phishing_data = choices.pick_random()
 
 	selected_emails.clear()
 	received_emails.clear()
 	resolved_emails.clear()
 	decisions.clear()
+	read_emails.clear()
 	last_result.clear()
 
 	var available_emails: Array[PhishingEmail] = []
@@ -72,6 +80,7 @@ func start_incident(data: PhishingData) -> void:
 	print("=== PHISHING ACTIVADO ===")
 	print("Correos seleccionados: ", selected_emails.size())
 
+	incident_started.emit(phishing_data)
 	_deliver_next_email()
 	_schedule_next_email()
 
@@ -137,6 +146,7 @@ func resolve_email(
 	if email in resolved_emails:
 		return
 
+	mark_email_read(email)
 	resolved_emails.append(email)
 	decisions.append({
 		"email_id": email.email_id,
@@ -148,6 +158,7 @@ func resolve_email(
 		"explanation": _explain(email),
 	})
 
+	email_state_changed.emit(email)
 	email_resolved.emit(email, accepted)
 
 	print(
@@ -230,3 +241,23 @@ func get_result() -> Dictionary:
 		"status": "En curso al terminar el día" if incident_active else ("Tiempo agotado" if time_remaining <= 0.0 else "Finalizado"),
 		"decisions": details,
 	}
+
+func mark_email_read(email: PhishingEmail) -> void:
+	if email in received_emails and email not in read_emails:
+		read_emails.append(email)
+		email_state_changed.emit(email)
+
+
+func get_email_state(email: PhishingEmail) -> String:
+	var index := resolved_emails.find(email)
+	if index >= 0:
+		return "Aceptado" if decisions[index]["accepted"] else "Rechazado"
+	return "Leído" if email in read_emails else "Sin leer"
+
+
+func get_unread_count() -> int:
+	var count := 0
+	for email in received_emails:
+		if email not in read_emails:
+			count += 1
+	return count

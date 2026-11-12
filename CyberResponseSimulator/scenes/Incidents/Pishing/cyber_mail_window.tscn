@@ -394,9 +394,9 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
 [node name="CyberMailWindow" type="TextureRect" unique_id=1415927651]
-mouse_filter = 0
 offset_right = 600.0
 offset_bottom = 400.0
+mouse_filter = 0
 theme = SubResource("Theme_yqoh2")
 texture = ExtResource("1_yqoh2")
 expand_mode = 1
@@ -427,12 +427,12 @@ offset_bottom = 39.0
 color = Color(0, 0, 0, 0)
 
 [node name="XPTitleGradient" type="TextureRect" parent="TitleBar" unique_id=528718249]
-expand_mode = 1
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 texture = SubResource("GradientTexture2D_dfe0y")
+expand_mode = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TitleBar" unique_id=228527785]
 layout_mode = 1
@@ -447,12 +447,12 @@ theme_override_constants/separation = 10
 
 [node name="TitleLabel" type="Label" parent="TitleBar/HBoxContainer" unique_id=1476866538]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_iwqih")
+theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0.08235294, 0.23529412, 0.5411765, 1)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
-theme_override_fonts/font = ExtResource("3_iwqih")
-theme_override_font_sizes/font_size = 22
 text = " ✉ CyberMail"
 vertical_alignment = 1
 
@@ -489,9 +489,9 @@ theme_override_constants/separation = 10
 
 [node name="InboxTitleLabel" type="Label" parent="InboxHeader/HBoxContainer" unique_id=2131091161]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.08627451, 0.23529412, 0.4627451, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.08627451, 0.23529412, 0.4627451, 1)
 text = "Bandeja de Entrada"
 
 [node name="InboxScroll" type="ScrollContainer" parent="." unique_id=1856035894]
@@ -530,30 +530,37 @@ mouse_filter = 2
 
 [node name="SenderLabel" type="Label" parent="InboxScroll/MailList/MailEntry_1/VBoxContainer" unique_id=1373914587]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 text = "Remitente"
 clip_text = true
 text_overrun_behavior = 3
 
 [node name="SubjectLabel" type="Label" parent="InboxScroll/MailList/MailEntry_1/VBoxContainer" unique_id=2019735086]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
 text = "Asunto del correo"
 clip_text = true
 text_overrun_behavior = 3
 
 [node name="AttachmentLabel" type="Label" parent="InboxScroll/MailList/MailEntry_1/VBoxContainer" unique_id=121824149]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 text = "Sin archivos adjuntos"
 clip_text = true
 text_overrun_behavior = 3
+
+[node name="StateLabel" type="Label" parent="InboxScroll/MailList/MailEntry_1/VBoxContainer" unique_id=1934500121]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_iwqih")
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.15686275, 0.32941177, 0.64705884, 1)
+text = "Sin leer"
 
 [node name="OpenButton" type="Button" parent="InboxScroll/MailList/MailEntry_1" unique_id=283917752]
 layout_mode = 0
@@ -584,30 +591,37 @@ mouse_filter = 2
 
 [node name="SenderLabel" type="Label" parent="InboxScroll/MailList/MailEntry_2/VBoxContainer" unique_id=613929865]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 text = "Remitente"
 clip_text = true
 text_overrun_behavior = 3
 
 [node name="SubjectLabel" type="Label" parent="InboxScroll/MailList/MailEntry_2/VBoxContainer" unique_id=1393753839]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
 text = "Asunto del correo"
 clip_text = true
 text_overrun_behavior = 3
 
 [node name="AttachmentLabel" type="Label" parent="InboxScroll/MailList/MailEntry_2/VBoxContainer" unique_id=1799096355]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 text = "Sin archivos adjuntos"
 clip_text = true
 text_overrun_behavior = 3
+
+[node name="StateLabel" type="Label" parent="InboxScroll/MailList/MailEntry_2/VBoxContainer" unique_id=1512937206]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_iwqih")
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.15686275, 0.32941177, 0.64705884, 1)
+text = "Sin leer"
 
 [node name="OpenButton" type="Button" parent="InboxScroll/MailList/MailEntry_2" unique_id=680473617]
 layout_mode = 0
@@ -638,30 +652,37 @@ mouse_filter = 2
 
 [node name="SenderLabel" type="Label" parent="InboxScroll/MailList/MailEntry_3/VBoxContainer" unique_id=1956477694]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 text = "Remitente"
 clip_text = true
 text_overrun_behavior = 3
 
 [node name="SubjectLabel" type="Label" parent="InboxScroll/MailList/MailEntry_3/VBoxContainer" unique_id=2047607994]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
 text = "Asunto del correo"
 clip_text = true
 text_overrun_behavior = 3
 
 [node name="AttachmentLabel" type="Label" parent="InboxScroll/MailList/MailEntry_3/VBoxContainer" unique_id=398075674]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 text = "Sin archivos adjuntos"
 clip_text = true
 text_overrun_behavior = 3
+
+[node name="StateLabel" type="Label" parent="InboxScroll/MailList/MailEntry_3/VBoxContainer" unique_id=739833443]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_iwqih")
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.15686275, 0.32941177, 0.64705884, 1)
+text = "Sin leer"
 
 [node name="OpenButton" type="Button" parent="InboxScroll/MailList/MailEntry_3" unique_id=1787761447]
 layout_mode = 0
@@ -692,30 +713,37 @@ mouse_filter = 2
 
 [node name="SenderLabel" type="Label" parent="InboxScroll/MailList/MailEntry_4/VBoxContainer" unique_id=206341890]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 text = "Remitente"
 clip_text = true
 text_overrun_behavior = 3
 
 [node name="SubjectLabel" type="Label" parent="InboxScroll/MailList/MailEntry_4/VBoxContainer" unique_id=1580768373]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
 text = "Asunto del correo"
 clip_text = true
 text_overrun_behavior = 3
 
 [node name="AttachmentLabel" type="Label" parent="InboxScroll/MailList/MailEntry_4/VBoxContainer" unique_id=1782896619]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 text = "Sin archivos adjuntos"
 clip_text = true
 text_overrun_behavior = 3
+
+[node name="StateLabel" type="Label" parent="InboxScroll/MailList/MailEntry_4/VBoxContainer" unique_id=286915345]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_iwqih")
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.15686275, 0.32941177, 0.64705884, 1)
+text = "Sin leer"
 
 [node name="OpenButton" type="Button" parent="InboxScroll/MailList/MailEntry_4" unique_id=2135192659]
 layout_mode = 0
@@ -746,30 +774,37 @@ mouse_filter = 2
 
 [node name="SenderLabel" type="Label" parent="InboxScroll/MailList/MailEntry_5/VBoxContainer" unique_id=1079774974]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 text = "Remitente"
 clip_text = true
 text_overrun_behavior = 3
 
 [node name="SubjectLabel" type="Label" parent="InboxScroll/MailList/MailEntry_5/VBoxContainer" unique_id=1489254844]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.1254902, 0.1254902, 0.1254902, 1)
 text = "Asunto del correo"
 clip_text = true
 text_overrun_behavior = 3
 
 [node name="AttachmentLabel" type="Label" parent="InboxScroll/MailList/MailEntry_5/VBoxContainer" unique_id=2039634766]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 text = "Sin archivos adjuntos"
 clip_text = true
 text_overrun_behavior = 3
+
+[node name="StateLabel" type="Label" parent="InboxScroll/MailList/MailEntry_5/VBoxContainer" unique_id=1968051945]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_iwqih")
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.15686275, 0.32941177, 0.64705884, 1)
+text = "Sin leer"
 
 [node name="OpenButton" type="Button" parent="InboxScroll/MailList/MailEntry_5" unique_id=331957504]
 layout_mode = 0
@@ -784,9 +819,9 @@ offset_left = 18.0
 offset_top = 367.0
 offset_right = 19.0
 offset_bottom = 390.0
-theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 text = "Tiempo: 120s | Recibidos: 1 | Respondidos: 0"
 
 [node name="EmailDetail" type="VBoxContainer" parent="." unique_id=595823493]
@@ -799,41 +834,48 @@ theme_override_constants/separation = 6
 
 [node name="Subject" type="Label" parent="EmailDetail" unique_id=1354898768]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.1254902, 0.2, 0.30588236, 1)
 text = "Asunto del correo"
 autowrap_mode = 3
 max_lines_visible = 2
 
 [node name="Sender" type="Label" parent="EmailDetail" unique_id=1432039298]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.39215687, 0.45490196, 0.54509807, 1)
 text = "De: Nombre <correo@empresa.cl>
 Para: empleado@empresa.cl"
 autowrap_mode = 3
 max_lines_visible = 2
 
+[node name="State" type="Label" parent="EmailDetail" unique_id=1814422585]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_iwqih")
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.15686275, 0.32941177, 0.64705884, 1)
+text = "Estado: Sin leer"
+
 [node name="Body" type="RichTextLabel" parent="EmailDetail" unique_id=1752372608]
 custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/default_color = Color(0.1254902, 0.2, 0.30588236, 1)
-theme_override_fonts/normal_font = ExtResource("3_iwqih")
-theme_override_font_sizes/normal_font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_iyqx3")
 theme_override_styles/focus = SubResource("StyleBoxFlat_4nemo")
+theme_override_fonts/normal_font = ExtResource("3_iwqih")
+theme_override_font_sizes/normal_font_size = 16
+theme_override_colors/default_color = Color(0.1254902, 0.2, 0.30588236, 1)
 text = "Aquí se mostrará el contenido del correo recibido.
 
 Puedes editar los colores, el tamaño y el estilo de estos nodos desde el Inspector."
 
 [node name="Attachment" type="Label" parent="EmailDetail" unique_id=926896654]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.20784314, 0.36078432, 0.6666667, 1)
 text = "ADJUNTO  |  documento.pdf"
 autowrap_mode = 3
 text_overrun_behavior = 3
@@ -846,49 +888,49 @@ theme_override_constants/separation = 8
 [node name="BackButton" type="Button" parent="EmailDetail/Actions" unique_id=1108689884]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_ilq2j")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pm4k8")
+theme_override_styles/hover = SubResource("StyleBoxFlat_sjn53")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_c4ao2")
+theme_override_styles/focus = SubResource("StyleBoxFlat_2gdys")
 theme_override_colors/font_color = Color(0.08235294, 0.16470589, 0.2784314, 1)
 theme_override_colors/font_pressed_color = Color(0.08235294, 0.16470589, 0.2784314, 1)
 theme_override_colors/font_hover_color = Color(0.08235294, 0.16470589, 0.2784314, 1)
 theme_override_colors/font_disabled_color = Color(0.5411765, 0.5882353, 0.65882355, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBoxFlat_ilq2j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pm4k8")
-theme_override_styles/hover = SubResource("StyleBoxFlat_sjn53")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_c4ao2")
-theme_override_styles/focus = SubResource("StyleBoxFlat_2gdys")
 text = "< Volver"
 
 [node name="AcceptButton" type="Button" parent="EmailDetail/Actions" unique_id=1598577197]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_ce7bk")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_0h18i")
+theme_override_styles/hover = SubResource("StyleBoxFlat_na2kg")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_3fl14")
+theme_override_styles/focus = SubResource("StyleBoxFlat_lmtgm")
 theme_override_colors/font_color = Color(0.08235294, 0.16470589, 0.2784314, 1)
 theme_override_colors/font_pressed_color = Color(0.08235294, 0.16470589, 0.2784314, 1)
 theme_override_colors/font_hover_color = Color(0.08235294, 0.16470589, 0.2784314, 1)
 theme_override_colors/font_disabled_color = Color(0.5411765, 0.5882353, 0.65882355, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBoxFlat_ce7bk")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_0h18i")
-theme_override_styles/hover = SubResource("StyleBoxFlat_na2kg")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_3fl14")
-theme_override_styles/focus = SubResource("StyleBoxFlat_lmtgm")
 text = "Aceptar correo"
 
 [node name="RejectButton" type="Button" parent="EmailDetail/Actions" unique_id=1638384819]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_d4h0j")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_kk52r")
+theme_override_styles/hover = SubResource("StyleBoxFlat_8v3pq")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_ncwsq")
+theme_override_styles/focus = SubResource("StyleBoxFlat_5h7n8")
 theme_override_colors/font_color = Color(0.08235294, 0.16470589, 0.2784314, 1)
 theme_override_colors/font_pressed_color = Color(0.08235294, 0.16470589, 0.2784314, 1)
 theme_override_colors/font_hover_color = Color(0.08235294, 0.16470589, 0.2784314, 1)
 theme_override_colors/font_disabled_color = Color(0.5411765, 0.5882353, 0.65882355, 1)
 theme_override_fonts/font = ExtResource("3_iwqih")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBoxFlat_d4h0j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_kk52r")
-theme_override_styles/hover = SubResource("StyleBoxFlat_8v3pq")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_ncwsq")
-theme_override_styles/focus = SubResource("StyleBoxFlat_5h7n8")
 text = "Rechazar correo"

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "rrhh_actividad"
+sender_name = "Recursos Humanos"
+sender_address = "personas@empresa.cl"
+subject = "Actividad del equipo"
+body = "Hola, recuerda que puedes confirmar tu asistencia a la actividad del equipo desde la intranet habitual. No necesitamos que envíes datos por correo."
+attachment_name = ""
+recipient = "empleado@empresa.cl"
+has_attachment = false
+is_phishing = false
+explanation = "Mensaje de coordinación coherente con la actividad anunciada. Remite al canal habitual y no solicita credenciales."

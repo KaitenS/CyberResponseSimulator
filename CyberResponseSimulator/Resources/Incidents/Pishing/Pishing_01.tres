@@ -9,6 +9,8 @@
 [ext_resource type="Resource" uid="uid://cgqe1lw77if3u" path="res://resources/Incidents/Pishing/Emails/Email_02_Pishing.tres" id="6_tfpct"]
 [ext_resource type="Resource" uid="uid://c1scwk2h7g43o" path="res://resources/Incidents/Pishing/Emails/Email_03_Legitimo.tres" id="7_qb421"]
 
+[ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Pishing_02.tres" id="variant2"]
+[ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Pishing_03.tres" id="variant3"]
 [resource]
 script = ExtResource("2_20sh0")
 incident_id = "pishing_01"
@@ -16,3 +18,4 @@ incident_name = "Phishing - 01"
 daily_summary = ExtResource("1_u72rb")
 emails = Array[ExtResource("1_usjry")]([ExtResource("3_d61js"), ExtResource("4_41bpp"), ExtResource("5_4mae6"), ExtResource("6_tfpct"), ExtResource("7_qb421")])
 metadata/_custom_type_script = "uid://c8i61im5igeyg"
+variants = Array[ExtResource("2_20sh0")]([ExtResource("variant2"), ExtResource("variant3")])

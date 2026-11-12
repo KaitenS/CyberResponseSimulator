@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "ticket_contrasena"
+sender_name = "Mesa de ayuda"
+sender_address = "mesa@empresa-soporte.cl"
+subject = "Verificación de tu ticket"
+body = "Responde con tu contraseña actual para que podamos cerrar el ticket y mantener habilitada tu cuenta."
+attachment_name = ""
+recipient = "empleado@empresa.cl"
+has_attachment = false
+is_phishing = true
+explanation = "El remitente usa un dominio parecido y pide una contraseña, algo que soporte no necesita. El cierre de un ticket no justifica esa solicitud."

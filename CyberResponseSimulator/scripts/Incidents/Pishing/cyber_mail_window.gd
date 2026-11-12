@@ -67,9 +67,12 @@ func _refresh() -> void:
 		var email := emails[i]
 		var content := rows[i].get_node("VBoxContainer")
 		content.get_node("SenderLabel").text = email.sender_name
-		var prefix := "[Respondido] " if controller.is_email_resolved(email) else ""
+		content.get_node("StateLabel").text = controller.get_email_state(email)
+		var prefix := ""
 		content.get_node("SubjectLabel").text = prefix + email.subject
 		content.get_node("AttachmentLabel").text = email.attachment_name if email.has_attachment else "Sin archivos adjuntos"
+	if selected_email != null and is_instance_valid(controller):
+		$EmailDetail/State.text = "Estado: " + controller.get_email_state(selected_email)
 	_update_actions()
 	_on_time_updated(controller.time_remaining if is_instance_valid(controller) else 0.0)
 
@@ -80,6 +83,8 @@ func _select_row(index: int) -> void:
 	if index >= emails.size():
 		return
 	selected_email = emails[index]
+	controller.mark_email_read(selected_email)
+	_refresh()
 	subject_label.text = selected_email.subject
 	sender_label.text = "De: %s <%s>\nPara: %s" % [selected_email.sender_name, selected_email.sender_address, selected_email.recipient]
 	message.text = selected_email.body
