@@ -131,7 +131,7 @@ func setup_incidents() -> void:
 func start_incident_test() -> void:
 
 	await get_tree().create_timer(
-		first_incident_delay
+		first_incident_delay, false
 	).timeout
 
 	if not GameManager.game_active:
@@ -260,7 +260,7 @@ func show_incident_notification(
 	notification_panel.visible = true
 
 	await get_tree().create_timer(
-		4.0
+		4.0, false
 	).timeout
 
 	notification_panel.visible = false
