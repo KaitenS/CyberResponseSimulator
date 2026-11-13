@@ -6,3 +6,5 @@
 *.tmp
 *.tmo
 CyberResponseSimulator/scripts/DDOS/terminal_mitigacion.gd.uid
+CyberResponseSimulator/scripts/Incidents/ddos/pantalla_resultado.gd.uid
+*.gd
