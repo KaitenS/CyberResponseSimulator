@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "actualizacion_oficial_exe"
+sender_name = "Mesa de ayuda"
+sender_address = "soporte@empresa.cl"
+recipient = "empleado@empresa.cl"
+subject = "Instalador autorizado del cliente de soporte"
+body = "Adjuntamos cliente_soporte.exe, el instalador anunciado para el mantenimiento de hoy. Comprueba el remitente y el resumen diario antes de abrirlo. No necesitamos tu contraseña."
+is_phishing = false
+simulates_update = true
+update_duration = 10.0
+explanation = "El resumen anunció cliente_soporte.exe desde soporte@empresa.cl. Coinciden el archivo, el remitente y la tarea prevista. Ser un .exe exige revisar el contexto, pero no lo convierte automáticamente en fraudulento."
+
+has_attachment = true
+attachment_name = "cliente_soporte.exe"

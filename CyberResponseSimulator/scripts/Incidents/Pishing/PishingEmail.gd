@@ -21,3 +21,10 @@ extends Resource
 
 # Explicación pedagógica que se revela al terminar el día.
 @export_multiline var explanation: String = ""
+## Texto mostrado y destino real del enlace de práctica.
+@export var link_text: String = ""
+@export var link_url: String = ""
+
+## Abrir esta actualización legítima consume tiempo del incidente.
+@export var simulates_update: bool = false
+@export_range(1.0, 60.0, 1.0) var update_duration: float = 10.0

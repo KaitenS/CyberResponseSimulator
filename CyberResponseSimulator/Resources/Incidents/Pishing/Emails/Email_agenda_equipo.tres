@@ -12,3 +12,6 @@ recipient = "empleado@empresa.cl"
 has_attachment = true
 is_phishing = false
 explanation = "Comparte información de trabajo sin pedir pagos ni contraseñas. Es coherente con la jornada de coordinación."
+
+link_text = "Ver agenda del equipo"
+link_url = "https://intranet.empresa.example/agenda"

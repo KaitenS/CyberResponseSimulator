@@ -4,11 +4,14 @@
 script = ExtResource("1")
 email_id = "ticket_contrasena"
 sender_name = "Mesa de ayuda"
-sender_address = "mesa@empresa-soporte.cl"
+sender_address = "s0porte@empresa.cl"
 subject = "Verificación de tu ticket"
-body = "Responde con tu contraseña actual para que podamos cerrar el ticket y mantener habilitada tu cuenta."
+body = "Tu ticket requiere una última verificación. Accede al portal para mantener habilitada tu cuenta."
 attachment_name = ""
 recipient = "empleado@empresa.cl"
 has_attachment = false
 is_phishing = true
-explanation = "El remitente usa un dominio parecido y pide una contraseña, algo que soporte no necesita. El cierre de un ticket no justifica esa solicitud."
+explanation = "s0porte contiene un cero en lugar de la o de soporte@empresa.cl. Aunque el texto visible dice soporte.empresa.example, el destino real es soporte.ernpresa.example: rn sustituye la m de empresa. No coincide con el canal oficial del resumen diario."
+
+link_text = "https://soporte.empresa.example/verificar"
+link_url = "https://soporte.ernpresa.example/verificar"

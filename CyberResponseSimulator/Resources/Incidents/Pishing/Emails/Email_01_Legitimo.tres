@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_x8q4q")
 email_id = "email_01"
-sender_name = "María Gonzáles"
+sender_name = "María González"
 sender_address = "maria.gonzalez@empresa.cl"
 recipient = "empleado@empresa.cl"
 subject = "Informe mensual de gastos"
@@ -19,3 +19,7 @@ attachment_name = "informe_gastos.pdf"
 has_attachment = true
 explanation = "Un reporte de Finanzas en PDF es coherente con el cierre de período y los formatos de lectura habituales. No pide instalar programas ni compartir credenciales."
 metadata/_custom_type_script = "uid://l3b3e5vup7qn"
+
+link_text = "Consultar informe en Finanzas"
+
+link_url = "https://finanzas.empresa.example/informes"

@@ -6,7 +6,7 @@
 script = ExtResource("1_yqw5o")
 email_id = "email_02_P"
 sender_name = "María González"
-sender_address = "maria.gonzalez@empresa-segura.cl"
+sender_address = "rnaria.gonzalez@empresa.cl"
 recipient = "empleado@empresa.cl"
 subject = "Informe mensual de gastos - URGENTE"
 body = "Hola,
@@ -19,5 +19,9 @@ María"
 attachment_name = "informe_gastos.exe"
 has_attachment = true
 is_phishing = true
-explanation = "El dominio empresa-segura.cl imita al corporativo. Un informe en formato .exe contradice el uso de documentos de lectura y el asunto urgente intenta reducir la revisión."
+explanation = "El remitente rnaria.gonzalez comienza con rn, no con la m de maria.gonzalez indicada en el resumen. El destino usa ernpresa.example (rn en lugar de m), no empresa.example. Además, un informe .exe es un ejecutable inesperado; la urgencia no justifica abrirlo."
 metadata/_custom_type_script = "uid://l3b3e5vup7qn"
+
+link_text = "Consultar informe en Finanzas"
+
+link_url = "https://finanzas.ernpresa.example/informes"

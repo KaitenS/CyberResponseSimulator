@@ -265,3 +265,36 @@ func create_incident() -> void:
 func show_incident_notification(_incident: IncidentData) -> void:
 	# La alerta orienta sin revelar el diagnóstico ni alterar el incidente.
 	notification_panel.call("show_alert")
+
+
+# Consecuencia solicitada por Phishing; reutiliza los puntos de entrada existentes.
+func start_phishing_consequence(computer: Computer) -> void:
+	if not GameManager.game_active or not is_instance_valid(computer):
+		return
+	var choices: Array[String] = []
+	if malware_data != null and not (is_instance_valid(computer.malware_controller) and not computer.malware_controller.finished):
+		var malware_running := false
+		for other in computers:
+			if is_instance_valid(other) and is_instance_valid(other.malware_controller) and not other.malware_controller.finished:
+				malware_running = true
+		if not malware_running:
+			choices.append("malware")
+	if not IncidenteDDoS.activo:
+		choices.append("ddos")
+	if choices.is_empty():
+		return
+	var kind: String = choices.pick_random()
+	var incident: IncidentData = malware_data if kind == "malware" else IncidentData.new()
+	if kind == "ddos":
+		incident.incident_id = "ddos"
+		incident.incident_name = "DDoS"
+		incident.difficulty = 3
+	if not IncidentManager.start_incident(incident):
+		return
+	if kind == "malware":
+		computer.activate_malware(malware_data)
+		if is_instance_valid(computer.cyber_desk):
+			computer.cyber_desk.get_node("CyberDesk").set_malware_controller(computer.malware_controller)
+	else:
+		DDoSEnMapa.iniciar_en_escena(get_parent(), incident)
+	show_incident_notification(incident)

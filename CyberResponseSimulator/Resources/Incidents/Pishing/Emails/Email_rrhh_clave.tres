@@ -4,11 +4,14 @@
 script = ExtResource("1")
 email_id = "rrhh_clave"
 sender_name = "Gestión de Personas"
-sender_address = "personas@empresa-validacion.cl"
+sender_address = "pers0nas@empresa.cl"
 subject = "Confirma tu asistencia hoy"
-body = "Para conservar tu cupo responde este mensaje con tu usuario y contraseña de la empresa. El plazo vence en una hora."
+body = "Para conservar tu cupo confirma tu asistencia en el portal de inscripción. El plazo vence en una hora."
 attachment_name = ""
 recipient = "empleado@empresa.cl"
 has_attachment = false
 is_phishing = true
-explanation = "El dominio es distinto del habitual y pide una contraseña por correo. La presión por perder el cupo contradice el procedimiento de inscripción."
+explanation = "El remitente pers0nas sustituye la o por un cero respecto de personas@empresa.cl. El enlace lleva a empresa.example.verificacion.example, que pertenece a verificacion.example y no al portal intranet.empresa.example del resumen. La urgencia refuerza el engaño."
+
+link_text = "Confirmar mi cupo"
+link_url = "https://empresa.example.verificacion.example/acceso"

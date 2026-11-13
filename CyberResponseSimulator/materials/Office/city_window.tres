@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3]
+[ext_resource type="Shader" path="res://materials/Office/city_window.gdshader" id="1"]
+[ext_resource type="Texture2D" path="res://assets/Textures/City/city_far.svg" id="2"]
+[ext_resource type="Texture2D" path="res://assets/Textures/City/city_middle.svg" id="3"]
+[ext_resource type="Texture2D" path="res://assets/Textures/City/city_near.svg" id="4"]
+[resource]
+shader = ExtResource("1")
+shader_parameter/distant_city = ExtResource("2")
+shader_parameter/middle_city = ExtResource("3")
+shader_parameter/near_city = ExtResource("4")
+shader_parameter/window_size = Vector2(2.1, 1.15)
+shader_parameter/parallax_strength = 0.85
+shader_parameter/exterior_brightness = 0.92

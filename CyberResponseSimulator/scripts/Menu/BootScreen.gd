@@ -1,4 +1,7 @@
 extends Control
+@export var sfx_enabled: bool = true
+var _leaving := false
+var _typing := false
 
 @onready var boot_text: RichTextLabel = $Background/BootText
 @onready var glitch_overlay: ColorRect = $GlitchOverlay
@@ -29,6 +32,8 @@ var displayed_text := ""
 
 
 func _ready():
+	$SFX/Typing.finished.connect(_loop_typing)
+	_play_sfx("PowerOn")
 	
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	
@@ -48,9 +53,13 @@ func _ready():
 
 	# Pequeña espera inicial
 	await get_tree().create_timer(0.7).timeout
+	if _leaving:
+		return
 
 	# Comenzar boot
 	await type_boot_sequence()
+	if _leaving:
+		return
 
 
 func type_boot_sequence():
@@ -58,18 +67,29 @@ func type_boot_sequence():
 	for line in boot_lines:
 
 		await type_line(line)
+		if _leaving:
+			return
 
 		# Pausa entre líneas
 		await get_tree().create_timer(0.05).timeout
+		if _leaving:
+			return
 
+	_play_sfx("AccessGranted")
 	# Esperar después de ACCESS GRANTED
 	await get_tree().create_timer(0.5).timeout
+	if _leaving:
+		return
 
 	# Comenzar secuencia de logos
 	await logo_sequence()
+	if _leaving:
+		return
 
 
 func type_line(line: String):
+	_typing = true
+	_play_sfx("Typing")
 
 	var current_text := ""
 
@@ -81,7 +101,12 @@ func type_line(line: String):
 		boot_text.text = displayed_text + current_text + "_"
 
 		await get_tree().create_timer(0.001).timeout
+		if _leaving:
+			return
 
+	_typing = false
+	$SFX/Typing.stop()
+	_play_sfx("LineBeep")
 	# Guardar la línea terminada
 	displayed_text += current_text + "\n"
 
@@ -101,6 +126,8 @@ func logo_sequence():
 	)
 
 	await boot_fade.finished
+	if _leaving:
+		return
 
 
 	# =====================================================
@@ -108,8 +135,12 @@ func logo_sequence():
 	# =====================================================
 
 	await show_logo(logo1, 0.30)
+	if _leaving:
+		return
 
 	await get_tree().create_timer(0.05).timeout
+	if _leaving:
+		return
 
 
 	# =====================================================
@@ -117,8 +148,12 @@ func logo_sequence():
 	# =====================================================
 
 	await show_logo(logo2, 0.30)
+	if _leaving:
+		return
 
 	await get_tree().create_timer(0.05).timeout
+	if _leaving:
+		return
 
 
 	# =====================================================
@@ -126,6 +161,8 @@ func logo_sequence():
 	# =====================================================
 
 	await show_logo_final(logo3)
+	if _leaving:
+		return
 
 
 	# =====================================================
@@ -133,9 +170,12 @@ func logo_sequence():
 	# =====================================================
 
 	await glitch_transition()
+	if _leaving:
+		return
 
 
 func show_logo(logo: TextureRect, duration: float):
+	_play_sfx("LogoSweep")
 
 	# Asegurar que empieza invisible
 	logo.modulate.a = 0.0
@@ -151,9 +191,13 @@ func show_logo(logo: TextureRect, duration: float):
 	)
 
 	await fade_in.finished
+	if _leaving:
+		return
 
 	# Mantener visible
 	await get_tree().create_timer(0.7).timeout
+	if _leaving:
+		return
 
 	# Fade OUT
 	var fade_out := create_tween()
@@ -166,8 +210,11 @@ func show_logo(logo: TextureRect, duration: float):
 	)
 
 	await fade_out.finished
+	if _leaving:
+		return
 
 func show_logo_final(logo: TextureRect):
+	_play_sfx("LogoSweep")
 
 	# Comienza invisible
 	logo.modulate.a = 0.0
@@ -183,14 +230,19 @@ func show_logo_final(logo: TextureRect):
 	)
 
 	await fade_in.finished
+	if _leaving:
+		return
 
 	# Pequeño momento para que podamos verlo
 	await get_tree().create_timer(0.25).timeout
+	if _leaving:
+		return
 
 	# NO hacemos fade out.
 	# El glitch se encargará de destruir visualmente el logo.
 
 func glitch_transition():
+	_play_sfx("Glitch")
 
 	# =====================================================
 	# FASE 1 - GLITCH PEQUEÑO
@@ -207,6 +259,8 @@ func glitch_transition():
 	)
 
 	await get_tree().create_timer(0.10).timeout
+	if _leaving:
+		return
 
 
 	# =====================================================
@@ -219,6 +273,8 @@ func glitch_transition():
 	)
 
 	await get_tree().create_timer(0.06).timeout
+	if _leaving:
+		return
 
 
 	glitch_material.set_shader_parameter(
@@ -227,6 +283,8 @@ func glitch_transition():
 	)
 
 	await get_tree().create_timer(0.12).timeout
+	if _leaving:
+		return
 
 
 	# =====================================================
@@ -239,12 +297,15 @@ func glitch_transition():
 	)
 
 	await get_tree().create_timer(0.20).timeout
+	if _leaving:
+		return
 
 
 	# =====================================================
 	# FASE 4 - VHS
 	# =====================================================
 
+	_play_sfx("VHS")
 	var vhs_duration := 0.60
 	var elapsed := 0.0
 
@@ -267,12 +328,16 @@ func glitch_transition():
 		)
 
 		await get_tree().process_frame
+		if _leaving:
+			return
 
 
 	# =====================================================
 	# FASE 5 - APAGADO CRT
 	# =====================================================
 
+	$SFX/VHS.stop()
+	_play_sfx("CRTShutdown")
 	var shutdown_duration := 1.10
 	elapsed = 0.0
 
@@ -304,6 +369,8 @@ func glitch_transition():
 		)
 
 		await get_tree().process_frame
+		if _leaving:
+			return
 
 
 	# =====================================================
@@ -322,6 +389,8 @@ func glitch_transition():
 
 	# Mantener el punto un instante
 	await get_tree().create_timer(0.12).timeout
+	if _leaving:
+		return
 
 
 	# =====================================================
@@ -334,12 +403,51 @@ func glitch_transition():
 	)
 
 	await get_tree().create_timer(0.18).timeout
+	if _leaving:
+		return
 
 
 	# =====================================================
 	# CAMBIAR AL MENÚ
 	# =====================================================
 
-	get_tree().change_scene_to_file(
-		"res://scenes/Menu/MainMenu.tscn"
-	)
+	_go_to_menu()
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") and not event.is_echo():
+		get_viewport().set_input_as_handled()
+		_go_to_menu()
+
+
+func _play_sfx(sound_name: String) -> void:
+	if sfx_enabled and not _leaving:
+		var player := get_node("SFX/" + sound_name) as AudioStreamPlayer
+		player.play()
+
+
+func _loop_typing() -> void:
+	if _typing and not _leaving:
+		_play_sfx("Typing")
+
+
+func _stop_sfx() -> void:
+	_typing = false
+	var sounds := get_node_or_null("SFX")
+	if sounds != null:
+		for child in sounds.get_children():
+			if child is AudioStreamPlayer:
+				child.stop()
+
+
+func _go_to_menu() -> void:
+	if _leaving:
+		return
+	_leaving = true
+	_stop_sfx()
+	get_tree().call_deferred("change_scene_to_file", "res://scenes/Menu/MainMenu.tscn")
+
+
+func _exit_tree() -> void:
+	_leaving = true
+	_stop_sfx()
