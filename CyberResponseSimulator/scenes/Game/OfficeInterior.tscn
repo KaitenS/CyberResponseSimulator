@@ -1,6 +1,8 @@
 [gd_scene format=3]
 [ext_resource type="PackedScene" path="res://assets/Models/Map/Office.blend" id="1"]
 [ext_resource type="Material" path="res://materials/Office/office_walls.tres" id="2"]
+[ext_resource type="ArrayMesh" path="res://assets/Models/Map/Office_ExpandedServers.tres" id="3"]
 [node name="Office" instance=ExtResource("1")]
 [node name="Office_Walls" parent="." index="0"]
 material_override = ExtResource("2")
+mesh = ExtResource("3")

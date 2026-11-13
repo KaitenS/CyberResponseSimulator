@@ -7,9 +7,11 @@
 [ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Emails/Email_manual_soporte.tres" id="e3"]
 [ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Emails/Email_ticket_contrasena.tres" id="e4"]
 [ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Emails/Email_datos_proveedor.tres" id="e5"]
+[ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Emails/Email_actualizacion_oficial.tres" id="e6"]
+[ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Emails/Email_actualizacion_oficial_exe.tres" id="e7"]
 [resource]
 script = ExtResource("data")
 incident_id = "pishing_03"
 incident_name = "Phishing - 03"
 daily_summary = ExtResource("summary")
-emails = Array[ExtResource("email")]([ExtResource("e1"), ExtResource("e2"), ExtResource("e3"), ExtResource("e4"), ExtResource("e5")])
+emails = Array[ExtResource("email")]([ExtResource("e1"), ExtResource("e2"), ExtResource("e3"), ExtResource("e4"), ExtResource("e5"), ExtResource("e6"), ExtResource("e7")])

@@ -1,0 +1,30 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Game/Interaction/ComputerIncidentMarker.gd" id="1_script"]
+[ext_resource type="FontFile" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_font"]
+
+[node name="IncidentMarker" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Warning" type="Label3D" parent="."]
+billboard = 1
+no_depth_test = true
+pixel_size = 0.006
+modulate = Color(1, 0.78, 0.08, 1)
+outline_modulate = Color(0.12, 0.08, 0.01, 1)
+font = ExtResource("2_font")
+font_size = 64
+outline_size = 12
+text = "[!]"
+
+[node name="Caption" type="Label3D" parent="."]
+position = Vector3(0, -0.25, 0)
+billboard = 1
+no_depth_test = true
+pixel_size = 0.004
+modulate = Color(1, 0.85, 0.25, 1)
+outline_modulate = Color(0.12, 0.08, 0.01, 1)
+font = ExtResource("2_font")
+font_size = 18
+outline_size = 8
+text = "REVISAR EQUIPO"

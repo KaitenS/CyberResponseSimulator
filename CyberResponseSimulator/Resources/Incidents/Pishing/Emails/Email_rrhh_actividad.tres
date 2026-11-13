@@ -12,3 +12,6 @@ recipient = "empleado@empresa.cl"
 has_attachment = false
 is_phishing = false
 explanation = "Mensaje de coordinación coherente con la actividad anunciada. Remite al canal habitual y no solicita credenciales."
+
+link_text = "Confirmar asistencia en la intranet"
+link_url = "https://intranet.empresa.example/actividades"

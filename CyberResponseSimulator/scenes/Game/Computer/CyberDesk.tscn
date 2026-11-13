@@ -21,6 +21,8 @@
 
 [ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/phishing_mail_notice.tscn" id="18_mail_notice"]
 [ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/phishing_summary_notice.tscn" id="19_summary_notice"]
+[ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/phishing_action_screen.tscn" id="20_phishing_action"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_re7y8"]
 bg_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
 border_width_left = 2
@@ -589,3 +591,5 @@ stretch_mode = 4
 [node name="MailNotice" parent="CyberDesk/DesktopIcons/GridContainer/Email Button" instance=ExtResource("18_mail_notice")]
 
 [node name="SummaryNotice" parent="CyberDesk/DesktopIcons/GridContainer/DailySummary Button" instance=ExtResource("19_summary_notice")]
+
+[node name="PhishingActionScreen" parent="CyberDesk" instance=ExtResource("20_phishing_action")]

@@ -11,4 +11,4 @@ attachment_name = "parche_urgente.exe"
 recipient = "empleado@empresa.cl"
 has_attachment = true
 is_phishing = true
-explanation = "Aunque la dirección parece interna, solicita instalar un ejecutable adjunto. El mantenimiento utiliza el portal corporativo, no este canal."
+explanation = "Aunque la dirección parece interna, parche_urgente.exe no coincide con cliente_soporte.exe anunciado en el resumen. La urgencia y un nombre de archivo distinto requieren detenerse y verificar la solicitud."

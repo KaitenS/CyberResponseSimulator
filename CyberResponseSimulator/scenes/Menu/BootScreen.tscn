@@ -6,6 +6,15 @@
 [ext_resource type="Texture2D" uid="uid://cmpovd3im3fm" path="res://assets/Logos/Logo_DuocUC.png" id="4_768qo"]
 [ext_resource type="Texture2D" uid="uid://k0ms02wtmohb" path="res://assets/Logos/CybugLogo.png" id="5_ghp12"]
 
+[ext_resource type="AudioStream" path="res://assets/Audio/Boot/power_on.wav" id="sfx_PowerOn"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Boot/typing.wav" id="sfx_Typing"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Boot/line_beep.wav" id="sfx_LineBeep"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Boot/access_granted.wav" id="sfx_AccessGranted"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Boot/logo_sweep.wav" id="sfx_LogoSweep"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Boot/glitch.wav" id="sfx_Glitch"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Boot/vhs.wav" id="sfx_VHS"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Boot/crt_shutdown.wav" id="sfx_CRTShutdown"]
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ls8ij"]
 shader = ExtResource("2_qo86g")
 shader_parameter/glitch_amount = 0.0
@@ -105,3 +114,47 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0)
+
+[node name="SFX" type="Node" parent="."]
+[node name="PowerOn" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("sfx_PowerOn")
+volume_db = -14.0
+[node name="Typing" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("sfx_Typing")
+volume_db = -23.0
+[node name="LineBeep" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("sfx_LineBeep")
+volume_db = -22.0
+[node name="AccessGranted" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("sfx_AccessGranted")
+volume_db = -16.0
+[node name="LogoSweep" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("sfx_LogoSweep")
+volume_db = -21.0
+[node name="Glitch" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("sfx_Glitch")
+volume_db = -19.0
+[node name="VHS" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("sfx_VHS")
+volume_db = -22.0
+[node name="CRTShutdown" type="AudioStreamPlayer" parent="SFX"]
+stream = ExtResource("sfx_CRTShutdown")
+volume_db = -19.0
+
+
+[node name="SkipHint" type="Label" parent="."]
+z_index = 2
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -254.0
+offset_top = -46.0
+offset_right = -24.0
+offset_bottom = -20.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.65, 0.8, 0.7, 1)
+theme_override_font_sizes/font_size = 16
+text = "ESC · OMITIR INTRO"
+horizontal_alignment = 2

@@ -3,6 +3,12 @@ extends Interactable
 
 const CYBER_DESK_SCENE := preload("res://scenes/Game/Computer/CyberDesk.tscn")
 
+## Espera antes de volver a asignar Phishing a este computador.
+@export_range(10.0, 300.0, 1.0) var phishing_repeat_delay: float = 45.0
+var _repeat_phishing_data: PhishingData = null
+@export_range(0.0, 1.0, 0.05) var phishing_chain_probability: float = 0.35
+@export_range(1.0, 20.0, 1.0) var phishing_breach_display_seconds: float = 6.0
+
 var phishing_active: bool = false
 var active_incident: IncidentData = null
 var cyber_desk: Control = null
@@ -71,11 +77,16 @@ func _on_phishing_finished(completed: bool) -> void:
 	else:
 		GameManager.incidents_failed += 1
 
+	_repeat_phishing_data = active_incident as PhishingData
 	IncidentManager.finish_incident(active_incident)
 
 	active_incident = null
+	if phishing_controller.compromised:
+		$PhishingBreachTimer.start(phishing_breach_display_seconds)
+	else:
+		call_deferred("_reset_phishing_mailbox")
 
-	# Conservar los correos al reabrir CyberMail tras finalizar.
+	# Los resultados ya están guardados; la bandeja se vacía al finalizar.
 
 	print("Computer: Incidente Phishing finalizado.")
 
@@ -108,6 +119,8 @@ func open_cyber_desk() -> void:
 	cyber_desk = CYBER_DESK_SCENE.instantiate()
 
 	cyber_desk_viewport.add_child(cyber_desk)
+	# El mouse virtual entra al SubViewport sin necesitar un primer clic.
+	cyber_desk_viewport.notify_mouse_entered()
 
 	# Mostrar la pantalla del CyberDesk.
 	computer_screen_black.visible = false
@@ -190,13 +203,16 @@ func _input(event: InputEvent) -> void:
 		_on_cyber_desk_close_requested()
 		return
 
+	if cyber_desk.get_node("CyberDesk/PhishingActionScreen").is_blocking():
+		return
+
 	if event is InputEventMouseMotion:
 		var previous_position := cursor_position
 		move_custom_cursor(event.relative)
 		if _phishing_scroll_dragging or _cursor_over_phishing_window():
 			var motion := InputEventMouseMotion.new()
-			motion.position = cursor_position
-			motion.global_position = cursor_position
+			motion.position = cursor_position - CURSOR_SIZE / 2.0
+			motion.global_position = motion.position
 			motion.relative = cursor_position - previous_position
 			motion.button_mask = event.button_mask
 			cyber_desk_viewport.push_input(motion, true)
@@ -205,8 +221,8 @@ func _input(event: InputEvent) -> void:
 		if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
 			if _cursor_over_phishing_window():
 				var wheel := event.duplicate() as InputEventMouseButton
-				wheel.position = cursor_position
-				wheel.global_position = cursor_position
+				wheel.position = cursor_position - CURSOR_SIZE / 2.0
+				wheel.global_position = wheel.position
 				cyber_desk_viewport.push_input(wheel, true)
 			return
 
@@ -242,6 +258,9 @@ func _input(event: InputEvent) -> void:
 		virtual_click.button_index = MOUSE_BUTTON_LEFT
 		virtual_click.pressed = event.pressed
 		virtual_click.position = cursor_position
+		if _cursor_over_phishing_window():
+			# La punta visible de la flecha, no el centro del sprite.
+			virtual_click.position -= CURSOR_SIZE / 2.0
 
 		print("ENVIANDO CLICK AL CYBERDESK: ", cursor_position)
 
@@ -297,6 +316,7 @@ func _on_cyber_desk_close_requested() -> void:
 	# Mostrar la pantalla negra.
 	computer_screen_black.visible = true
 
+	cyber_desk_viewport.notify_mouse_exited()
 	cyber_desk.queue_free()
 	cyber_desk = null
 	custom_cursor = null
@@ -323,3 +343,37 @@ func _cursor_over_phishing_window() -> bool:
 		if other != null and other.is_visible_in_tree() and other.get_global_rect().has_point(cursor_position):
 			return false
 	return desk._is_click_on_phishing_window(cursor_position)
+
+
+func _reset_phishing_mailbox() -> void:
+	if phishing_active:
+		return
+	if is_instance_valid(cyber_desk):
+		cyber_desk.get_node("CyberDesk").set_phishing_controller(null)
+	if is_instance_valid(phishing_controller):
+		phishing_controller.queue_free()
+	phishing_controller = null
+	if GameManager.game_active:
+		$PhishingRepeatTimer.start(phishing_repeat_delay)
+
+
+func _on_phishing_repeat_timeout() -> void:
+	if not GameManager.game_active or _repeat_phishing_data == null:
+		return
+	if phishing_active:
+		return
+	# Esperar si este equipo está ocupado o se alcanzó el límite global.
+	if (is_instance_valid(malware_controller) and not malware_controller.finished) or not IncidentManager.start_incident(_repeat_phishing_data):
+		$PhishingRepeatTimer.start(10.0)
+		return
+	activate_phishing(_repeat_phishing_data)
+	var flow = get_parent().get_node_or_null("IncidentFlowManager")
+	if flow != null:
+		flow.show_incident_notification(_repeat_phishing_data)
+
+
+func _on_phishing_breach_timeout() -> void:
+	var flow = get_parent().get_node_or_null("IncidentFlowManager")
+	_reset_phishing_mailbox()
+	if GameManager.game_active and flow != null and randf() < phishing_chain_probability:
+		flow.start_phishing_consequence(self)

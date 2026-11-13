@@ -813,6 +813,17 @@ anchor_bottom = 1.0
 theme_override_fonts/font = ExtResource("3_iwqih")
 flat = true
 
+[node name="AutoOpenWarning" type="Label" parent="."]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 352.0
+offset_right = 582.0
+offset_bottom = 367.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("3_iwqih")
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.78, 0.10, 0.12, 1)
+text = "Al aceptar, se abrirán enlaces y adjuntos (.exe) automáticamente."
 [node name="Status" type="Label" parent="." unique_id=116509152]
 layout_mode = 0
 offset_left = 18.0
@@ -871,6 +882,14 @@ text = "Aquí se mostrará el contenido del correo recibido.
 
 Puedes editar los colores, el tamaño y el estilo de estos nodos desde el Inspector."
 
+[node name="LinkDestination" type="Label" parent="EmailDetail"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.25, 0.45, 1)
+theme_override_fonts/font = ExtResource("3_iwqih")
+theme_override_font_sizes/font_size = 12
+text_overrun_behavior = 3
+
 [node name="Attachment" type="Label" parent="EmailDetail" unique_id=926896654]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_iwqih")
@@ -880,6 +899,13 @@ text = "ADJUNTO  |  documento.pdf"
 autowrap_mode = 3
 text_overrun_behavior = 3
 max_lines_visible = 1
+
+[node name="OpenAttachment" type="Button" parent="EmailDetail"]
+visible = false
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_iwqih")
+theme_override_font_sizes/font_size = 14
+text = "Abrir archivo adjunto"
 
 [node name="Actions" type="HBoxContainer" parent="EmailDetail" unique_id=1804070057]
 layout_mode = 2

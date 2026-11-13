@@ -21,6 +21,10 @@ func _ready() -> void:
 	subject_label = $EmailDetail/Subject
 	sender_label = $EmailDetail/Sender
 	message = $EmailDetail/Body
+	message.meta_clicked.connect(_on_link_clicked)
+	$EmailDetail/OpenAttachment.pressed.connect(_on_attachment_pressed)
+	message.meta_hover_started.connect(_on_link_hover)
+	message.meta_hover_ended.connect(_on_link_exit)
 	attachment_label = $EmailDetail/Attachment
 	accept_button = $EmailDetail/Actions/AcceptButton
 	reject_button = $EmailDetail/Actions/RejectButton
@@ -52,6 +56,7 @@ func set_controller(value: PishingIncidentController) -> void:
 	_back_to_inbox()
 
 func _back_to_inbox() -> void:
+	$EmailDetail/LinkDestination.text = ""
 	detail.hide()
 	inbox.get_parent().show()
 	_refresh()
@@ -87,7 +92,7 @@ func _select_row(index: int) -> void:
 	_refresh()
 	subject_label.text = selected_email.subject
 	sender_label.text = "De: %s <%s>\nPara: %s" % [selected_email.sender_name, selected_email.sender_address, selected_email.recipient]
-	message.text = selected_email.body
+	_render_body(selected_email)
 	attachment_label.text = "ADJUNTO  |  " + (selected_email.attachment_name if selected_email.has_attachment else "Sin archivos adjuntos")
 	inbox.get_parent().hide()
 	detail.show()
@@ -99,10 +104,15 @@ func _update_actions() -> void:
 		enabled = not controller.is_email_resolved(selected_email)
 	accept_button.disabled = not enabled
 	reject_button.disabled = not enabled
+	$EmailDetail/OpenAttachment.visible = selected_email != null and selected_email.has_attachment
+	$EmailDetail/OpenAttachment.disabled = not enabled
 
 func _respond(accepted: bool) -> void:
 	if is_instance_valid(controller) and selected_email != null:
-		controller.resolve_email(selected_email, accepted)
+		if accepted:
+			controller.accept_email(selected_email)
+		else:
+			controller.resolve_email(selected_email, false)
 		_refresh()
 
 func _on_email_received(_email: PhishingEmail) -> void:
@@ -121,3 +131,54 @@ func _on_time_updated(seconds: float) -> void:
 		status_label.text = "Tiempo: %ds | Recibidos: %d | Respondidos: %d" % [ceili(seconds), controller.received_emails.size(), controller.resolved_emails.size()]
 	else:
 		status_label.text = "Incidente finalizado | Respondidos: %d/%d" % [controller.resolved_emails.size(), controller.selected_emails.size()]
+
+
+func _render_body(email: PhishingEmail) -> void:
+	message.clear()
+	$EmailDetail/LinkDestination.text = ""
+	$EmailDetail/Body.get_v_scroll_bar().value = 0
+	var regex := RegEx.new()
+	regex.compile("(?i)https?://[^\\s<>\\[\\]]+")
+	var offset := 0
+	for found in regex.search_all(email.body):
+		message.add_text(email.body.substr(offset, found.get_start() - offset))
+		var url := found.get_string().trim_suffix(".").trim_suffix(",")
+		_append_link(url, url)
+		message.add_text(found.get_string().substr(url.length()))
+		offset = found.get_end()
+	message.add_text(email.body.substr(offset))
+	if not email.link_url.is_empty():
+		message.add_text("\n\n")
+		_append_link(email.link_text if not email.link_text.is_empty() else email.link_url, email.link_url)
+
+
+func _append_link(caption: String, destination: String) -> void:
+	message.push_color(Color("175dcc"))
+	message.push_meta(destination)
+	message.push_underline()
+	message.add_text(caption)
+	message.pop()
+	message.pop()
+	message.pop()
+
+
+func _on_link_hover(destination: Variant) -> void:
+	var url := str(destination)
+	var host := url.get_slice("://", 1).get_slice("/", 0).get_slice("?", 0).get_slice("#", 0)
+	host = host.get_slice("@", host.get_slice_count("@") - 1)
+	$EmailDetail/LinkDestination.text = "Dominio: " + host
+	$EmailDetail/LinkDestination.tooltip_text = "Destino: " + url
+
+
+func _on_link_exit(_destination: Variant) -> void:
+	$EmailDetail/LinkDestination.text = ""
+	$EmailDetail/LinkDestination.tooltip_text = ""
+
+
+func _on_link_clicked(_destination: Variant) -> void:
+	if is_instance_valid(controller) and selected_email != null:
+		controller.open_content(selected_email, "link")
+
+func _on_attachment_pressed() -> void:
+	if is_instance_valid(controller) and selected_email != null:
+		controller.open_content(selected_email, "attachment")

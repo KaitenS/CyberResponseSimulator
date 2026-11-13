@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://0pwjijbq1v1s" path="res://assets/Models/Extras/Pc_Model.blend" id="4_qqs5g"]
 
 [ext_resource type="AudioStream" path="res://assets/Audio/Phishing/new_mail.wav" id="5_phishing_mail_sound"]
+[ext_resource type="PackedScene" path="res://scenes/Game/Computer/ComputerIncidentMarker.tscn" id="6_incident_marker"]
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_1olpp"]
 size = Vector3(10.489136, 5.2304688, 11)
 
@@ -66,3 +68,15 @@ mesh = SubResource("QuadMesh_f2rsq")
 [node name="PhishingMailSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_phishing_mail_sound")
 volume_db = -10.0
+[node name="IncidentMarker" parent="." instance=ExtResource("6_incident_marker")]
+position = Vector3(0, 16, 0)
+scale = Vector3(20, 20, 20)
+
+[node name="PhishingRepeatTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="PhishingRepeatTimer" to="." method="_on_phishing_repeat_timeout"]
+
+[node name="PhishingBreachTimer" type="Timer" parent="."]
+one_shot = true
+[connection signal="timeout" from="PhishingBreachTimer" to="." method="_on_phishing_breach_timeout"]

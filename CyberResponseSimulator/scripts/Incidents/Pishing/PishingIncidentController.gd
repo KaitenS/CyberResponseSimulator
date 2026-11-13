@@ -29,6 +29,13 @@ var next_email_timer: float = 0.0
 var decisions: Array[Dictionary] = []
 var read_emails: Array[PhishingEmail] = []
 var last_result: Dictionary = {}
+var compromised: bool = false
+var update_remaining: float = 0.0
+var update_total: float = 0.0
+var updating_email: PhishingEmail = null
+var opened_content: Array[String] = []
+var action_is_update: bool = false
+var action_description: String = ""
 
 
 func _ready() -> void:
@@ -56,6 +63,13 @@ func start_incident(data: PhishingData) -> void:
 	decisions.clear()
 	read_emails.clear()
 	last_result.clear()
+	compromised = false
+	update_remaining = 0.0
+	update_total = 0.0
+	updating_email = null
+	opened_content.clear()
+	action_is_update = false
+	action_description = ""
 
 	var available_emails: Array[PhishingEmail] = []
 
@@ -117,6 +131,15 @@ func _process(delta: float) -> void:
 		finish_incident(false)
 		return
 
+	if update_remaining > 0.0:
+		update_remaining = maxf(0.0, update_remaining - delta)
+		if update_remaining == 0.0:
+			var email := updating_email
+			updating_email = null
+			resolve_email(email, true)
+			if not incident_active:
+				return
+
 	if received_emails.size() >= selected_emails.size():
 		return
 
@@ -156,7 +179,7 @@ func resolve_email(
 	email: PhishingEmail,
 	accepted: bool
 ) -> void:
-	if not incident_active:
+	if not incident_active or update_remaining > 0.0:
 		return
 
 	if email not in received_emails:
@@ -200,6 +223,8 @@ func finish_incident(completed: bool) -> void:
 
 	incident_active = false
 	next_email_timer = 0.0
+	update_remaining = 0.0
+	updating_email = null
 
 	print("=== PHISHING FINALIZADO ===")
 	print("Completado: ", completed)
@@ -207,7 +232,7 @@ func finish_incident(completed: bool) -> void:
 	print("Correos totales: ", selected_emails.size())
 
 	last_result = get_result()
-	last_result["success"] = completed and last_result["correct"] == selected_emails.size()
+	last_result["success"] = completed and not compromised and last_result["correct"] == selected_emails.size()
 	incident_finished.emit(last_result["success"])
 
 
@@ -255,9 +280,10 @@ func get_result() -> Dictionary:
 		"pending": pending,
 		"not_received": total - received_emails.size(),
 		"total": total,
-		"points": points,
-		"success": not incident_active and total > 0 and correct == total,
-		"status": "En curso al terminar el día" if incident_active else ("Tiempo agotado" if time_remaining <= 0.0 else "Finalizado"),
+		"points": 0 if compromised else points,
+		"compromised": compromised,
+		"success": not compromised and not incident_active and total > 0 and correct == total,
+		"status": "Equipo comprometido al abrir contenido fraudulento" if compromised else "En curso al terminar el día" if incident_active else ("Tiempo agotado" if time_remaining <= 0.0 else "Finalizado"),
 		"decisions": details,
 	}
 
@@ -286,3 +312,67 @@ func mark_summary_read() -> void:
 		return
 	summary_read = true
 	summary_read_changed.emit()
+
+
+func accept_email(email: PhishingEmail) -> void:
+	if not incident_active or update_remaining > 0.0 or email not in received_emails or email in resolved_emails:
+		return
+	var kinds: Array[String] = []
+	if email.has_attachment:
+		kinds.append("attachment")
+	if not email.link_url.is_empty() or _body_has_link(email.body):
+		kinds.append("link")
+	if kinds.is_empty():
+		resolve_email(email, true)
+	else:
+		_open_payload(email, kinds)
+
+
+func _body_has_link(body: String) -> bool:
+	return "https://" in body.to_lower() or "http://" in body.to_lower()
+
+
+func open_content(email: PhishingEmail, kind: String) -> void:
+	var kinds: Array[String] = [kind]
+	_open_payload(email, kinds)
+
+
+func _open_payload(email: PhishingEmail, kinds: Array[String]) -> void:
+	if not incident_active or update_remaining > 0.0 or email not in received_emails or email in resolved_emails:
+		return
+	var pending: Array[String] = []
+	var names := PackedStringArray()
+	for kind in kinds:
+		if kind not in ["link", "attachment"]:
+			continue
+		if kind == "attachment" and not email.has_attachment:
+			continue
+		if kind == "link" and email.link_url.is_empty() and not _body_has_link(email.body):
+			continue
+		var key := email.email_id + ":" + kind
+		if key not in opened_content:
+			pending.append(kind)
+			opened_content.append(key)
+			names.append(email.attachment_name if kind == "attachment" else (email.link_text if not email.link_text.is_empty() else "Enlace del correo"))
+	if pending.is_empty():
+		return
+	mark_email_read(email)
+	if email.is_phishing:
+		compromised = true
+		resolved_emails.append(email)
+		decisions.append({
+			"email_id": email.email_id, "subject": email.subject,
+			"sender": email.sender_address, "accepted": true,
+			"is_phishing": true, "correct": false,
+			"explanation": "Se abrió contenido fraudulento: " + ", ".join(names) + ". " + _explain(email),
+			"action": "+".join(pending),
+		})
+		finish_incident(false)
+	else:
+		# La extensión define la presentación; la clasificación del escenario
+		# determina si es seguro. Un .exe también puede ser legítimo.
+		action_is_update = email.simulates_update or ("attachment" in pending and email.attachment_name.to_lower().ends_with(".exe"))
+		action_description = "\n".join(names)
+		update_total = maxf(1.0, email.update_duration) if action_is_update else 2.0 * pending.size()
+		update_remaining = update_total
+		updating_email = email

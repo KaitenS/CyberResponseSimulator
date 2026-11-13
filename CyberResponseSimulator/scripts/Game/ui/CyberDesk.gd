@@ -18,6 +18,7 @@ func set_malware_controller(controller: MalwareIncidentController) -> void:
 
 
 func set_phishing_controller(controller: PishingIncidentController) -> void:
+	$PhishingActionScreen.set_controller(controller)
 	$Windows/CyberMailWindow.set_controller(controller)
 	$Windows/DailySummaryWindow.set_controller(controller)
 	$"DesktopIcons/GridContainer/Email Button/MailNotice".set_controller(controller)
@@ -36,6 +37,8 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if $PhishingActionScreen.is_blocking():
+		return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 
