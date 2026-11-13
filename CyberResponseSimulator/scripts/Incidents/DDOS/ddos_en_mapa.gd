@@ -15,7 +15,7 @@ class_name DDoSEnMapa
 ## ("ddos"). Se consume una sola vez. Sirve para el modo practica.
 static var forzar_siguiente: String = ""
 ## Dificultad elegida (0 facil, 1 normal, 2 dificil). Se guarda en user://.
-static var dificultad: int = -1
+static var dificultad: int = 0
 static var nivel_adaptativo: float = 0.5
 ## Accesibilidad: sin parpadeos de luz, destellos ni sacudida de camara.
 static var reducir_efectos: bool = false
@@ -59,7 +59,7 @@ static func cargar_ajustes() -> void:
 	_ajustes_cargados = true
 	var cfg := ConfigFile.new()
 	if cfg.load(ARCHIVO_AJUSTES) == OK:
-		dificultad = int(cfg.get_value("ddos", "dificultad", IncidenteDDoS.INDICE_ADAPTATIVA))
+		dificultad = 0   # dificultad fija: se ignora lo guardado
 		nivel_adaptativo = float(cfg.get_value("ddos", "nivel_adaptativo", 0.5))
 		reducir_efectos = bool(cfg.get_value("ddos", "reducir_efectos", false))
 	if dificultad < 0 or dificultad >= IncidenteDDoS.DIFICULTADES.size():
@@ -76,8 +76,7 @@ static func guardar_ajuste(clave: String, valor) -> void:
 ## Para el menu: pasa a la siguiente dificultad y devuelve su nombre.
 static func ciclar_dificultad() -> String:
 	cargar_ajustes()
-	dificultad = (dificultad + 1) % IncidenteDDoS.DIFICULTADES.size()
-	guardar_ajuste("dificultad", dificultad)
+	dificultad = 0   # dificultad fija: ya no se cambia
 	return nombre_dificultad()
 
 

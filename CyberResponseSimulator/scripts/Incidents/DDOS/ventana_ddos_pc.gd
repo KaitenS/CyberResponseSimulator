@@ -22,16 +22,16 @@ const OFFSET_PUNTA := Vector2(12.0, 12.0)
 
 const FUENTE_RUTA := "res://assets/Fonts/VCR_OSD_MONO_1.001.ttf"
 
-const COL_MARCO := Color(0.10, 0.12, 0.16)
-const COL_TITULO := Color(0.13, 0.17, 0.24)
-const COL_FONDO := Color(0.055, 0.07, 0.095)
-const COL_PANEL := Color(0.085, 0.105, 0.14)
-const COL_BORDE := Color(0.30, 0.55, 0.65)
-const COL_TEXTO := Color(0.84, 0.90, 0.95)
-const COL_TENUE := Color(0.50, 0.58, 0.66)
-const COL_OK := Color(0.30, 0.92, 0.55)
-const COL_AVISO := Color(1.0, 0.78, 0.30)
-const COL_ALERTA := Color(1.0, 0.40, 0.38)
+const COL_MARCO := Color(0.925, 0.914, 0.847)
+const COL_TITULO := Color(0.0, 0.329, 0.89)
+const COL_FONDO := Color(0.925, 0.914, 0.847)
+const COL_PANEL := Color(1.0, 0.996, 0.96)
+const COL_BORDE := Color(0.0, 0.24, 0.73)
+const COL_TEXTO := Color(0.05, 0.05, 0.1)
+const COL_TENUE := Color(0.36, 0.36, 0.36)
+const COL_OK := Color(0.0, 0.5, 0.15)
+const COL_AVISO := Color(0.72, 0.4, 0.0)
+const COL_ALERTA := Color(0.78, 0.05, 0.05)
 
 const MAX_FLUJOS := 4
 const LINEAS_LOG := 5
@@ -60,9 +60,9 @@ var _telemetria: RichTextLabel
 var _registro: RichTextLabel
 
 # --- Verificacion de reinicio (secuencias de flechas, estilo Helldivers)
-const QTE_LARGO_MIN := 4
-const QTE_LARGO_MAX := 6
-const QTE_TIEMPO := 8.0          ## Segundos para completar cada secuencia
+const QTE_LARGO_MIN := 3
+const QTE_LARGO_MAX := 4
+const QTE_TIEMPO := 12.0          ## Segundos para completar cada secuencia
 const DIR_ARRIBA := 0
 const DIR_ABAJO := 1
 const DIR_IZQ := 2
@@ -319,7 +319,7 @@ func _refrescar_servidores() -> void:
 			carga = 0.0
 		elif IncidenteDDoS.infectado[id]:
 			texto = "INFECTADO (ransomware)" if fmod(_parpadeo, 0.6) < 0.4 else ""
-			col = Color(1.0, 0.3, 0.9)
+			col = Color(0.7, 0.0, 0.55)
 		elif IncidenteDDoS.apagon_restante > 0.0:
 			texto = "REINICIO GENERAL"
 			col = COL_AVISO
@@ -404,7 +404,7 @@ func _refrescar_telemetria() -> void:
 
 	var ol := _buscar_flujo(_flujo_sel)
 	if ol.is_empty():
-		_telemetria.text = "[color=#5a7a6a]Sin flujos anomalos por ahora.\nAtento a nuevas alertas.[/color]\n\n" + _texto_manual()
+		_telemetria.text = "[color=#555555]Sin flujos anomalos por ahora.\nAtento a nuevas alertas.[/color]\n\n" + _texto_manual()
 		return
 
 	var l := PackedStringArray()
@@ -412,34 +412,51 @@ func _refrescar_telemetria() -> void:
 		l.append("[b]FLUJO #%d[/b]" % (ol.indice + 1))
 
 	if ol.vector == IncidenteDDoS.Vector.LEGITIMO:
-		l.append("[color=#ffcc55]Podria ser trafico legitimo. Analice antes de actuar.[/color]")
+		l.append("[color=#b36b00]Parece trafico normal (falsa alarma).[/color]")
 		_bloque(l, ol.telemetria)
-		l.append("[color=#3fe08a]Si nada parece un ataque real, NO aplique contramedida.[/color]")
+		l.append("[color=#007a2e]SUGERENCIA: no aprietes ningun boton.[/color]")
 		_telemetria.text = "\n".join(l)
 		return
 
 	_bloque(l, ol.telemetria)
+	if not ol.mitigada:
+		l.append(_sugerencia(ol.vector))
 
 	if ol.vector_extra != -1:
-		l.append("[b]-- 2 firmas superpuestas --[/b]")
+		l.append("[b]-- Segundo ataque a la vez --[/b]")
 		_bloque(l, ol.telemetria_extra)
+		if not ol.mitigada_extra:
+			l.append(_sugerencia(ol.vector_extra))
 
 	var completo: bool = ol.mitigada and (ol.vector_extra == -1 or ol.mitigada_extra)
 	if completo:
-		l.append("[color=#3fe08a]>> Flujo neutralizado.[/color]")
+		l.append("[color=#007a2e]>> Flujo neutralizado.[/color]")
 	elif ol.mitigada or ol.mitigada_extra:
-		l.append("[color=#ffcc55]>> Parcial: falta la otra firma.[/color]")
+		l.append("[color=#b36b00]>> Parcial: falta la otra firma.[/color]")
 
 	_telemetria.text = "\n".join(l)
 
 
 func _bloque(l: PackedStringArray, t: Dictionary) -> void:
-	l.append("Pkts/s %s  Tam %s  SYN %s  Handshakes %s" % [
-		_miles(t.paquetes_seg), t.tamano_medio,
-		t.porcentaje_syn, t.handshakes_completados])
+	l.append("Paquetes/s: %s   Tamano: %s" % [_miles(t.paquetes_seg), t.tamano_medio])
 	l.append("Origen: %s" % t.ips_origen)
-	l.append("Destino: %s" % t.puerto_destino)
-	l.append("[color=#ffcc55]>[/color] %s" % t.nota)
+	l.append("[color=#b36b00]>[/color] %s" % t.nota)
+
+
+## Pista para el jugador: que boton conviene apretar.
+func _sugerencia(v: int) -> String:
+	var m: int = IncidenteDDoS.CONTRAMEDIDA.get(v, -1)
+	if m == -1:
+		return ""
+	return "[color=#0044bb]SUGERENCIA: boton %s[/color]" % _nombre_boton(m)
+
+
+func _nombre_boton(m: int) -> String:
+	match m:
+		IncidenteDDoS.Mitigacion.SYN_COOKIES: return "SYN Cookies"
+		IncidenteDDoS.Mitigacion.FILTRO_UDP: return "Filtro UDP"
+		IncidenteDDoS.Mitigacion.RATE_LIMIT: return "Rate limit"
+	return "Blackhole"
 
 
 func _refrescar_botones() -> void:
@@ -455,7 +472,7 @@ func _refrescar_botones() -> void:
 func _refrescar_registro() -> void:
 	var h: Array = IncidenteDDoS.historial_log
 	if h.is_empty():
-		_registro.text = "[color=#5a7a6a]> Sistema en espera. Sin incidentes registrados.[/color]"
+		_registro.text = "[color=#555555]> Sistema en espera. Sin incidentes registrados.[/color]"
 		return
 
 	var l := PackedStringArray()
@@ -465,13 +482,13 @@ func _refrescar_registro() -> void:
 		if linea.length() > CARACTERES_LOG:
 			linea = linea.substr(0, CARACTERES_LOG - 3) + "..."
 		linea = linea.replace("[", "(").replace("]", ")")
-		var col := "#9fd8bd"
+		var col := "#222222"
 		if linea.begins_with("(ERROR)") or linea.begins_with("(CRITICO)"):
-			col = "#ff6b55"
+			col = "#c00000"
 		elif linea.begins_with("(OK)"):
-			col = "#3fe08a"
+			col = "#007a2e"
 		elif linea.begins_with("(ALERTA") or linea.begins_with("(AVISO)") or linea.begins_with("(TRAFICO)"):
-			col = "#ffcc55"
+			col = "#b36b00"
 		l.append("[color=%s]> %s[/color]" % [col, linea])
 	_registro.text = "\n".join(l)
 
@@ -496,15 +513,15 @@ func _miles(n: int) -> String:
 
 
 func _texto_manual() -> String:
-	return """[color=#9fd8bd][b]MANUAL DEL ANALISTA[/b]
-[color=#3fe08a]SYN Flood[/color]: ~60 B, >90% SYN, sin handshakes -> SYN Cookies
-[color=#3fe08a]UDP[/color]: >2 KB, origen 53/UDP -> Filtro UDP
-[color=#3fe08a]HTTP Flood[/color]: GET validos repetidos -> Rate limit
-[color=#3fe08a]Botnet[/color]: miles de IPs reales, un AS -> Blackhole
-[color=#ff8a5c]Legitimo[/color]: pocas IPs conocidas -> NO actuar
+	return """[color=#222222][b]MANUAL DEL ANALISTA[/b]
+[color=#007a2e]SYN Flood[/color]: ~60 B, >90% SYN, sin handshakes -> SYN Cookies
+[color=#007a2e]UDP[/color]: >2 KB, origen 53/UDP -> Filtro UDP
+[color=#007a2e]HTTP Flood[/color]: GET validos repetidos -> Rate limit
+[color=#007a2e]Botnet[/color]: miles de IPs reales, un AS -> Blackhole
+[color=#b33a00]Legitimo[/color]: pocas IPs conocidas -> NO actuar
 Combinado: una contramedida por firma.
-[color=#ff77ee]Ransomware[/color]: pulsa AISLAR en el servidor.
-[color=#ffcc55]Rack que no arranca[/color]: autoriza aqui (flechas o codigo del rack).[/color]"""
+[color=#aa0088]Ransomware[/color]: pulsa AISLAR en el servidor.
+[color=#b36b00]Rack que no arranca[/color]: autoriza aqui (flechas o codigo del rack).[/color]"""
 
 
 # ============================================================ CONSTRUCCION
@@ -515,7 +532,7 @@ func _construir() -> void:
 	marco.position = Vector2.ZERO
 	marco.size = TAM
 	marco.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	marco.add_theme_stylebox_override("panel", _caja(COL_MARCO, Color(0.35, 0.45, 0.55, 0.6), 1, 0, 8))
+	marco.add_theme_stylebox_override("panel", _caja(COL_MARCO, Color(0.0, 0.24, 0.73), 2, 0, 0))
 	add_child(marco)
 
 	# Barra de titulo
@@ -530,18 +547,18 @@ func _construir() -> void:
 	add_child(titulo)
 
 	var punto_t := ColorRect.new()
-	punto_t.color = COL_OK
+	punto_t.color = Color(0.5, 1.0, 0.5)
 	punto_t.position = Vector2(10, 9)
 	punto_t.size = Vector2(6, 6)
 	punto_t.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	titulo.add_child(punto_t)
-	_etiqueta(titulo, "Servidores  /  Monitor de red", Vector2(24, 3), Vector2(400, 18), 13, COL_TEXTO)
+	_etiqueta(titulo, "Servidores - Monitor de red", Vector2(24, 3), Vector2(400, 18), 13, Color.WHITE)
 
 	_cerrar = Panel.new()
 	_cerrar.position = Vector2(TAM.x - 32, 4)
 	_cerrar.size = Vector2(26, 20)
 	_cerrar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_cerrar.add_theme_stylebox_override("panel", _caja(Color(0.78, 0.22, 0.26), Color(1, 1, 1, 0.25), 1, 0, 5))
+	_cerrar.add_theme_stylebox_override("panel", _caja(Color(0.85, 0.3, 0.2), Color.WHITE, 1, 0, 0))
 	add_child(_cerrar)
 	var x := _etiqueta(_cerrar, "X", Vector2(0, 1), Vector2(26, 18), 14, Color.WHITE)
 	x.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -551,13 +568,13 @@ func _construir() -> void:
 	cuerpo.position = Vector2(6, 30)
 	cuerpo.size = Vector2(TAM.x - 12, TAM.y - 36)
 	cuerpo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	cuerpo.add_theme_stylebox_override("panel", _caja(COL_FONDO, Color(1, 1, 1, 0.07), 1, 0, 6))
+	cuerpo.add_theme_stylebox_override("panel", _caja(COL_FONDO, Color(0.55, 0.55, 0.5), 2, 0, 0))
 	add_child(cuerpo)
 
 	# ---- Fila de estado
 	_etiqueta(cuerpo, "DISPONIBILIDAD", Vector2(8, 5), Vector2(130, 16), 12, COL_TENUE)
 	_barra_disp_fondo = ColorRect.new()
-	_barra_disp_fondo.color = Color(1, 1, 1, 0.08)
+	_barra_disp_fondo.color = Color(0.55, 0.55, 0.5)
 	_barra_disp_fondo.position = Vector2(140, 10)
 	_barra_disp_fondo.size = Vector2(230, 5)
 	_barra_disp_fondo.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -578,7 +595,7 @@ func _construir() -> void:
 		p.position = Vector2(4 + i * 195, 28)
 		p.size = Vector2(188, 46)
 		p.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		p.add_theme_stylebox_override("panel", _caja(COL_PANEL, Color(1, 1, 1, 0.08), 1, 0, 6))
+		p.add_theme_stylebox_override("panel", _caja(COL_PANEL, Color(0.55, 0.55, 0.5), 1, 0, 6))
 		cuerpo.add_child(p)
 
 		_etiqueta(p, nombres[i], Vector2(9, 3), Vector2(100, 15), 12, COL_TEXTO)
@@ -591,7 +608,7 @@ func _construir() -> void:
 		pct.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 
 		var fondo := ColorRect.new()
-		fondo.color = Color(1, 1, 1, 0.08)
+		fondo.color = Color(0.55, 0.55, 0.5)
 		fondo.position = Vector2(9, 37)
 		fondo.size = Vector2(170, 4)
 		fondo.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -606,8 +623,8 @@ func _construir() -> void:
 
 		var ais := _boton(p, "AISLAR", Vector2(120, 29), Vector2(64, 15), 10)
 		ais.custom_minimum_size = Vector2(64, 15)
-		ais.add_theme_color_override("font_color", Color(1.0, 0.5, 0.95))
-		var caja_ais := _caja(Color(0.25, 0.05, 0.22), Color(1.0, 0.3, 0.9), 1, 0)
+		ais.add_theme_color_override("font_color", Color(0.6, 0.0, 0.5))
+		var caja_ais := _caja(Color(1.0, 0.85, 0.95), Color(0.7, 0.0, 0.55), 1, 0)
 		caja_ais.content_margin_top = 0
 		caja_ais.content_margin_bottom = 0
 		ais.add_theme_stylebox_override("normal", caja_ais)
@@ -628,9 +645,10 @@ func _construir() -> void:
 	_telemetria.position = Vector2(196, 80)
 	_telemetria.size = Vector2(388, 190)
 	_telemetria.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_telemetria.add_theme_color_override("default_color", COL_TEXTO)
 	_telemetria.add_theme_font_size_override("normal_font_size", 12)
 	_telemetria.add_theme_font_size_override("bold_font_size", 12)
-	_telemetria.add_theme_stylebox_override("normal", _caja(COL_PANEL, Color(1, 1, 1, 0.08), 1, 7, 6))
+	_telemetria.add_theme_stylebox_override("normal", _caja(COL_PANEL, Color(0.55, 0.55, 0.5), 1, 7, 6))
 	cuerpo.add_child(_telemetria)
 
 	# ---- Contramedidas
@@ -647,7 +665,7 @@ func _construir() -> void:
 
 	_boton_general = _boton(cuerpo, "REINICIO GENERAL", Vector2(436, 276), Vector2(146, 26), 12)
 	_boton_general.add_theme_color_override("font_color", COL_ALERTA)
-	_boton_general.add_theme_color_override("font_disabled_color", COL_ALERTA.darkened(0.55))
+	_boton_general.add_theme_color_override("font_disabled_color", COL_ALERTA.lightened(0.55))
 
 	_construir_qte(cuerpo)
 
@@ -670,8 +688,9 @@ func _construir() -> void:
 	_registro.position = Vector2(4, 308)
 	_registro.size = Vector2(580, 80)
 	_registro.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_registro.add_theme_color_override("default_color", COL_TEXTO)
 	_registro.add_theme_font_size_override("normal_font_size", 12)
-	_registro.add_theme_stylebox_override("normal", _caja(COL_PANEL, Color(1, 1, 1, 0.08), 1, 7, 6))
+	_registro.add_theme_stylebox_override("normal", _caja(COL_PANEL, Color(0.55, 0.55, 0.5), 1, 7, 6))
 	cuerpo.add_child(_registro)
 
 
@@ -698,27 +717,27 @@ func _boton(padre: Control, texto: String, pos: Vector2, tam: Vector2, fuente: i
 	b.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	b.add_theme_font_size_override("font_size", fuente)
 	b.add_theme_color_override("font_color", COL_TEXTO)
-	b.add_theme_color_override("font_disabled_color", COL_TENUE.darkened(0.2))
+	b.add_theme_color_override("font_disabled_color", Color(0.55, 0.55, 0.55))
 	b.add_theme_stylebox_override("normal", _caja_boton(false, {}))
-	b.add_theme_stylebox_override("disabled", _caja(Color(0.07, 0.085, 0.11), Color(1, 1, 1, 0.05), 1, 4, 5))
+	b.add_theme_stylebox_override("disabled", _caja(Color(0.85, 0.85, 0.82), Color(0.65, 0.65, 0.6), 1, 4, 0))
 	padre.add_child(b)
 	return b
 
 
 func _caja_boton(seleccionado: bool, ol: Dictionary) -> StyleBoxFlat:
-	var fondo := Color(0.115, 0.15, 0.2)
-	var borde := Color(1, 1, 1, 0.10)
+	var fondo := Color(0.93, 0.91, 0.85)
+	var borde := Color(0.25, 0.25, 0.25)
 	if seleccionado:
-		fondo = Color(0.13, 0.24, 0.31)
+		fondo = Color(0.78, 0.86, 0.98)
 		borde = COL_BORDE
 	if not ol.is_empty() and ol.vector == IncidenteDDoS.Vector.LEGITIMO and not seleccionado:
-		borde = COL_AVISO.darkened(0.3)
-	return _caja(fondo, borde, 1, 4, 5)
+		borde = COL_AVISO
+	return _caja(fondo, borde, 2 if seleccionado else 1, 4, 0)
 
 
 func _caja(fondo: Color, borde: Color, grosor: int, margen: int = 0, radio: int = 0) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
-	sb.set_corner_radius_all(radio)
+	sb.set_corner_radius_all(0)   # estilo 90s: esquinas rectas
 	sb.bg_color = fondo
 	sb.border_color = borde
 	sb.set_border_width_all(grosor)
@@ -747,15 +766,15 @@ class FlechasQte extends Control:
 		var x0 := size.x / 2.0 - paso * (n - 1) / 2.0
 		for i in n:
 			var c := Vector2(x0 + i * paso, size.y / 2.0)
-			var col := Color(0.35, 0.45, 0.42)
+			var col := Color(0.65, 0.65, 0.65)
 			var k := 1.0
 			if i < pos:
-				col = Color(0.25, 1.0, 0.45)
+				col = Color(0.0, 0.6, 0.2)
 			elif i == pos:
-				col = Color(1, 1, 1)
+				col = Color(0.1, 0.2, 0.8)
 				k = 1.15
 			if flash > 0.0:
-				col = Color(0.3, 1.0, 0.5) if flash_ok else Color(1.0, 0.3, 0.25)
+				col = Color(0.0, 0.6, 0.2) if flash_ok else Color(0.85, 0.1, 0.1)
 			var ang := 0.0
 			match patron[i]:
 				1: ang = PI
@@ -772,7 +791,7 @@ func _construir_qte(cuerpo: Control) -> void:
 	_qte_panel.position = Vector2(4, 80)
 	_qte_panel.size = Vector2(580, 190)
 	_qte_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_qte_panel.add_theme_stylebox_override("panel", _caja(Color(0.07, 0.05, 0.03), COL_AVISO, 2))
+	_qte_panel.add_theme_stylebox_override("panel", _caja(Color(1.0, 0.97, 0.85), COL_AVISO, 2))
 	_qte_panel.visible = false
 	cuerpo.add_child(_qte_panel)
 
@@ -788,7 +807,7 @@ func _construir_qte(cuerpo: Control) -> void:
 	_qte_panel.add_child(_qte_flechas)
 
 	_qte_barra_fondo = ColorRect.new()
-	_qte_barra_fondo.color = Color(0.15, 0.12, 0.06)
+	_qte_barra_fondo.color = Color(0.8, 0.78, 0.7)
 	_qte_barra_fondo.position = Vector2(40, 140)
 	_qte_barra_fondo.size = Vector2(500, 10)
 	_qte_barra_fondo.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -807,7 +826,7 @@ func _construir_qte(cuerpo: Control) -> void:
 		Vector2(10, 160), Vector2(560, 16), 12, COL_TENUE)
 	_qte_ayuda.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-	_cod_label = _etiqueta(_qte_panel, "_ _ _ _", Vector2(10, 62), Vector2(560, 50), 40, Color.WHITE)
+	_cod_label = _etiqueta(_qte_panel, "_ _ _ _", Vector2(10, 62), Vector2(560, 50), 40, COL_TEXTO)
 	_cod_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_cod_label.visible = false
 

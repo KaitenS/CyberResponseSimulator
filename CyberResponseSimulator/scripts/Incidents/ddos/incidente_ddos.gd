@@ -80,10 +80,10 @@ const VECTORES_ATAQUE := [Vector.SYN_FLOOD, Vector.UDP_AMP, Vector.HTTP_FLOOD, V
 
 # ---------------------------------------------------------- BALANCE (tunear aqui)
 const DURACION_INCIDENTE := 120.0      ## Duracion maxima (modo practica); en partida se ajusta al reloj
-const INTERVALO_OLEADA := 22.0         ## Cada cuanto entra una oleada nueva
+const INTERVALO_OLEADA := 28.0         ## Cada cuanto entra una oleada nueva
 const DURACION_OLEADA := 30.0          ## Cuanto vive una oleada sin mitigar
-const ESCALADA_POR_OLEADA := 0.22      ## Intensidad += esto por cada oleada
-const INTENSIDAD_MAXIMA := 1.9         ## Tope: en partidas largas no se vuelve imposible
+const ESCALADA_POR_OLEADA := 0.10      ## Intensidad += esto por cada oleada
+const INTENSIDAD_MAXIMA := 1.3         ## Tope: en partidas largas no se vuelve imposible
 
 const PRESION_BASE := 7.5              ## Carga/seg que mete una oleada (intensidad 1.0)
 const PRESION_MITIGADA := 0.15         ## Multiplicador de presion tras mitigar bien
@@ -91,7 +91,7 @@ const RECUPERACION_CARGA := 7.0        ## Carga/seg que baja un servidor sin pre
 const CARGA_MAXIMA := 100.0
 
 const DISPONIBILIDAD_MAXIMA := 100.0
-const DRENAJE_POR_CAIDO := 1.6         ## Disponibilidad/seg que pierde cada servidor caido
+const DRENAJE_POR_CAIDO := 1.0         ## Disponibilidad/seg que pierde cada servidor caido
 const REGEN_DISPONIBILIDAD := 0.6      ## Disponibilidad/seg cuando todo esta online
 
 const TIEMPO_REINICIO_INDIVIDUAL := 5.0
@@ -115,7 +115,7 @@ const FACTOR_JORNADA_SIN_CAMARAS := 1.5
 var prob_fallo_reinicio: float = 0.45
 ## Cuantas secuencias de flechas pide un reinicio fallido. Se sortea un valor
 ## de esta lista (mas copias = mas probable): casi siempre 1-2, rara vez 5.
-const SECUENCIAS_POSIBLES := [1, 1, 1, 1, 2, 2, 2, 3, 3, 5]
+const SECUENCIAS_POSIBLES := [1, 1, 1, 1, 1, 1, 2, 2, 2, 3]
 ## Recompensa (puntos de la barra de disponibilidad) por acertar una secuencia
 ## y un extra al completar todas y dejar el rack autorizado.
 const RECOMPENSA_SECUENCIA := 4.0
@@ -127,14 +127,14 @@ const BONO_RACHA_4 := 4.0
 const BONO_RAPIDO := 2.0
 
 ## Dificultad progresiva: cada oleada sube la probabilidad de fallo.
-const PROB_FALLO_POR_OLEADA := 0.04
+const PROB_FALLO_POR_OLEADA := 0.02
 const PROB_FALLO_MAXIMA := 0.85
-const PROB_FALLO_AUMENTO_MAXIMO := 0.2   ## lo mas que puede subir por oleadas
-const SECUENCIAS_AVANZADO := [1, 2, 2, 3, 3, 3, 5, 5]   ## a partir de la oleada 4
+const PROB_FALLO_AUMENTO_MAXIMO := 0.1   ## lo mas que puede subir por oleadas
+const SECUENCIAS_AVANZADO := [1, 1, 2, 2, 2, 3, 3, 3]   ## a partir de la oleada 4
 const OLEADA_AVANZADA := 4
 
 ## Personalidad de cada rack.
-const PROB_FALLO_EXTRA := {0: 0.0, 1: 0.15, 2: -0.10}       ## Camaras es inestable
+const PROB_FALLO_EXTRA := {0: 0.0, 1: 0.05, 2: -0.05}       ## Camaras es inestable
 const TIEMPO_REINICIO_SERVIDOR := {0: 5.0, 1: 5.0, 2: 7.0}  ## Monitoreo reinicia lento
 const RASGO_SERVIDOR := {0: "", 1: "inestable", 2: "reinicio lento"}
 
@@ -143,17 +143,14 @@ enum Verificacion { FLECHAS, CODIGO }
 
 ## Si nadie atiende el ataque (ventana Servidores cerrada y sin tocar racks)
 ## durante este tiempo, se da por abandonado y falla.
-const LIMITE_SIN_ATENCION := 40.0
+const LIMITE_SIN_ATENCION := 60.0
 const AVISO_SIN_ATENCION := 0.6   ## fraccion del limite en que se avisa
 
-## Dificultad: 0 facil, 1 normal, 2 dificil -> {presion, prob_fallo}
+## Dificultad FIJA (suave): {presion, prob_fallo}
 const DIFICULTADES := [
-	{"nombre": "Facil", "presion": 6.0, "prob_fallo": 0.35},
-	{"nombre": "Normal", "presion": 7.5, "prob_fallo": 0.45},
-	{"nombre": "Dificil", "presion": 9.0, "prob_fallo": 0.55},
-	{"nombre": "Adaptativa", "presion": 7.5, "prob_fallo": 0.45, "adaptativa": true},
+	{"nombre": "Unica", "presion": 4.5, "prob_fallo": 0.2},
 ]
-const INDICE_ADAPTATIVA := 3
+const INDICE_ADAPTATIVA := 0   ## ya no hay adaptativa: dificultad fija
 
 ## Dificultad adaptativa: el nivel (0 = como Facil, 1 = como Dificil) se reevalua
 ## cada INTERVALO_ADAPTACION segundos segun como lo hace el jugador.
@@ -168,10 +165,10 @@ const FALLO_FACIL := 0.35
 const FALLO_DIFICIL := 0.55
 
 ## Eventos aleatorios (una vez por incidente como maximo).
-const PROB_CORTE_LUZ := 0.6
+const PROB_CORTE_LUZ := 0.25
 const DURACION_CORTE_LUZ := 6.0
 const OLEADA_CORTE_LUZ := 2
-const PROB_INFECCION := 0.55
+const PROB_INFECCION := 0.2
 const OLEADA_INFECCION := 3
 const PRESION_INFECCION := 5.0         ## carga/seg extra del servidor infectado
 const DRENAJE_INFECCION := 0.8         ## disponibilidad/seg extra por infectado
@@ -182,13 +179,13 @@ const ARCHIVO_REGISTRO := "user://ddos_registro.json"
 const MAX_REGISTROS := 30
 
 ## Probabilidad de que una oleada nueva sea trafico legitimo (trampa).
-const PROB_LEGITIMA := 0.22
+const PROB_LEGITIMA := 0.15
 ## A partir de que numero de oleada pueden aparecer trampas.
 const OLEADA_MINIMA_LEGITIMA := 1
 ## Probabilidad de que una oleada real venga con un segundo vector combinado.
-const PROB_COMBINADA := 0.3
+const PROB_COMBINADA := 0.05
 ## A partir de que numero de oleada pueden aparecer ataques combinados.
-const OLEADA_MINIMA_COMBINADA := 4
+const OLEADA_MINIMA_COMBINADA := 6
 
 # ---------------------------------------------------------------- ESTADO
 var activo: bool = false
@@ -216,12 +213,12 @@ var autorizado: Array[bool] = [false, false, false]
 var tipo_verificacion: Array[int] = [0, 0, 0]
 var codigo_rack: Array[String] = ["", "", ""]
 ## Probabilidad de que un reinicio fallido pida CODIGO en vez de flechas.
-var prob_codigo: float = 0.35
+var prob_codigo: float = 0.15
 
 ## Duracion de esta partida del incidente (se adapta al reloj del juego).
 var duracion_total: float = DURACION_INCIDENTE
 var _presion_base: float = PRESION_BASE
-var nombre_dificultad: String = "Normal"
+var nombre_dificultad: String = "Unica"
 var adaptativa: bool = false
 var nivel_adaptativo: float = 0.5      ## 0 facil .. 1 dificil (se conserva entre intentos)
 var _t_adaptacion: float = 0.0
