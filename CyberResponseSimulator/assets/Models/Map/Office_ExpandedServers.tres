@@ -1,6 +1,6 @@
-[gd_resource type="ArrayMesh" format=4]
+[gd_resource type="ArrayMesh" format=4 uid="uid://cjayphynm0d12"]
 
-[ext_resource type="Texture2D" path="res://assets/Models/Map/textures/Walls Texture.png" id="1_qk7bm"]
+[ext_resource type="Texture2D" uid="uid://bwoe1kmholcat" path="res://assets/Models/Map/textures/Walls Texture.png" id="1_qk7bm"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t5uc3"]
 resource_name = "Office_Walls"

@@ -13,11 +13,9 @@
 [ext_resource type="PackedScene" path="res://scenes/Game/ui/SimulationClock.tscn" id="10_simulation_clock"]
 [ext_resource type="PackedScene" path="res://scenes/Game/ui/IncidentAlert.tscn" id="11_incident_alert"]
 [ext_resource type="PackedScene" path="res://scenes/Game/OfficeRoomDecor.tscn" id="12_office_furnishing"]
-
-[ext_resource type="PackedScene" path="res://scenes/Game/PauseMenu.tscn" id="13_pause_menu"]
-
+[ext_resource type="PackedScene" uid="uid://bpap1btjsmjat" path="res://scenes/Game/PauseMenu.tscn" id="13_pause_menu"]
 [ext_resource type="PackedScene" path="res://scenes/Game/ui/Manual/AnalystManual.tscn" id="14_analyst_manual"]
-
+[ext_resource type="PackedScene" uid="uid://dhvarbgrejemb" path="res://scenes/Game/ResultsScreen.tscn" id="17_fvyqv"]
 [ext_resource type="PackedScene" path="res://scenes/Game/OfficeDoors.tscn" id="30_office_doors"]
 
 [sub_resource type="Environment" id="Environment_bekgd"]
@@ -28,8 +26,7 @@ size = Vector3(42, 0.2, 24)
 [node name="Game" type="Node3D" unique_id=221791749]
 
 [node name="Player" parent="." unique_id=1615212832 instance=ExtResource("1_bekgd")]
-position = Vector3(0.24, 0.12, 1.0)
-rotation = Vector3(0, 3.14159265, 0)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.24, 0.12, 1)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1503072395]
 transform = Transform3D(0.4513888, 0.81627876, -0.36046794, -0.6378497, 0.5776582, 0.509371, 0.624016, 0, 0.7814116, -1.810559, 3.323124, 1.8862411)
@@ -112,10 +109,11 @@ raiz_mapa = NodePath("../Floor/Office")
 script = ExtResource("9_i6kj0")
 
 [node name="OfficeFurnishing" parent="." unique_id=89076 instance=ExtResource("12_office_furnishing")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.012480885, -0.008297443, -0.011900544)
 
-[node name="PauseMenu" parent="." instance=ExtResource("13_pause_menu")]
+[node name="PauseMenu" parent="." unique_id=462817156 instance=ExtResource("13_pause_menu")]
 
-[node name="AnalystManual" parent="." instance=ExtResource("14_analyst_manual")]
+[node name="AnalystManual" parent="." unique_id=7372824 instance=ExtResource("14_analyst_manual")]
 
-[node name="OfficeDoors" parent="." instance=ExtResource("30_office_doors")]
+[node name="OfficeDoors" parent="." unique_id=1239699460 instance=ExtResource("30_office_doors")]
+
+[node name="ResultsScreen" parent="." unique_id=1501641403 instance=ExtResource("17_fvyqv")]
