@@ -229,7 +229,7 @@ func _input(event: InputEvent) -> void:
 
 	if event is InputEventMouseButton:
 		if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
-			if _cursor_over_phishing_window():
+			if _cursor_over_phishing_window() or _cursor_over_malware_window():
 				var wheel := event.duplicate() as InputEventMouseButton
 				wheel.position = cursor_position - CURSOR_SIZE / 2.0
 				wheel.global_position = wheel.position
@@ -387,3 +387,10 @@ func _on_phishing_breach_timeout() -> void:
 	_reset_phishing_mailbox()
 	if GameManager.game_active and flow != null and randf() < phishing_chain_probability:
 		flow.start_phishing_consequence(self)
+		
+func _cursor_over_malware_window() -> bool:
+	if not is_instance_valid(cyber_desk):
+		return false
+	var desk := cyber_desk.get_node("CyberDesk")
+	var window := desk.get_node_or_null("Windows/MalwareWindow") as Control
+	return window != null and window.is_visible_in_tree() and window.get_global_rect().has_point(cursor_position)

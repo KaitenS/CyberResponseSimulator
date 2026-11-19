@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://uq850xsipf35" path="res://scripts/Game/ui/PauseMenu.gd" id="1_gxovh"]
 [ext_resource type="Shader" uid="uid://nwxyqj6nvl4q" path="res://shaders/blur_dim.gdshader" id="1_h2k4b"]
 [ext_resource type="FontFile" uid="uid://mashn6f4lmra" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_gxovh"]
-
 [ext_resource type="StyleBox" path="res://scenes/Game/ui/PausePanelStyle.tres" id="4_pause_style"]
 [ext_resource type="PackedScene" path="res://scenes/Game/ui/PauseOptions.tscn" id="5_pause_options"]
 
@@ -130,7 +129,7 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_n62i7")
 text = "◈ CONTINUAR"
 text_direction = 1
 
-[node name="OptionsButton" type="Button" parent="Center/Panel/Buttons"]
+[node name="OptionsButton" type="Button" parent="Center/Panel/Buttons" unique_id=572670865]
 custom_minimum_size = Vector2(280, 52)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8392157, 0.8509804, 0.8784314, 1)
@@ -142,7 +141,7 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_h2k4b")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_gxovh")
 theme_override_styles/hover = SubResource("StyleBoxFlat_n62i7")
-text = "OPCIONES"
+text = "⛭ OPCIONES"
 text_direction = 1
 
 [node name="MenuButton" type="Button" parent="Center/Panel/Buttons" unique_id=1686861082]
@@ -161,6 +160,5 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_m27eb")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_o6k08")
 text = "✗ VOLVER AL MENU"
 
-[node name="OptionsPanel" parent="Center" instance=ExtResource("5_pause_options")]
-visible = false
+[node name="OptionsPanel" parent="Center" unique_id=395280314 instance=ExtResource("5_pause_options")]
 layout_mode = 2
