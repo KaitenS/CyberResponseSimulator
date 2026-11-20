@@ -426,6 +426,16 @@ offset_right = 596.0
 offset_bottom = 39.0
 color = Color(0, 0, 0, 0)
 
+[node name="NoteLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/TitleBar" unique_id=801927241]
+layout_mode = 1
+offset_left = 10.0
+offset_top = 353.0
+offset_right = 580.0
+offset_bottom = 377.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 11
+text = "Actuar sobre un elemento legítimo cuenta como error."
+
 [node name="HBoxContainer" type="HBoxContainer" parent="CyberDesk/Windows/MalwareWindow/TitleBar" unique_id=1580696914]
 layout_mode = 1
 anchors_preset = 15
@@ -658,15 +668,6 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_y2pfc")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_3ggmy")
 text = "Ignorar"
 
-[node name="NoteLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=801927241]
-layout_mode = 1
-offset_top = 312.0
-offset_right = 570.0
-offset_bottom = 336.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 11
-text = "Actuar sobre un elemento legítimo cuenta como error."
-
 [node name="ResultPanel" type="ColorRect" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1598306369]
 visible = false
 layout_mode = 1
@@ -684,6 +685,20 @@ text = "Resultado aqui"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
+
+[node name="ErrorFlash" type="ColorRect" parent="CyberDesk/Windows/MalwareWindow" unique_id=2014997041]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -22.0
+offset_top = -118.0
+offset_right = -22.0
+offset_bottom = -118.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0, 0, 1)
 
 [node name="CyberMailWindow" parent="CyberDesk/Windows" unique_id=61340324 instance=ExtResource("16_phishing_mail")]
 visible = false
