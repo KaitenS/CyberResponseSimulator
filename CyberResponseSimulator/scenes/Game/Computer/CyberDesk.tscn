@@ -721,6 +721,15 @@ stretch_mode = 4
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="EffectsLayer" type="Control" parent="CyberDesk" unique_id=695089138]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
 [connection signal="gui_input" from="CyberDesk/DesktopIcons/GridContainer/DailySummary Button" to="CyberDesk" method="_on_daily_summary_button_gui_input"]
 [connection signal="pressed" from="CyberDesk/DesktopIcons/GridContainer/DailySummary Button" to="CyberDesk" method="_on_daily_summary_button_pressed"]
 [connection signal="pressed" from="CyberDesk/TaskBar/HBoxContainer/CloseButton" to="CyberDesk" method="_on_close_button_pressed"]
