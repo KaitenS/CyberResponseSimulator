@@ -15,7 +15,7 @@ class_name DDoSEnMapa
 ## ("ddos"). Se consume una sola vez. Sirve para el modo practica.
 static var forzar_siguiente: String = ""
 ## Dificultad elegida (0 facil, 1 normal, 2 dificil). Se guarda en user://.
-static var dificultad: int = -1
+static var dificultad: int = 0
 static var nivel_adaptativo: float = 0.5
 ## Accesibilidad: sin parpadeos de luz, destellos ni sacudida de camara.
 static var reducir_efectos: bool = false
@@ -33,7 +33,6 @@ const SHAKE_ESCALA := 0.08
 var _incidente: IncidentData = null
 var _ultimo_incidente: IncidentData = null   ## para poder reintentar
 var _hud: HudDDoS
-var _resultado: PantallaResultado
 var _prompt: Label
 var _rack_actual: ServidorFisico = null
 var _bloqueado := false
@@ -59,7 +58,7 @@ static func cargar_ajustes() -> void:
 	_ajustes_cargados = true
 	var cfg := ConfigFile.new()
 	if cfg.load(ARCHIVO_AJUSTES) == OK:
-		dificultad = int(cfg.get_value("ddos", "dificultad", IncidenteDDoS.INDICE_ADAPTATIVA))
+		dificultad = 0   # dificultad fija: se ignora lo guardado
 		nivel_adaptativo = float(cfg.get_value("ddos", "nivel_adaptativo", 0.5))
 		reducir_efectos = bool(cfg.get_value("ddos", "reducir_efectos", false))
 	if dificultad < 0 or dificultad >= IncidenteDDoS.DIFICULTADES.size():
@@ -76,8 +75,7 @@ static func guardar_ajuste(clave: String, valor) -> void:
 ## Para el menu: pasa a la siguiente dificultad y devuelve su nombre.
 static func ciclar_dificultad() -> String:
 	cargar_ajustes()
-	dificultad = (dificultad + 1) % IncidenteDDoS.DIFICULTADES.size()
-	guardar_ajuste("dificultad", dificultad)
+	dificultad = 0   # dificultad fija: ya no se cambia
 	return nombre_dificultad()
 
 
@@ -88,12 +86,23 @@ static func nombre_dificultad() -> String:
 
 ## Punto de entrada para el IncidentFlowManager.
 static func iniciar_en_escena(escena: Node, incidente: IncidentData) -> void:
+	# Un solo DDoS a la vez: si ya hay uno en curso, se libera el cupo que
+	# el IncidentManager acababa de reservar para este.
+	if IncidenteDDoS.activo:
+		IncidentManager.finish_incident(incidente)
+		return
 	var nodo := escena.get_tree().get_first_node_in_group("ddos_mapa") as DDoSEnMapa
 	if nodo == null:
 		nodo = DDoSEnMapa.new()
 		nodo.name = "DDoSEnMapa"
 		escena.add_child(nodo)
 	nodo.empezar(incidente)
+
+
+func _exit_tree() -> void:
+	# Salir al menu / reiniciar: el autoload IncidenteDDoS no se libera solo.
+	if IncidenteDDoS.activo:
+		IncidenteDDoS.cancelar()
 
 
 func _ready() -> void:
@@ -115,15 +124,6 @@ func _ready() -> void:
 
 	_hud = HudDDoS.new()
 	add_child(_hud)
-
-	_resultado = PantallaResultado.new()
-	add_child(_resultado)
-	_resultado.configurar_modo_integrado()
-	_resultado.reintento_solicitado.connect(reintentar)
-	_resultado.reinicio_partida_solicitado.connect(reiniciar_partida)
-
-	_resultado.pantalla_abierta.connect(_actualizar_bloqueo)
-	_resultado.pantalla_cerrada.connect(_actualizar_bloqueo)
 
 	_crear_prompt()
 
@@ -220,7 +220,7 @@ func _accion() -> StringName:
 # ============================================================ BLOQUEO
 
 func _actualizar_bloqueo() -> void:
-	var bloquear: bool = _resultado.abierta
+	var bloquear: bool = false   # la pantalla de resultados es la general del juego
 	if bloquear == _bloqueado:
 		return
 	_bloqueado = bloquear

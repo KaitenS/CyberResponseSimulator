@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://ntgd8it4388w" path="res://scripts/Incidents/DDOS/terminal_mitigacion.gd" id="1_3jnwy"]
 [ext_resource type="PackedScene" uid="uid://dgar6hffx2lre" path="res://scenes/Incidents/DDOS/servidor_fisico.tscn" id="2_wm2kq"]
 [ext_resource type="Script" uid="uid://bi5f7uytd3yhj" path="res://scripts/Incidents/DDOS/hud_ddos.gd" id="3_3f0jx"]
-[ext_resource type="Script" uid="uid://hd16y62srgmm" path="res://scripts/Incidents/DDOS/pantalla_resultado.gd" id="4_qrff2"]
 [ext_resource type="Script" uid="uid://dmygrt4aomr2w" path="res://scripts/Incidents/DDOS/disparador_ddos.gd" id="5_7r7n7"]
 [ext_resource type="PackedScene" uid="uid://di5nkowwadexl" path="res://scenes/Incidents/DDOS/player.tscn" id="6_3ge82"]
 
@@ -183,9 +182,6 @@ mesh = SubResource("Mesh_teclado")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.28, 0.7925, 0.18)
 material_override = SubResource("Mat_tecla")
 mesh = SubResource("Mesh_mouse")
-
-[node name="Resultado" type="CanvasLayer" parent="." unique_id=810239501]
-script = ExtResource("4_qrff2")
 
 [node name="Disparador" type="Node" parent="." unique_id=810239502]
 script = ExtResource("5_7r7n7")
