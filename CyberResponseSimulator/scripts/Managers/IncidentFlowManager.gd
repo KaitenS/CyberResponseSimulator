@@ -7,6 +7,14 @@ extends Node
 # ==========================================
 
 @export var first_incident_delay: float = 5.0
+
+## DDoS garantizado: el primer incidente sale al azar entre los tres, asi que
+## en muchas partidas el DDoS no aparecia. Si pasado este tiempo (segundos de
+## partida) todavia no hubo un DDoS, entra uno apenas no haya otro incidente
+## activo (asi no se acumulan ataques). 0 = desactivado.
+@export var ddos_garantizado_en: float = 150.0
+## Ya no se lanza un DDoS garantizado si quedan menos segundos que estos.
+@export var ddos_tiempo_minimo: float = 100.0
 @export var phishing_data: PhishingData
 @export var malware_data: MalwareIncidentData
 
@@ -29,6 +37,7 @@ var available_incidents: Array[IncidentData] = []
 
 var computers: Array[Computer] = []
 var active_incident: IncidentData = null
+var _hubo_ddos: bool = false
 
 
 # ==========================================
@@ -60,6 +69,7 @@ func _ready() -> void:
 
 	if GameManager.game_active:
 		start_incident_test()
+		_programar_ddos_garantizado()
 
 
 # ==========================================
@@ -222,6 +232,7 @@ func create_incident() -> void:
 			computer.activate_malware(malware_data)
 
 		"ddos":
+			_hubo_ddos = true
 			# El DDoS se juega en este mismo mapa: consola en el PC
 			# (icono "Servidores") y racks fisicos. Ver ddos_en_mapa.gd.
 			DDoSEnMapa.iniciar_en_escena(get_parent(), incident)
@@ -296,5 +307,41 @@ func start_phishing_consequence(computer: Computer) -> void:
 		if is_instance_valid(computer.cyber_desk):
 			computer.cyber_desk.get_node("CyberDesk").set_malware_controller(computer.malware_controller)
 	else:
+		_hubo_ddos = true
 		DDoSEnMapa.iniciar_en_escena(get_parent(), incident)
+	show_incident_notification(incident)
+
+
+# ==========================================
+# DDOS GARANTIZADO
+# ==========================================
+
+func _programar_ddos_garantizado() -> void:
+	if ddos_garantizado_en <= 0.0 or DDoSEnMapa.modo_practica:
+		return
+	# Si el sorteo esta forzado a otro incidente (pruebas), se respeta.
+	if forzar_incidente != "" and forzar_incidente != "ddos":
+		return
+
+	await get_tree().create_timer(ddos_garantizado_en, false).timeout
+
+	# Espera su turno: nunca entra encima de otro incidente en curso.
+	while GameManager.game_active and not _hubo_ddos:
+		if GameManager.time_remaining < ddos_tiempo_minimo:
+			return
+		if IncidentManager.active_incidents.is_empty() and not IncidenteDDoS.activo:
+			_lanzar_ddos_garantizado()
+			return
+		await get_tree().create_timer(3.0, false).timeout
+
+
+func _lanzar_ddos_garantizado() -> void:
+	var incident := IncidentData.new()
+	incident.incident_id = "ddos"
+	incident.incident_name = "DDoS"
+	incident.difficulty = 3
+	if not IncidentManager.start_incident(incident):
+		return
+	_hubo_ddos = true
+	DDoSEnMapa.iniciar_en_escena(get_parent(), incident)
 	show_incident_notification(incident)
