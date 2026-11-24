@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://br671yjpunmeo"
-path="res://.godot/imported/MailWindow.png-d395f4ee4a952edd124119dc7c9ae82f.ctex"
+path="res://.godot/imported/MailWindow.png-62664b467a67fe73aa7d65117069504e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/CyberDesk/Desktop Windows/MailWindow.png"
-dest_files=["res://.godot/imported/MailWindow.png-d395f4ee4a952edd124119dc7c9ae82f.ctex"]
+source_file="res://assets - copia/CyberDesk/Desktop Windows/MailWindow.png"
+dest_files=["res://.godot/imported/MailWindow.png-62664b467a67fe73aa7d65117069504e.ctex"]
 
 [params]
 

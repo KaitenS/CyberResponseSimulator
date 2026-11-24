@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c36cq5t0x2wbb"
-path="res://.godot/imported/OFF_Button.png-f6d7a972dd16a3786d436657b1b2ce30.ctex"
+path="res://.godot/imported/OFF_Button.png-b4f27dcb443964fce79ef62fcb84573c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/CyberDesk/Desktop Icons/OFF_Button.png"
-dest_files=["res://.godot/imported/OFF_Button.png-f6d7a972dd16a3786d436657b1b2ce30.ctex"]
+source_file="res://assets - copia/CyberDesk/Desktop Icons/OFF_Button.png"
+dest_files=["res://.godot/imported/OFF_Button.png-b4f27dcb443964fce79ef62fcb84573c.ctex"]
 
 [params]
 

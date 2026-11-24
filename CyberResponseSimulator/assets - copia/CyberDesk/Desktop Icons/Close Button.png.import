@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b4qxpprow3i7v"
-path="res://.godot/imported/Close Button.png-8de3468739862e81d36ea748e7d7b675.ctex"
+path="res://.godot/imported/Close Button.png-1362b5cc343d3ed06e711d38d71420c5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/CyberDesk/Desktop Icons/Close Button.png"
-dest_files=["res://.godot/imported/Close Button.png-8de3468739862e81d36ea748e7d7b675.ctex"]
+source_file="res://assets - copia/CyberDesk/Desktop Icons/Close Button.png"
+dest_files=["res://.godot/imported/Close Button.png-1362b5cc343d3ed06e711d38d71420c5.ctex"]
 
 [params]
 

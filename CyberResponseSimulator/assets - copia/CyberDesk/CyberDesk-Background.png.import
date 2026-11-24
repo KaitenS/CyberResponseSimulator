@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b382mppsyt32x"
-path="res://.godot/imported/CyberDesk-Background.png-cbba7630310ef250d9fc62894ce98e69.ctex"
+path="res://.godot/imported/CyberDesk-Background.png-4963632d17ff45a1ff74b669aafc2d47.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/CyberDesk/CyberDesk-Background.png"
-dest_files=["res://.godot/imported/CyberDesk-Background.png-cbba7630310ef250d9fc62894ce98e69.ctex"]
+source_file="res://assets - copia/CyberDesk/CyberDesk-Background.png"
+dest_files=["res://.godot/imported/CyberDesk-Background.png-4963632d17ff45a1ff74b669aafc2d47.ctex"]
 
 [params]
 

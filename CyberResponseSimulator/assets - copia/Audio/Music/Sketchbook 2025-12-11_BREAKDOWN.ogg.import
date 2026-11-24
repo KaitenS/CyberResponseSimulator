@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://bgycibwtncguu"
-path="res://.godot/imported/Sketchbook 2025-12-11_BREAKDOWN.ogg-cdc3d4224354692db5f45f788814d077.oggvorbisstr"
+path="res://.godot/imported/Sketchbook 2025-12-11_BREAKDOWN.ogg-8f1f0bf5a49e5ed7779b53a68b8e2e5c.oggvorbisstr"
 
 [deps]
 
-source_file="res://assets/Audio/Music/Sketchbook 2025-12-11_BREAKDOWN.ogg"
-dest_files=["res://.godot/imported/Sketchbook 2025-12-11_BREAKDOWN.ogg-cdc3d4224354692db5f45f788814d077.oggvorbisstr"]
+source_file="res://assets - copia/Audio/Music/Sketchbook 2025-12-11_BREAKDOWN.ogg"
+dest_files=["res://.godot/imported/Sketchbook 2025-12-11_BREAKDOWN.ogg-8f1f0bf5a49e5ed7779b53a68b8e2e5c.oggvorbisstr"]
 
 [params]
 

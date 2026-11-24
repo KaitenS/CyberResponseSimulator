@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hru6m2358jfh"
-path="res://.godot/imported/Server_logo.png-e58e0cdfc71be8e1575b6788c773196c.ctex"
+path="res://.godot/imported/Server_logo.png-9893f78f92a2949b8cd6eec52e9676e6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/CyberDesk/Desktop Icons/Server_logo.png"
-dest_files=["res://.godot/imported/Server_logo.png-e58e0cdfc71be8e1575b6788c773196c.ctex"]
+source_file="res://assets - copia/CyberDesk/Desktop Icons/Server_logo.png"
+dest_files=["res://.godot/imported/Server_logo.png-9893f78f92a2949b8cd6eec52e9676e6.ctex"]
 
 [params]
 

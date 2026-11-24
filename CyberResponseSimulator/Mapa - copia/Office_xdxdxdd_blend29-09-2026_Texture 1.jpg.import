@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c02mc683vfjd5"
-path.s3tc="res://.godot/imported/Office_xdxdxdd_blend29-09-2026_Texture 1.jpg-6b6fde42933c7b2b70d8a7985dd9f649.s3tc.ctex"
+path.s3tc="res://.godot/imported/Office_xdxdxdd_blend29-09-2026_Texture 1.jpg-772e5087699bd126b1b5d4bb15d94936.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://Mapa/Office_xdxdxdd_blend29-09-2026_Texture 1.jpg"
-dest_files=["res://.godot/imported/Office_xdxdxdd_blend29-09-2026_Texture 1.jpg-6b6fde42933c7b2b70d8a7985dd9f649.s3tc.ctex"]
+source_file="res://Mapa - copia/Office_xdxdxdd_blend29-09-2026_Texture 1.jpg"
+dest_files=["res://.godot/imported/Office_xdxdxdd_blend29-09-2026_Texture 1.jpg-772e5087699bd126b1b5d4bb15d94936.s3tc.ctex"]
 
 [params]
 

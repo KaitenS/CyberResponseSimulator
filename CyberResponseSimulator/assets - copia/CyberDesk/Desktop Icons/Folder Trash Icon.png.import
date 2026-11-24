@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cg44dmcv7kkix"
-path="res://.godot/imported/Folder Trash Icon.png-5036d48d4e980e8c817563567fc4e6cf.ctex"
+path="res://.godot/imported/Folder Trash Icon.png-03e3c906419c925aa0db099e92bd25d5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/CyberDesk/Desktop Icons/Folder Trash Icon.png"
-dest_files=["res://.godot/imported/Folder Trash Icon.png-5036d48d4e980e8c817563567fc4e6cf.ctex"]
+source_file="res://assets - copia/CyberDesk/Desktop Icons/Folder Trash Icon.png"
+dest_files=["res://.godot/imported/Folder Trash Icon.png-03e3c906419c925aa0db099e92bd25d5.ctex"]
 
 [params]
 

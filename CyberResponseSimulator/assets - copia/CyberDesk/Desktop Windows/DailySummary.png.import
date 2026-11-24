@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://r3wt6uk2picy"
-path="res://.godot/imported/DailySummary.png-8397599d7411671f50947fa42464d0f5.ctex"
+path="res://.godot/imported/DailySummary.png-c0be3f46e7edeb3ece632abde608f76e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/CyberDesk/Desktop Windows/DailySummary.png"
-dest_files=["res://.godot/imported/DailySummary.png-8397599d7411671f50947fa42464d0f5.ctex"]
+source_file="res://assets - copia/CyberDesk/Desktop Windows/DailySummary.png"
+dest_files=["res://.godot/imported/DailySummary.png-c0be3f46e7edeb3ece632abde608f76e.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b7a6s2rvefiqi"
-path="res://.godot/imported/Email_Logo.png-d0025ed07e5079ef95d47d9c56f7d2d2.ctex"
+path="res://.godot/imported/Email_Logo.png-bc4dfb3859877d275b38b0cc74ad9d3a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/CyberDesk/Desktop Icons/Email_Logo.png"
-dest_files=["res://.godot/imported/Email_Logo.png-d0025ed07e5079ef95d47d9c56f7d2d2.ctex"]
+source_file="res://assets - copia/CyberDesk/Desktop Icons/Email_Logo.png"
+dest_files=["res://.godot/imported/Email_Logo.png-bc4dfb3859877d275b38b0cc74ad9d3a.ctex"]
 
 [params]
 

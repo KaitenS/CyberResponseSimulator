@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://k0ms02wtmohb"
-path="res://.godot/imported/CybugLogo.png-61e87e34ed022091d29b2e43203e4309.ctex"
+path="res://.godot/imported/CybugLogo.png-bc5831f59686353222b832aba3e6c0d7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Logos/CybugLogo.png"
-dest_files=["res://.godot/imported/CybugLogo.png-61e87e34ed022091d29b2e43203e4309.ctex"]
+source_file="res://assets - copia/Logos/CybugLogo.png"
+dest_files=["res://.godot/imported/CybugLogo.png-bc5831f59686353222b832aba3e6c0d7.ctex"]
 
 [params]
 

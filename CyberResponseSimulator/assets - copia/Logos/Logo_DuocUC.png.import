@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmpovd3im3fm"
-path="res://.godot/imported/Logo_DuocUC.png-0ce1e78544f9fd65ef8e87024e0d067d.ctex"
+path="res://.godot/imported/Logo_DuocUC.png-685c2227ce322e1f087b9fa912ae3773.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Logos/Logo_DuocUC.png"
-dest_files=["res://.godot/imported/Logo_DuocUC.png-0ce1e78544f9fd65ef8e87024e0d067d.ctex"]
+source_file="res://assets - copia/Logos/Logo_DuocUC.png"
+dest_files=["res://.godot/imported/Logo_DuocUC.png-685c2227ce322e1f087b9fa912ae3773.ctex"]
 
 [params]
 
