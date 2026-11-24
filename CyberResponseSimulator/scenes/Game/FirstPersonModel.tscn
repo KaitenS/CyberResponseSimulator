@@ -1,9 +1,70 @@
 [gd_scene format=3]
-[ext_resource type="PackedScene" path="res://assets/Models/Player/SC_Model.blend" id="1"]
-[node name="SC_Model" instance=ExtResource("1")]
+[ext_resource type="PackedScene" path="res://assets/Models/Player/SC_Model.blend" id="1_head"]
+[ext_resource type="ArrayMesh" path="res://assets/Models/Player/Locomotion/Torso.tres" id="3_torso"]
+[ext_resource type="ArrayMesh" path="res://assets/Models/Player/Locomotion/LeftArm.tres" id="4_left_arm"]
+[ext_resource type="ArrayMesh" path="res://assets/Models/Player/Locomotion/RightArm.tres" id="5_right_arm"]
+[ext_resource type="ArrayMesh" path="res://assets/Models/Player/Locomotion/LeftLeg.tres" id="6_left_leg"]
+[ext_resource type="ArrayMesh" path="res://assets/Models/Player/Locomotion/RightLeg.tres" id="7_right_leg"]
+[ext_resource type="AnimationLibrary" path="res://assets/Models/Player/Locomotion/LocomotionAnimations.tres" id="8_animations"]
 
-[node name="Glasses_001" parent="."]
-layers = 524288
+[node name="SC_Model" type="Node3D"]
 
-[node name="Head+Hair" parent="."]
-layers = 524288
+[node name="Rig" type="Node3D" parent="."]
+
+[node name="Torso" type="Node3D" parent="Rig"]
+position = Vector3(0, 0.7, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Rig/Torso"]
+mesh = ExtResource("3_torso")
+
+[node name="LeftArm" type="Node3D" parent="Rig/Torso"]
+position = Vector3(-0.125, 0.105, 0)
+rotation = Vector3(0, 0, 0.4363323)
+
+[node name="Mesh" type="MeshInstance3D" parent="Rig/Torso/LeftArm"]
+mesh = ExtResource("4_left_arm")
+
+[node name="RightArm" type="Node3D" parent="Rig/Torso"]
+position = Vector3(0.125, 0.105, 0)
+rotation = Vector3(0, 0, -0.4363323)
+
+[node name="Mesh" type="MeshInstance3D" parent="Rig/Torso/RightArm"]
+mesh = ExtResource("5_right_arm")
+
+[node name="HeadSource" parent="Rig/Torso" instance=ExtResource("1_head")]
+position = Vector3(0, -0.7, 0)
+
+[node name="Chest" parent="Rig/Torso/HeadSource" index="0"]
+visible = false
+
+[node name="Glasses_001" parent="Rig/Torso/HeadSource" index="1"]
+layers = 1
+cast_shadow = 3
+
+[node name="Head+Hair" parent="Rig/Torso/HeadSource" index="2"]
+layers = 1
+cast_shadow = 3
+
+[node name="Left_Boot" parent="Rig/Torso/HeadSource" index="3"]
+visible = false
+
+[node name="Legs" parent="Rig/Torso/HeadSource" index="4"]
+visible = false
+
+[node name="LeftLeg" type="Node3D" parent="Rig"]
+position = Vector3(-0.06, 0.535, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Rig/LeftLeg"]
+mesh = ExtResource("6_left_leg")
+
+[node name="RightLeg" type="Node3D" parent="Rig"]
+position = Vector3(0.06, 0.535, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Rig/RightLeg"]
+mesh = ExtResource("7_right_leg")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "idle"
+libraries = {
+&"": ExtResource("8_animations")
+}

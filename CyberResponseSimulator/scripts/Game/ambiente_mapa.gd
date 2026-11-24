@@ -31,6 +31,8 @@ extends Node
 var _env: Environment
 var _luces_apoyo: Array[Light3D] = []
 var _energia_amb_base := 0.55
+var _luces_techo: Array[Dictionary] = []
+var _paneles_techo: Array[Dictionary] = []
 
 
 func _ready() -> void:
@@ -41,14 +43,17 @@ func _ready() -> void:
 	_configurar_entorno(escena)
 	_configurar_luz_principal(escena)
 	_agregar_luces_apoyo(escena)
+	_registrar_luces_techo()
 	if usar_vineta:
 		_agregar_vineta()
 
 	# Durante el apagon del DDoS la ambientacion tambien se oscurece.
 	if has_node("/root/IncidenteDDoS"):
 		var inc := get_node("/root/IncidenteDDoS")
-		inc.corte_luz_iniciado.connect(_on_corte.bind(true))
+		inc.corte_luz_iniciado.connect(_on_corte_iniciado)
 		inc.corte_luz_terminado.connect(_on_corte.bind(false))
+		if inc.corte_restante > 0.0:
+			_on_corte(true)
 
 
 func _configurar_entorno(escena: Node) -> void:
@@ -158,6 +163,28 @@ func _on_corte(iniciado: bool) -> void:
 	var t := create_tween().set_parallel(true)
 	t.tween_property(_env, "ambient_light_energy", 0.06 if iniciado else _energia_amb_base, 0.5)
 	t.tween_property(_env, "glow_intensity", 0.3 if iniciado else brillo_glow, 0.5)
+	for saved in _luces_techo:
+		if is_instance_valid(saved["node"]):
+			t.tween_property(saved["node"], "light_energy", 0.0 if iniciado else saved["energy"], 0.5)
+	for saved in _paneles_techo:
+		var material: StandardMaterial3D = saved["material"]
+		t.tween_property(material, "emission_energy_multiplier", 0.0 if iniciado else saved["emission"], 0.5)
+		t.tween_property(material, "albedo_color", Color(0.12,0.13,0.14,1) if iniciado else saved["color"], 0.5)
 	for l in _luces_apoyo:
 		if is_instance_valid(l):
 			t.tween_property(l, "light_energy", 0.0 if iniciado else (1.1 if l is OmniLight3D else 1.6), 0.5)
+
+
+func _registrar_luces_techo() -> void:
+	# Las luminarias ya existen en OfficeCeiling.tscn y son editables.
+	for light in get_tree().get_nodes_in_group("office_ceiling_lights"):
+		if light is Light3D:
+			_luces_techo.append({"node": light, "energy": light.light_energy})
+	for panel in get_tree().get_nodes_in_group("office_ceiling_diffusers"):
+		if panel is MeshInstance3D and panel.material_override is StandardMaterial3D:
+			var material: StandardMaterial3D = panel.material_override
+			_paneles_techo.append({"material": material, "emission": material.emission_energy_multiplier, "color": material.albedo_color})
+
+
+func _on_corte_iniciado(_segundos: float) -> void:
+	_on_corte(true)

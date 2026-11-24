@@ -1,0 +1,36 @@
+[gd_scene format=3]
+[sub_resource type="StandardMaterial3D" id="Frame"]
+albedo_color = Color(0.24, 0.29, 0.30, 1)
+metallic = 0.3
+roughness = 0.65
+[sub_resource type="StandardMaterial3D" id="Diffuser"]
+resource_local_to_scene = true
+albedo_color = Color(0.88, 0.94, 1, 1)
+emission_enabled = true
+emission = Color(0.65, 0.78, 1, 1)
+emission_energy_multiplier = 1.3
+roughness = 0.65
+[sub_resource type="BoxMesh" id="FrameMesh"]
+size = Vector3(1.2, 0.06, 0.38)
+material = SubResource("Frame")
+[sub_resource type="BoxMesh" id="DiffuserMesh"]
+size = Vector3(1.10, 0.008, 0.28)
+[node name="CeilingLamp" type="Node3D"]
+[node name="Frame" type="MeshInstance3D" parent="."]
+mesh = SubResource("FrameMesh")
+[node name="Diffuser" type="MeshInstance3D" parent="." groups=["office_ceiling_diffusers"]]
+position = Vector3(0, -0.034, 0)
+material_override = SubResource("Diffuser")
+mesh = SubResource("DiffuserMesh")
+[node name="Light" type="SpotLight3D" parent="." groups=["office_ceiling_lights"]]
+position = Vector3(0, -0.13, 0)
+rotation = Vector3(-1.5707963, 0, 0)
+light_color = Color(0.94, 0.97, 1, 1)
+light_energy = 1.6
+shadow_enabled = true
+shadow_bias = 0.03
+shadow_normal_bias = 0.3
+spot_range = 4.6
+spot_attenuation = 1.0
+spot_angle = 60.0
+spot_angle_attenuation = 0.8

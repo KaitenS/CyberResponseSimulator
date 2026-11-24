@@ -18,6 +18,8 @@
 [ext_resource type="PackedScene" uid="uid://dhvarbgrejemb" path="res://scenes/Game/ResultsScreen.tscn" id="17_fvyqv"]
 [ext_resource type="PackedScene" path="res://scenes/Game/OfficeDoors.tscn" id="30_office_doors"]
 
+[ext_resource type="PackedScene" path="res://scenes/Game/OfficeCeiling.tscn" id="32_ceiling"]
+
 [sub_resource type="Environment" id="Environment_bekgd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_tt4u6"]
@@ -122,3 +124,5 @@ script = ExtResource("9_i6kj0")
 one_shot = true
 
 [connection signal="timeout" from="IncidentFlowManager/ScheduleTimer" to="IncidentFlowManager" method="_on_schedule_timeout"]
+
+[node name="OfficeCeiling" parent="." instance=ExtResource("32_ceiling")]

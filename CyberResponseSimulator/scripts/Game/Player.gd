@@ -8,6 +8,11 @@ const MOUSE_SENSITIVITY := 0.002
 @export_range(10.0, 85.0, 1.0) var look_up_limit_degrees: float = 65.0
 @export_range(10.0, 85.0, 1.0) var look_down_limit_degrees: float = 70.0
 
+@export_group("Animación al caminar")
+@export_range(0.1, 10.0, 0.1) var reference_walk_speed: float = 3.5
+@export_range(0.0, 1.0, 0.01) var locomotion_transition_seconds: float = 0.18
+var _walking: bool = false
+
 var camera_pitch := 0.0
 var current_interactable: Interactable = null
 
@@ -21,6 +26,7 @@ var camera_original_rotation := Vector3.ZERO
 
 # ==========================================
 
+@onready var locomotion_animations: AnimationPlayer = $SC_Model/AnimationPlayer
 @onready var camera: Camera3D = $Camera3D
 @onready var interaction_ray: RayCast3D = $Camera3D/InteractionRay
 @onready var interaction_label: Label = get_tree().current_scene.get_node_or_null(
@@ -35,6 +41,7 @@ func _ready():
 
 func _physics_process(delta):
 	if camera_locked:
+		_set_locomotion_speed(0.0)
 		velocity = Vector3.ZERO
 		return
 
@@ -99,6 +106,8 @@ func _physics_process(delta):
 	velocity.z = direction.z * SPEED
 
 	move_and_slide()
+	var actual_velocity := get_real_velocity()
+	_set_locomotion_speed(Vector2(actual_velocity.x, actual_velocity.z).length())
 
 
 	# ==========================================
@@ -261,3 +270,12 @@ func exit_computer_view() -> void:
 	camera_locked = false
 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+
+func _set_locomotion_speed(speed: float) -> void:
+	# Usar desplazamiento real evita caminar en el sitio contra una pared.
+	var walking := speed > 0.12
+	if walking != _walking:
+		locomotion_animations.play("walk" if walking else "idle", locomotion_transition_seconds)
+		_walking = walking
+	locomotion_animations.speed_scale = clampf(speed / reference_walk_speed, 0.65, 1.8) if walking else 1.0

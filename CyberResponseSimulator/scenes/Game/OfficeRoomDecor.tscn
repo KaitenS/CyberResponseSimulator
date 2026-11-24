@@ -3112,7 +3112,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.98, -0.245)
 mesh = SubResource("BoxMesh_a2qjg")
 
 [node name="Plant" type="Node3D" parent="SecurityOffice" unique_id=1987562021]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4, 0.0010000089, -11.5)
+position = Vector3(-13.64999962, 0.00100001, -11.72000027)
 
 [node name="Pot" type="MeshInstance3D" parent="SecurityOffice/Plant" unique_id=1847362393]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0)
@@ -3388,7 +3388,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.588, -0.09, 0.038)
 mesh = SubResource("BoxMesh_vxfh5")
 
 [node name="Plant" type="Node3D" parent="MeetingRoom" unique_id=1970457633]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8, 0.009000002, -7.6)
+position = Vector3(-7.88000011, 0.00900000, -7.69999981)
 
 [node name="Pot" type="MeshInstance3D" parent="MeetingRoom/Plant" unique_id=97939819]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0)
@@ -3736,7 +3736,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.98, -0.245)
 mesh = SubResource("BoxMesh_xcuju")
 
 [node name="Plant" type="Node3D" parent="WorkRoomB" unique_id=1546043762]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2, 0.009000002, -7.6)
+position = Vector3(7.28000021, 0.00900000, -7.69999981)
 
 [node name="Pot" type="MeshInstance3D" parent="WorkRoomB/Plant" unique_id=266913536]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0)
@@ -5221,7 +5221,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.23, 2.3)
 mesh = SubResource("BoxMesh_25n7v")
 
 [node name="LeftPlant" type="Node3D" parent="Elevator" unique_id=144635730]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.08, 0.009000002, 1.62)
+position = Vector3(-1.23248088, 0.00900000, 1.83190060)
 
 [node name="Pot" type="MeshInstance3D" parent="Elevator/LeftPlant" unique_id=287083777]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0)
@@ -5253,7 +5253,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10601456, 0.61, 0.056222)
 mesh = SubResource("SphereMesh_lxjj0")
 
 [node name="RightPlant" type="Node3D" parent="Elevator" unique_id=1736537536]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.08, 0.009000002, 1.62)
+position = Vector3(1.04751909, 0.00900000, 1.83190060)
 
 [node name="Pot" type="MeshInstance3D" parent="Elevator/RightPlant" unique_id=1773710508]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0)
@@ -5287,7 +5287,7 @@ mesh = SubResource("SphereMesh_lxjj0")
 [node name="Hallway" type="Node3D" parent="." unique_id=1176847802]
 
 [node name="WestPlant" type="Node3D" parent="Hallway" unique_id=390826544]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.85, 0.0010000089, -0.9)
+position = Vector3(-7.96000004, 0.00100001, -0.88000000)
 
 [node name="Pot" type="MeshInstance3D" parent="Hallway/WestPlant" unique_id=597155180]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0)
@@ -5319,7 +5319,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10601456, 0.61, 0.056222)
 mesh = SubResource("SphereMesh_1335c")
 
 [node name="EastPlant" type="Node3D" parent="Hallway" unique_id=600085375]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.7, 0.0010000089, -1.25)
+position = Vector3(10.19999981, 0.00100001, -0.92000002)
 
 [node name="Pot" type="MeshInstance3D" parent="Hallway/EastPlant" unique_id=1261260232]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0)
@@ -5351,7 +5351,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.10601456, 0.61, 0.056222)
 mesh = SubResource("SphereMesh_beq0p")
 
 [node name="MeetingPlant" type="Node3D" parent="Hallway" unique_id=1481807675]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, 0.0010000089, -9.6)
+position = Vector3(1.60000002, 0.00100001, -10.64999962)
 
 [node name="Pot" type="MeshInstance3D" parent="Hallway/MeetingPlant" unique_id=645948600]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 0)
