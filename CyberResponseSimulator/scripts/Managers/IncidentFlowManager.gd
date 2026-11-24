@@ -7,6 +7,10 @@ extends Node
 # ==========================================
 
 @export var first_incident_delay: float = 5.0
+## Intervalo entre nuevos sorteos durante una partida normal.
+@export_range(1.0, 300.0, 1.0) var min_incident_delay: float = 35.0
+@export_range(1.0, 300.0, 1.0) var max_incident_delay: float = 55.0
+@export_range(1.0, 30.0, 1.0) var retry_delay: float = 5.0
 @export var phishing_data: PhishingData
 @export var malware_data: MalwareIncidentData
 
@@ -29,6 +33,10 @@ var available_incidents: Array[IncidentData] = []
 
 var computers: Array[Computer] = []
 var active_incident: IncidentData = null
+var _last_incident_id: String = ""
+var _practice_only: bool = false
+
+@onready var _schedule_timer: Timer = $ScheduleTimer
 
 
 # ==========================================
@@ -45,6 +53,7 @@ var active_incident: IncidentData = null
 func _ready() -> void:
 
 	notification_panel.visible = false
+	GameManager.game_ended.connect(_on_game_ended)
 
 	setup_incidents()
 
@@ -108,7 +117,10 @@ func setup_incidents() -> void:
 	if DDoSEnMapa.forzar_siguiente != "":
 		forzado = DDoSEnMapa.forzar_siguiente
 		DDoSEnMapa.forzar_siguiente = ""
+	if forzado == "phishing" and phishing_data != null:
+		forzado = phishing_data.incident_id
 	DDoSEnMapa.modo_practica = (forzado == "ddos")
+	_practice_only = DDoSEnMapa.modo_practica
 
 	if forzado != "":
 		var filtrados: Array[IncidentData] = []
@@ -142,125 +154,89 @@ func setup_incidents() -> void:
 # ==========================================
 
 func start_incident_test() -> void:
+	_schedule_timer.start(maxf(0.01, first_incident_delay))
 
-	await get_tree().create_timer(
-		first_incident_delay, false
-	).timeout
 
+func manages_incident_schedule() -> bool:
+	return not _practice_only
+
+
+func _on_schedule_timeout() -> void:
 	if not GameManager.game_active:
 		return
+	var created := create_incident()
+	# La práctica tiene un único ataque y conserva su reinicio propio.
+	if _practice_only:
+		return
+	if created:
+		_schedule_timer.start(randf_range(
+			maxf(0.01, minf(min_incident_delay, max_incident_delay)),
+			maxf(0.01, maxf(min_incident_delay, max_incident_delay))
+		))
+	else:
+		_schedule_timer.start(maxf(0.01, retry_delay))
 
-	create_incident()
+
+func _on_game_ended() -> void:
+	_schedule_timer.stop()
 
 
-# ==========================================
-# CREAR INCIDENTE
-# ==========================================
+func _refresh_computers() -> void:
+	computers.clear()
+	for node in get_tree().get_nodes_in_group("computers"):
+		if node is Computer:
+			computers.append(node)
 
-func create_incident() -> void:
 
+func _free_computers() -> Array[Computer]:
+	var free: Array[Computer] = []
+	for computer in computers:
+		if is_instance_valid(computer) and computer.is_available_for_incident():
+			free.append(computer)
+	return free
+
+
+func create_incident() -> bool:
+	if not GameManager.game_active or IncidentManager.active_incidents.size() >= IncidentManager.MAX_ACTIVE_INCIDENTS:
+		return false
+	_refresh_computers()
 	if computers.is_empty():
-
-		print(
-			"ERROR: No hay computadores disponibles."
-		)
-
-		return
-
-
-	if available_incidents.is_empty():
-
-		print(
-			"ERROR: No hay incidentes disponibles."
-		)
-
-		return
-
-
-	# ==========================================
-	# SELECCIONAR INCIDENTE
-	# ==========================================
-
-	var incident: IncidentData = (
-		available_incidents.pick_random()
-	)
-
-
-	# ==========================================
-	# REGISTRAR INCIDENTE
-	# ==========================================
-
+		return false
+	var free := _free_computers()
+	var choices: Array[IncidentData] = []
+	for incident in available_incidents:
+		var already_active := false
+		for running in IncidentManager.active_incidents:
+			if running == incident or running.incident_id == incident.incident_id:
+				already_active = true
+		if already_active:
+			continue
+		if incident.incident_id == "ddos":
+			if not IncidenteDDoS.activo:
+				choices.append(incident)
+		elif (incident is PhishingData or incident is MalwareIncidentData) and not free.is_empty():
+			choices.append(incident)
+	if choices.is_empty():
+		return false
+	# Favorecer variedad cuando hay más de un tipo elegible.
+	if choices.size() > 1:
+		choices = choices.filter(func(item: IncidentData): return item.incident_id != _last_incident_id)
+	var incident: IncidentData = choices.pick_random()
+	var computer: Computer = computers.pick_random() if incident.incident_id == "ddos" else free.pick_random()
 	if not IncidentManager.start_incident(incident):
-
-		print(
-			"No se pudo iniciar el incidente."
-		)
-
-		return
-
-
+		return false
 	active_incident = incident
-
-
-	# ==========================================
-	# SELECCIONAR COMPUTADOR
-	# ==========================================
-
-	var computer: Computer = computers.pick_random()
-
-
-	# ==========================================
-	# ACTIVAR INCIDENTE
-	# ==========================================
-
-	match incident.incident_id:
-
-		"pishing_01":
-			computer.activate_phishing(incident)
-
-		"malware":
-			computer.activate_malware(malware_data)
-
-		"ddos":
-			# El DDoS se juega en este mismo mapa: consola en el PC
-			# (icono "Servidores") y racks fisicos. Ver ddos_en_mapa.gd.
-			DDoSEnMapa.iniciar_en_escena(get_parent(), incident)
-
-
-	# ==========================================
-	# DEBUG
-	# ==========================================
-
-	print("================================")
-	print(
-		"NUEVO INCIDENTE: ",
-		incident.incident_name
-	)
-
-	print(
-		"ID: ",
-		incident.incident_id
-	)
-
-	print(
-		"DIFICULTAD: ",
-		incident.difficulty
-	)
-
-	print(
-		"COMPUTADOR AFECTADO: ",
-		computer.name
-	)
-
-	print("================================")
-
-
+	_last_incident_id = incident.incident_id
+	if incident is PhishingData:
+		computer.activate_phishing(incident)
+	elif incident is MalwareIncidentData:
+		computer.activate_malware(incident)
+	else:
+		DDoSEnMapa.iniciar_en_escena(get_parent(), incident)
 	show_incident_notification(incident)
+	print("NUEVO INCIDENTE: ", incident.incident_name, " | Equipo: ", computer.name)
+	return true
 
-
-# ==========================================
-# NOTIFICACIÓN
-# ==========================================
 
 func show_incident_notification(_incident: IncidentData) -> void:
 	# La alerta orienta sin revelar el diagnóstico ni alterar el incidente.
@@ -271,8 +247,9 @@ func show_incident_notification(_incident: IncidentData) -> void:
 func start_phishing_consequence(computer: Computer) -> void:
 	if not GameManager.game_active or not is_instance_valid(computer):
 		return
+	_refresh_computers()
 	var choices: Array[String] = []
-	if malware_data != null and not (is_instance_valid(computer.malware_controller) and not computer.malware_controller.finished):
+	if malware_data != null and computer.is_available_for_incident():
 		var malware_running := false
 		for other in computers:
 			if is_instance_valid(other) and is_instance_valid(other.malware_controller) and not other.malware_controller.finished:

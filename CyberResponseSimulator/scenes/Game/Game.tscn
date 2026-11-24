@@ -117,3 +117,8 @@ script = ExtResource("9_i6kj0")
 [node name="OfficeDoors" parent="." unique_id=1239699460 instance=ExtResource("30_office_doors")]
 
 [node name="ResultsScreen" parent="." unique_id=1501641403 instance=ExtResource("17_fvyqv")]
+
+[node name="ScheduleTimer" type="Timer" parent="IncidentFlowManager"]
+one_shot = true
+
+[connection signal="timeout" from="IncidentFlowManager/ScheduleTimer" to="IncidentFlowManager" method="_on_schedule_timeout"]

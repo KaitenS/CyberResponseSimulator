@@ -700,7 +700,6 @@ stretch_mode = 4
 [connection signal="pressed" from="CyberDesk/DesktopIcons/GridContainer/DailySummary Button" to="CyberDesk" method="_on_daily_summary_button_pressed"]
 [connection signal="pressed" from="CyberDesk/TaskBar/HBoxContainer/CloseButton" to="CyberDesk" method="_on_close_button_pressed"]
 [connection signal="pressed" from="CyberDesk/Windows/MalwareWindow/TitleBar/HBoxContainer/CloseButton" to="CyberDesk" method="_on_close_button_pressed"]
-[node name="MailNotice" parent="CyberDesk/DesktopIcons/GridContainer/Email Button" instance=ExtResource("18_mail_notice")]
 
 [node name="SummaryNotice" parent="CyberDesk/DesktopIcons/GridContainer/DailySummary Button" instance=ExtResource("19_summary_notice")]
 

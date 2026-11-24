@@ -6,7 +6,7 @@ var active_incidents: Array[IncidentData] = []
 
 
 func start_incident(incident: IncidentData) -> bool:
-	if active_incidents.size() >= MAX_ACTIVE_INCIDENTS:
+	if incident == null or incident in active_incidents or active_incidents.size() >= MAX_ACTIVE_INCIDENTS:
 		return false
 
 	active_incidents.append(incident)

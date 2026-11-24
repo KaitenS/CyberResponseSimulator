@@ -12,6 +12,9 @@ const GAME_DURATION: float = 600.0
 signal game_ended
 
 func start_game():
+	if IncidenteDDoS.activo:
+		IncidenteDDoS.abortar()
+	IncidentManager.active_incidents.clear()
 	game_active = true
 	score = 0
 	phishing_results.clear()

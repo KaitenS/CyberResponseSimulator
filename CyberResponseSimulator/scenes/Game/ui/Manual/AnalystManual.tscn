@@ -117,7 +117,7 @@ text = "Manual del\nAnalista"
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.34, 0.43, 0.39, 1)
-text = "OBSERVA · CONTRASTA · DECIDE"
+text = "APRENDE · PREVIENE · ACTÚA"
 [node name="Chapters" type="VBoxContainer" parent="Overlay/Center/Book/Index"]
 layout_mode = 2
 theme_override_constants/separation = 12
@@ -139,7 +139,7 @@ text = "03 ........ DDoS"
 [node name="Hint" type="Label" parent="Overlay/Center/Book/Index"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
-text = "Una pista no es una prueba.\nConsulta el contexto antes\nde tomar una decisión."
+text = "Para tu vida digital diaria.\nDesplaza la página con la rueda.\nAprende a reconocer riesgos\ny a pedir ayuda a tiempo."
 [node name="ChapterScroll" type="ScrollContainer" parent="Overlay/Center/Book"]
 offset_left = 540.0
 offset_top = 73.0
@@ -194,9 +194,43 @@ mouse_filter = 2
 [node name="Definition" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "Es un engaño que suplanta a una persona u organización para obtener datos, dinero o lograr que abras contenido peligroso."
+text = "Es una forma de engaño: alguien se hace pasar por una persona o entidad de confianza para que entregues datos, transfieras dinero o abras contenido peligroso. Se aprovecha de nuestras emociones y confianza; no necesita romper la seguridad del equipo para robar una contraseña.\n\nPuede llegar por correo, mensajería o redes sociales. Por SMS suele llamarse smishing; por llamadas, vishing. También puede esconderse detrás de un código QR."
 autowrap_mode = 3
 mouse_filter = 2
+[node name="HowTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "¿CÓMO FUNCIONA?"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="How" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "El atacante inventa una situación creíble: una cuenta bloqueada, una encomienda retenida o un pago pendiente. Luego te lleva a una página que imita un servicio real o te pide instalar algo. La urgencia, el miedo o un premio intentan que actúes antes de comprobar."
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="ExampleTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "UN EJEMPLO COTIDIANO"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Example" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "Te llega un SMS: tu paquete no pudo entregarse y debes pagar un pequeño recargo. La página copia el logo de una empresa de envíos, pero pide datos de tarjeta. En lugar de pagar desde el enlace, consulta el envío desde la aplicación o dirección oficial que ya conoces."
+autowrap_mode = 3
+mouse_filter = 2
+
 [node name="SignalsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
@@ -206,25 +240,76 @@ mouse_filter = 2
 [node name="Signals" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "• Solicitudes de contraseñas o pagos inesperados.\n• Dominios parecidos, pero distintos del habitual.\n• Adjuntos o enlaces que no esperabas.\n• Presión para actuar sin comprobar.\n• Contradicciones con las actividades del día."
+text = "• Solicitudes inesperadas de dinero, contraseñas o códigos de verificación.\n• Presión para actuar ya o mantener el trámite en secreto.\n• Remitentes y destinos que imitan nombres conocidos.\n• Descargas o accesos que no esperabas.\n\nUn mensaje puede estar perfectamente escrito e incluir tu nombre. No te bases solo en las faltas de ortografía."
 autowrap_mode = 3
 mouse_filter = 2
+[node name="DomainsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "LEE EL DESTINO REAL"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Domains" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "Ejemplos ficticios:\n• soporte.empresa.example es un subdominio de empresa.example.\n• soporte.ernpresa.example usa rn en lugar de m.\n• empresa.example.pagos.example pertenece a pagos.example.\n\nEl texto azul puede ocultar un destino distinto. En un computador, pasa el mouse sin pulsar para revisarlo. HTTPS cifra la conexión, pero no demuestra que el sitio sea honesto. Ante la duda, entra por la aplicación oficial o un marcador conocido."
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="PreventionTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "CÓMO PREVENIRLO"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Prevention" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "• Verifica la solicitud por un canal independiente, no con el teléfono incluido en el mensaje.\n• Usa contraseñas distintas y activa la autenticación multifactor: pide una segunda prueba al iniciar sesión.\n• Nunca dictes códigos de acceso a quien te contacte ni apruebes solicitudes de inicio de sesión que no hiciste.\n• Reporta el mensaje con la opción de tu plataforma o a TI."
+autowrap_mode = 3
+mouse_filter = 2
+
 [node name="ActionsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "CÓMO INVESTIGAR"
+text = "SI TE OCURRE"
 autowrap_mode = 3
 mouse_filter = 2
 [node name="Actions" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "1. Consulta el resumen diario.\n2. Lee la dirección completa y lo que se solicita.\n3. Contrasta el formato del adjunto y el contexto.\n4. Verifica por un canal conocido antes de confiar."
+text = "Si entregaste una contraseña, cámbiala desde un dispositivo de confianza y cambia también las cuentas donde la reutilizabas. Si diste datos bancarios o enviaste dinero, contacta al banco por su canal oficial.\n\nSi descargaste o instalaste algo sospechoso, revisa la sección Malware. En un equipo de trabajo, avisa a TI y explica qué abriste. Guarda el mensaje y la hora para ayudar a investigar."
 autowrap_mode = 3
 mouse_filter = 2
 [node name="Note" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
-text = "Un mensaje bien escrito o una dirección familiar no garantizan que sea seguro."
+text = "RECUERDA\nUn enlace abierto no confirma por sí solo una infección. Importa qué descargaste, instalaste o entregaste. Pedir ayuda a tiempo reduce el daño."
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="CheckTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "PIÉNSALO UN MOMENTO"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Check" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/PhishingPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "¿Un mensaje con tu nombre y el logo del banco es auténtico?\n\nNo necesariamente. Los atacantes pueden copiar logos y conocer datos personales. Confirma la solicitud por un canal conocido."
 autowrap_mode = 3
 mouse_filter = 2
 
@@ -248,9 +333,43 @@ mouse_filter = 2
 [node name="Definition" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "Es software malicioso que puede alterar un equipo, robar información, cifrar archivos o permitir accesos no autorizados."
+text = "Malware significa software malicioso. Es un programa o componente creado para dañar, espiar, robar información o permitir control no autorizado. Puede afectar computadores, teléfonos y otros dispositivos conectados.\n\nPhishing describe un engaño a una persona; malware describe software dañino. Un mensaje fraudulento puede distribuirlo, pero también puede limitarse a robar datos sin instalar nada."
 autowrap_mode = 3
 mouse_filter = 2
+[node name="HowTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "¿CÓMO FUNCIONA?"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="How" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "Puede llegar en instaladores manipulados, falsas actualizaciones, adjuntos o aplicaciones descargadas de lugares poco fiables. También puede aprovechar fallos de seguridad.\n\nEjemplo: una página anuncia que tu reproductor necesita actualizarse. El supuesto instalador agrega un programa que roba información. Busca la actualización desde el propio programa o el sitio oficial, no desde el anuncio."
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="TypesTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "TIPOS QUE PUEDES ENCONTRAR"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Types" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "• Ransomware: bloquea o cifra información y exige un pago; también puede robarla.\n• Spyware: recopila información sin autorización.\n• Troyano: se presenta como algo útil para que lo instales.\n• Virus: se propaga al infectar otros archivos.\n\nSon distintas formas de malware; no todo malware es un virus."
+autowrap_mode = 3
+mouse_filter = 2
+
 [node name="SignalsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
@@ -260,25 +379,59 @@ mouse_filter = 2
 [node name="Signals" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "• Procesos o archivos que no reconoces.\n• Comportamientos fuera de lo habitual.\n• Consumo de recursos sin explicación.\n• Cambios inesperados o alertas de seguridad."
+text = "• Alertas del antivirus, archivos inaccesibles o una petición de rescate.\n• Extensiones y aplicaciones que no instalaste.\n• Cambios inesperados del navegador o mensajes enviados sin tu permiso.\n\nLa lentitud también puede tener causas normales. Un nombre raro o mucha CPU no justifican borrar archivos del sistema."
 autowrap_mode = 3
 mouse_filter = 2
+[node name="PreventionTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "CÓMO PREVENIRLO"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Prevention" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "• Mantén sistema, aplicaciones y protección de seguridad actualizados.\n• Descarga desde el proveedor o una tienda oficial; revisa permisos.\n• No desactives el antivirus para instalar algo recibido por mensaje.\n• Haz copias de seguridad y comprueba que puedes recuperar archivos. Mantén al menos una copia protegida o desconectada para que una infección no la altere.\n• Un archivo .exe puede ser legítimo: la extensión sola no demuestra su seguridad."
+autowrap_mode = 3
+mouse_filter = 2
+
 [node name="ActionsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "CÓMO INVESTIGAR"
+text = "SI TE OCURRE"
 autowrap_mode = 3
 mouse_filter = 2
 [node name="Actions" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "1. Revisa los procesos y archivos disponibles.\n2. Reúne evidencias antes de actuar.\n3. Distingue lo legítimo de lo sospechoso.\n4. Evalúa la contención según la información reunida."
+text = "Deja de introducir contraseñas o datos bancarios en el dispositivo sospechoso. Si hay señales de infección activa, desconéctalo de la red y pide ayuda; en el trabajo, sigue el procedimiento de TI.\n\nEn un equipo personal, utiliza una herramienta de seguridad conocida y actualizada para analizarlo. No instales el supuesto antivirus que ofrece una ventana emergente. Cambia las credenciales expuestas desde otro dispositivo de confianza. Si hay ransomware, conserva el aviso y consulta a especialistas antes de recuperar desde una copia limpia."
 autowrap_mode = 3
 mouse_filter = 2
 [node name="Note" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
-text = "Un nombre extraño o un uso elevado de CPU no bastan para confirmar malware. No elimines archivos a ciegas."
+text = "RECUERDA\nEl antivirus ayuda, pero no detecta todas las amenazas. Pagar un rescate no garantiza recuperar los archivos ni que se eliminen las copias robadas."
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="CheckTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "PIÉNSALO UN MOMENTO"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Check" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/MalwarePage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "¿Que un instalador parezca funcionar demuestra que es seguro?\n\nNo. Puede cumplir una función visible y realizar acciones dañinas al mismo tiempo. Verifica su origen antes de ejecutarlo."
 autowrap_mode = 3
 mouse_filter = 2
 
@@ -302,9 +455,43 @@ mouse_filter = 2
 [node name="Definition" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "Un ataque distribuido de denegación de servicio busca saturar un sistema con tráfico desde múltiples orígenes, dificultando el acceso a usuarios legítimos."
+text = "DDoS significa denegación de servicio distribuida. Busca que una web, aplicación o red deje de atender a sus usuarios al agotar su capacidad. En un ataque distribuido participan múltiples orígenes.\n\nSu objetivo principal es la disponibilidad: poder usar el servicio. Que una página deje de responder no demuestra por sí solo un robo de datos."
 autowrap_mode = 3
 mouse_filter = 2
+[node name="HowTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "¿CÓMO FUNCIONA?"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="How" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "El tráfico puede saturar la conexión o consumir recursos de servidores y aplicaciones. A veces procede de una botnet: dispositivos infectados que un atacante controla en conjunto, incluso sin que sus dueños lo sepan.\n\nPiensa en un local cuyo acceso queda ocupado por tantas peticiones que los clientes reales no logran entrar. Una botnet es una forma de generar ese tráfico, pero no la única."
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="ExampleTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "UN EJEMPLO COTIDIANO"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Example" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "Intentas entrar a una plataforma de clases o jugar en línea y el servicio no responde. Si otras páginas funcionan, el problema podría estar en ese servicio. Pero también podría ser mantenimiento, una avería o demasiados usuarios legítimos. Solo su equipo técnico puede confirmarlo revisando evidencias."
+autowrap_mode = 3
+mouse_filter = 2
+
 [node name="SignalsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
@@ -314,25 +501,60 @@ mouse_filter = 2
 [node name="Signals" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "• Aumento inusual de solicitudes.\n• Lentitud, errores o pérdida de disponibilidad.\n• Recursos saturados en uno o varios servidores.\n• Patrones de tráfico diferentes de los habituales."
+text = "• Lentitud, errores y desconexiones que afectan al servicio.\n• Aumento anormal de tráfico o solicitudes.\n• Conexiones o recursos saturados.\n\nUn evento muy popular también puede provocar una subida legítima de visitas. Hay que comparar las métricas con la actividad habitual."
 autowrap_mode = 3
 mouse_filter = 2
+[node name="PreventionTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "CÓMO PREVENIRLO"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Prevention" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "Como usuario, actualiza tus dispositivos y router, cambia las claves predeterminadas y evita instalar software desconocido: ayudas a que tus equipos no sean utilizados contra otros.\n\nQuien administra un servicio necesita monitorización, un plan de respuesta y coordinación con su proveedor. La protección puede combinar filtrado, límites de solicitudes y redes de distribución de contenido. Debe distinguir tráfico atacante de usuarios reales; bloquear todo también deja el servicio fuera de uso."
+autowrap_mode = 3
+mouse_filter = 2
+
 [node name="ActionsTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "CÓMO INVESTIGAR"
+text = "SI TE OCURRE"
 autowrap_mode = 3
 mouse_filter = 2
 [node name="Actions" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "1. Observa las métricas y el estado de los servidores.\n2. Contrasta la demanda con el funcionamiento habitual.\n3. Evalúa la mitigación disponible y sus efectos.\n4. Comprueba que el servicio se recupere para usuarios legítimos."
+text = "Si eres usuario, consulta los canales oficiales de estado y avisa a soporte indicando la hora y el error. No descargues programas que prometen arreglar la caída.\n\nSi administras el servicio, revisa tráfico, recursos y registros, contacta al proveedor de alojamiento o conectividad y aplica el plan de mitigación. Comprueba que los usuarios legítimos recuperen acceso y documenta lo ocurrido. Reiniciar servidores sin analizar la causa no detiene necesariamente un ataque externo."
 autowrap_mode = 3
 mouse_filter = 2
 [node name="Note" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
-text = "Una caída no demuestra por sí sola un ataque. Un bloqueo excesivo también puede interrumpir tráfico legítimo."
+text = "RECUERDA\nUna caída no es siempre un DDoS. El antivirus del computador del usuario no sustituye las defensas que necesita el servicio atacado."
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="CheckTitle" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.12, 0.32, 0.28, 1)
+theme_override_constants/line_spacing = 3
+text = "PIÉNSALO UN MOMENTO"
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Check" type="Label" parent="Overlay/Center/Book/ChapterScroll/Pages/DDoSPage"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_constants/line_spacing = 3
+text = "¿Conviene bloquear todas las conexiones para solucionar una caída?\n\nNo como solución general: también impedirías entrar a los usuarios legítimos. La respuesta debe conservar el servicio y reducir el tráfico dañino."
 autowrap_mode = 3
 mouse_filter = 2
 

@@ -92,6 +92,8 @@ func _on_phishing_finished(completed: bool) -> void:
 
 
 func activate_malware(data: MalwareIncidentData) -> void:
+	if not is_available_for_incident():
+		return
 	malware_active = true
 	malware_incident = data
 
@@ -102,8 +104,15 @@ func activate_malware(data: MalwareIncidentData) -> void:
 	add_child(malware_controller)
 	malware_controller.setup(data, machine)
 	malware_controller.incident_finished.connect(_on_malware_finished)
+	if is_instance_valid(cyber_desk):
+		var desk = cyber_desk.get_node("CyberDesk")
+		desk.set_malware_controller(malware_controller)
+		var window = desk.get_node("Windows/MalwareWindow")
+		if window.visible:
+			window.open_investigation(malware_controller)
 	
 func _on_malware_finished(result: Dictionary) -> void:
+	malware_active = false
 	if result["success"]:
 		GameManager.score += 100
 		GameManager.incidents_completed += 1
@@ -111,6 +120,7 @@ func _on_malware_finished(result: Dictionary) -> void:
 		GameManager.incidents_failed += 1
 
 	IncidentManager.finish_incident(malware_incident)
+	malware_incident = null
 
 func has_active_incident() -> bool:
 	return active_incident != null
@@ -363,11 +373,15 @@ func _reset_phishing_mailbox() -> void:
 	if is_instance_valid(phishing_controller):
 		phishing_controller.queue_free()
 	phishing_controller = null
-	if GameManager.game_active:
+	var flow = get_parent().get_node_or_null("IncidentFlowManager")
+	if GameManager.game_active and not (flow != null and flow.manages_incident_schedule()):
 		$PhishingRepeatTimer.start(phishing_repeat_delay)
 
 
 func _on_phishing_repeat_timeout() -> void:
+	var scheduler = get_parent().get_node_or_null("IncidentFlowManager")
+	if scheduler != null and scheduler.manages_incident_schedule():
+		return
 	if not GameManager.game_active or _repeat_phishing_data == null:
 		return
 	if phishing_active:
@@ -387,3 +401,9 @@ func _on_phishing_breach_timeout() -> void:
 	_reset_phishing_mailbox()
 	if GameManager.game_active and flow != null and randf() < phishing_chain_probability:
 		flow.start_phishing_consequence(self)
+
+
+func is_available_for_incident() -> bool:
+	if phishing_active or (is_instance_valid(phishing_controller) and (phishing_controller.incident_active or phishing_controller.compromised)):
+		return false
+	return not (is_instance_valid(malware_controller) and not malware_controller.finished)
