@@ -30,6 +30,48 @@ file_size = "1.2KB"
 modified_date = "12/10/2026"
 metadata/_custom_type_script = "uid://cs1fyu2gc821y"
 
+[sub_resource type="Resource" id="Resource_np34o"]
+script = ExtResource("1_irw1c")
+file_name = "msupdate_helper.dll"
+file_path = "C:\\ProgramData\\Microsoft\\Updater\\msupdate_helper.dll"
+file_size = "96 KB"
+modified_date = "15/10/2026sí"
+is_malicious = true
+evidence_id = "archivo_msupdate_dll"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_hyxhx"]
+script = ExtResource("1_irw1c")
+file_name = "factura_proveedor_2025.pdf"
+file_path = "C:\\Users\\usuario.finanzas\\Documents\\Facturas\\factura_proveedor_2025.pdf"
+file_size = "214 KB"
+modified_date = "03/09/2026"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_5lk2q"]
+script = ExtResource("1_irw1c")
+file_name = "instalador_vpn.exe"
+file_path = "C:\\Users\\usuario.finanzas\\Downloads\\instalador_vpn.exe"
+file_size = "38.4 MB"
+modified_date = "08/10/2026"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_3t5cc"]
+script = ExtResource("1_irw1c")
+file_name = "contactos_clientes.csv"
+file_path = "C:\\Users\\usuario.finanzas\\Documents\\contactos_clientes.csv"
+file_size = "52 KB"
+modified_date = "29/09/2026"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_gl71d"]
+script = ExtResource("1_irw1c")
+file_name = "notas_reunion.txt"
+file_path = "C:\\Users\\usuario.finanzas\\Desktop\\notas_reunion.txt"
+file_size = "3 KB"
+modified_date = "14/10/2026"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
 [sub_resource type="Resource" id="Resource_usism"]
 script = ExtResource("2_t88t2")
 process_name = "svch0st.exe"
@@ -56,15 +98,57 @@ process_path = "C:\\Windows\\explorer.exe"
 started_by = "usuario.finanzas"
 metadata/_custom_type_script = "uid://c1nih121rphdg"
 
+[sub_resource type="Resource" id="Resource_ux7q8"]
+script = ExtResource("2_t88t2")
+process_name = "msupdate_svc.exe"
+cpu_usage = 4.8
+process_path = "C:\\ProgramData\\Microsoft\\Updater\\msupdate_svc.exe"
+started_by = "tarea programada"
+is_malicious = true
+evidence_id = "proceso_msupdate"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_ytiuc"]
+script = ExtResource("2_t88t2")
+process_name = "outlook.exe"
+cpu_usage = 6.2
+process_path = "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
+started_by = "usuario.finanzas"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_eby4n"]
+script = ExtResource("2_t88t2")
+process_name = "svchost.exe"
+cpu_usage = 0.8
+process_path = "C:\\Windows\\System32\\svchost.exe"
+started_by = "SYSTEM"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_6lgk7"]
+script = ExtResource("2_t88t2")
+process_name = "teams.exe"
+cpu_usage = 22.0
+process_path = "C:\\Users\\usuario.finanzas\\AppData\\Local\\Microsoft\\Teams\\current\\Teams.exe"
+started_by = "usuario.finanzas"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_k03m5"]
+script = ExtResource("2_t88t2")
+process_name = "MsMpEng.exe"
+cpu_usage = 1.5
+process_path = "C:\\Program Files\\Windows Defender\\MsMpEng.exe"
+started_by = "SYSTEM"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
 [resource]
 script = ExtResource("3_w1kla")
 title = "Equipo de Finanzas con comportamiento anómalo"
-required_evidence_ids = Array[String](["proceso_svchost_falso", "archivo_factura_exe"])
-processes = Array[ExtResource("2_t88t2")]([SubResource("Resource_usism"), SubResource("Resource_iv606"), SubResource("Resource_e3po3")])
-log_lines = Array[String](["[12/10 17:20] usuario.finanzas modificó presupuesto_2026.xlsx", "[15/10 08:51] chrome.exe descargó factura_urgente.exe desde mail-facturas.net", "[15/10 08:52] usuario.finanzas ejecutó factura_urgente.exe", "[15/10 08:52] svch0st.exe iniciado desde C:\\Users\\Public", "[15/10 08:53] svch0st.exe abrió conexión saliente a 203.0.113.45:443", "[15/10 09:30] explorer.exe accedió a informe_ventas.docx"])
-files = Array[ExtResource("1_irw1c")]([SubResource("Resource_irw1c"), SubResource("Resource_t88t2"), SubResource("Resource_w1kla")])
-malicious_process_ids = Array[String](["proceso_svchost_falso"])
-malicious_file_ids = Array[String](["archivo_factura_exe"])
+required_evidence_ids = Array[String](["proceso_svchost_falso", "archivo_factura_exe", "proceso_msupdate", "archivo_msupdate_dll"])
+processes = Array[ExtResource("2_t88t2")]([SubResource("Resource_usism"), SubResource("Resource_iv606"), SubResource("Resource_e3po3"), SubResource("Resource_ux7q8"), SubResource("Resource_ytiuc"), SubResource("Resource_eby4n"), SubResource("Resource_6lgk7"), SubResource("Resource_k03m5")])
+log_lines = Array[String](["[12/10 17:20] usuario.finanzas modificó presupuesto_2026.xlsx", "[15/10 08:51] chrome.exe descargó factura_urgente.exe desde mail-facturas.net", "[15/10 08:52] usuario.finanzas ejecutó factura_urgente.exe", "[15/10 08:52] svch0st.exe iniciado desde C:\\Users\\Public", "[15/10 08:53] svch0st.exe abrió conexión saliente a 203.0.113.45:443", "[15/10 09:30] explorer.exe accedió a informe_ventas.docx", "[14/10 11:05] outlook.exe recibió correo de facturas@mail-facturas.net con adjunto .exe", "[15/10 08:53] svch0st.exe creó tarea programada \"MicrosoftUpdate\"", "[15/10 08:54] tarea \"MicrosoftUpdate\" copió msupdate_helper.dll a C:\\ProgramData\\Microsoft\\Updater", "[15/10 08:55] msupdate_svc.exe iniciado por tarea programada", "[15/10 09:10] MsMpEng.exe analizó C:\\Users\\usuario.finanzas\\Downloads: sin detecciones", "[15/10 09:42] teams.exe aumentó uso de CPU durante videollamada", "[15/10 10:03] instalador_vpn.exe ejecutado por usuario.finanzas (firma digital válida)"])
+files = Array[ExtResource("1_irw1c")]([SubResource("Resource_irw1c"), SubResource("Resource_t88t2"), SubResource("Resource_w1kla"), SubResource("Resource_np34o"), SubResource("Resource_hyxhx"), SubResource("Resource_5lk2q"), SubResource("Resource_3t5cc"), SubResource("Resource_gl71d")])
+malicious_process_ids = Array[String](["proceso_svchost_falso", "proceso_msupdate"])
+malicious_file_ids = Array[String](["archivo_factura_exe", "archivo_msupdate_dll"])
 correct_containment_strategy = "aislar_equipo"
 incident_id = "malware"
 incident_name = "Malware"
