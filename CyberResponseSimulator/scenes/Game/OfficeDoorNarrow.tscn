@@ -1,0 +1,74 @@
+[gd_scene format=3]
+[ext_resource type="Script" path="res://scripts/Game/Interaction/OfficeDoor.gd" id="1"]
+[sub_resource type="StandardMaterial3D" id="LeafMaterial"]
+albedo_color = Color(0.36, 0.47, 0.51, 1)
+roughness = 0.6
+[sub_resource type="StandardMaterial3D" id="FrameMaterial"]
+albedo_color = Color(0.16, 0.23, 0.26, 1)
+roughness = 0.65
+[sub_resource type="StandardMaterial3D" id="GlassMaterial"]
+albedo_color = Color(0.57, 0.72, 0.73, 1)
+metallic = 0.15
+roughness = 0.28
+[sub_resource type="StandardMaterial3D" id="HandleMaterial"]
+albedo_color = Color(0.78, 0.80, 0.79, 1)
+metallic = 0.75
+roughness = 0.3
+[sub_resource type="BoxMesh" id="LeafMesh"]
+size = Vector3(1.1, 2.1, 0.06)
+material = SubResource("LeafMaterial")
+[sub_resource type="BoxMesh" id="PostMesh"]
+size = Vector3(0.07, 2.2, 0.22)
+material = SubResource("FrameMaterial")
+[sub_resource type="BoxMesh" id="TopMesh"]
+size = Vector3(1.2400000000000002, 0.08, 0.22)
+material = SubResource("FrameMaterial")
+[sub_resource type="BoxMesh" id="GlassMesh"]
+size = Vector3(0.5060000000000001, 0.55, 0.008)
+material = SubResource("GlassMaterial")
+[sub_resource type="BoxMesh" id="HandleMesh"]
+size = Vector3(0.18, 0.035, 0.055)
+material = SubResource("HandleMaterial")
+[sub_resource type="BoxShape3D" id="LeafShape"]
+size = Vector3(1.1, 2.1, 0.06)
+[sub_resource type="BoxShape3D" id="ClearanceShape"]
+size = Vector3(1.2000000000000002, 2.15, 0.65)
+[node name="OfficeDoor" type="Node3D"]
+[node name="Frame" type="Node3D" parent="."]
+[node name="LeftPost" type="MeshInstance3D" parent="Frame"]
+position = Vector3(-0.5850000000000001, 1.1, 0)
+mesh = SubResource("PostMesh")
+[node name="RightPost" type="MeshInstance3D" parent="Frame"]
+position = Vector3(0.5850000000000001, 1.1, 0)
+mesh = SubResource("PostMesh")
+[node name="Top" type="MeshInstance3D" parent="Frame"]
+position = Vector3(0, 2.16, 0)
+mesh = SubResource("TopMesh")
+[node name="Leaf" type="StaticBody3D" parent="."]
+position = Vector3(-0.55, 0, 0)
+script = ExtResource("1")
+interaction_text = "[E] Abrir / cerrar puerta"
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Leaf"]
+position = Vector3(0.55, 1.05, 0)
+shape = SubResource("LeafShape")
+[node name="Panel" type="MeshInstance3D" parent="Leaf"]
+position = Vector3(0.55, 1.05, 0)
+mesh = SubResource("LeafMesh")
+[node name="WindowFront" type="MeshInstance3D" parent="Leaf"]
+position = Vector3(0.55, 1.55, -0.036)
+mesh = SubResource("GlassMesh")
+[node name="HandleFront" type="MeshInstance3D" parent="Leaf"]
+position = Vector3(0.9000000000000001, 0.98, -0.0648)
+mesh = SubResource("HandleMesh")
+[node name="WindowBack" type="MeshInstance3D" parent="Leaf"]
+position = Vector3(0.55, 1.55, 0.036)
+mesh = SubResource("GlassMesh")
+[node name="HandleBack" type="MeshInstance3D" parent="Leaf"]
+position = Vector3(0.9000000000000001, 0.98, 0.0648)
+mesh = SubResource("HandleMesh")
+[node name="Clearance" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 1
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Clearance"]
+position = Vector3(0, 1.075, 0)
+shape = SubResource("ClearanceShape")

@@ -1,0 +1,9 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://assets/Models/Player/SC_Model.blend" id="1"]
+[node name="SC_Model" instance=ExtResource("1")]
+
+[node name="Glasses_001" parent="."]
+layers = 524288
+
+[node name="Head+Hair" parent="."]
+layers = 524288

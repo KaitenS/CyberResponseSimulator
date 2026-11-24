@@ -1,0 +1,47 @@
+[gd_scene format=3]
+[ext_resource type="Script" path="res://scripts/Game/ui/IncidentAlert.gd" id="1"]
+[ext_resource type="FontFile" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="2"]
+[ext_resource type="AudioStream" path="res://assets/Audio/UI/incident_alert.wav" id="3"]
+[sub_resource type="StyleBoxFlat" id="AlertPanel"]
+bg_color = Color(0.055, 0.075, 0.12, 0.96)
+border_width_left = 4
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.98, 0.66, 0.18, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+[node name="IncidentNotification" type="Panel"]
+offset_right = 388.0
+offset_bottom = 132.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("AlertPanel")
+script = ExtResource("1")
+[node name="Title" type="Label" parent="."]
+offset_left = 18.0
+offset_top = 14.0
+offset_right = 372.0
+offset_bottom = 38.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(1, 0.74, 0.3, 1)
+text = "ACTIVIDAD INUSUAL DETECTADA"
+[node name="IncidentLabel" type="Label" parent="."]
+offset_left = 18.0
+offset_top = 48.0
+offset_right = 368.0
+offset_bottom = 116.0
+mouse_filter = 2
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.93, 0.95, 0.98, 1)
+text = "Se reportaron anomalías en un equipo de la oficina.\nAcércate e investiga lo ocurrido."
+autowrap_mode = 3
+[node name="DismissTimer" type="Timer" parent="."]
+one_shot = true
+[node name="AlertSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3")
+volume_db = -12.0

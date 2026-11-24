@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "ticket_contrasena"
+sender_name = "Mesa de ayuda"
+sender_address = "s0porte@empresa.cl"
+subject = "Verificación de tu ticket"
+body = "Tu ticket requiere una última verificación. Accede al portal para mantener habilitada tu cuenta."
+attachment_name = ""
+recipient = "empleado@empresa.cl"
+has_attachment = false
+is_phishing = true
+explanation = "s0porte contiene un cero en lugar de la o de soporte@empresa.cl. Aunque el texto visible dice soporte.empresa.example, el destino real es soporte.ernpresa.example: rn sustituye la m de empresa. No coincide con el canal oficial del resumen diario."
+
+link_text = "https://soporte.empresa.example/verificar"
+link_url = "https://soporte.ernpresa.example/verificar"

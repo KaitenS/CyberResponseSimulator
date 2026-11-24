@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "parche_adjuntado"
+sender_name = "Soporte técnico"
+sender_address = "soporte@empresa.cl"
+subject = "Parche de mantenimiento"
+body = "Para evitar perder acceso instala inmediatamente el parche que adjuntamos a este correo."
+attachment_name = "parche_urgente.exe"
+recipient = "empleado@empresa.cl"
+has_attachment = true
+is_phishing = true
+explanation = "Aunque la dirección parece interna, parche_urgente.exe no coincide con cliente_soporte.exe anunciado en el resumen. La urgencia y un nombre de archivo distinto requieren detenerse y verificar la solicitud."

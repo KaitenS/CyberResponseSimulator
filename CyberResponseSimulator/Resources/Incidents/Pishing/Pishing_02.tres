@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="PhishingData" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingData.gd" id="data"]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="email"]
+[ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Summarys/Pishing_02_Summary.tres" id="summary"]
+[ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Emails/Email_rrhh_actividad.tres" id="e1"]
+[ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Emails/Email_rrhh_clave.tres" id="e2"]
+[ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Emails/Email_sala_confirmada.tres" id="e3"]
+[ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Emails/Email_pago_excepcional.tres" id="e4"]
+[ext_resource type="Resource" path="res://Resources/Incidents/Pishing/Emails/Email_agenda_equipo.tres" id="e5"]
+[resource]
+script = ExtResource("data")
+incident_id = "pishing_02"
+incident_name = "Phishing - 02"
+daily_summary = ExtResource("summary")
+emails = Array[ExtResource("email")]([ExtResource("e1"), ExtResource("e2"), ExtResource("e3"), ExtResource("e4"), ExtResource("e5")])

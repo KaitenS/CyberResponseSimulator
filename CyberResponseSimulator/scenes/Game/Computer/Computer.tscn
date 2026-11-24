@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://dx3u5dwfddwgy"]
+
+[ext_resource type="Shader" uid="uid://d3rtshi57a47u" path="res://shaders/PC_ScreenEffect.gdshader" id="3_do4s6"]
+[ext_resource type="Script" uid="uid://dla32wdqxa60s" path="res://scripts/Game/Interaction/Computer.gd" id="3_twvw0"]
+[ext_resource type="PackedScene" uid="uid://0pwjijbq1v1s" path="res://assets/Models/Extras/Pc_Model.blend" id="4_qqs5g"]
+
+[ext_resource type="AudioStream" path="res://assets/Audio/Phishing/new_mail.wav" id="5_phishing_mail_sound"]
+[ext_resource type="PackedScene" path="res://scenes/Game/Computer/ComputerIncidentMarker.tscn" id="6_incident_marker"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1olpp"]
+size = Vector3(10.489136, 5.2304688, 11)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_do4s6"]
+size = Vector3(1, 1, 0.052490234)
+
+[sub_resource type="QuadMesh" id="QuadMesh_1olpp"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1olpp"]
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0.12955844, 0.12955847, 0.12955844, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_7f3mm"]
+material = SubResource("StandardMaterial3D_1olpp")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_do4s6"]
+render_priority = 0
+shader = ExtResource("3_do4s6")
+
+[sub_resource type="QuadMesh" id="QuadMesh_f2rsq"]
+material = SubResource("ShaderMaterial_do4s6")
+
+[node name="Computer" type="StaticBody3D" unique_id=1867787470 groups=["computers"]]
+script = ExtResource("3_twvw0")
+
+[node name="Pc_Model" parent="." unique_id=1354022681 instance=ExtResource("4_qqs5g")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1349895221]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4873657, 2.2569475, 0)
+shape = SubResource("BoxShape3D_1olpp")
+
+[node name="CameraPoint" type="Marker3D" parent="." unique_id=538859403]
+transform = Transform3D(-1, -4.5753548e-09, 8.7302965e-08, 0, 0.9986295, 0.05233596, -8.742278e-08, 0.05233596, -0.9986295, 0, 3.2062874, -5.871275)
+
+[node name="Area3D" type="Area3D" parent="." unique_id=961422410]
+
+[node name="MonitorContainer" type="CollisionShape3D" parent="Area3D" unique_id=1953014601]
+transform = Transform3D(3.592, 0, 0, 0, 3.5374293, -0.62374425, 0, 0.62374425, 3.5374293, 0, 3.0461726, -1.0965688)
+shape = SubResource("BoxShape3D_do4s6")
+
+[node name="ComputerScreen" type="MeshInstance3D" parent="Area3D/MonitorContainer" unique_id=60710393]
+transform = Transform3D(1.0050112, 0, 0, 0, 1, -7.450581e-09, 0, 2.9802322e-08, 0.27616924, 0, 0.00054848194, -0.027074277)
+mesh = SubResource("QuadMesh_1olpp")
+
+[node name="CyberDeskViewport" type="SubViewport" parent="Area3D/MonitorContainer" unique_id=916516761]
+size = Vector2i(640, 640)
+render_target_update_mode = 4
+
+[node name="ComputerScreenBlack" type="MeshInstance3D" parent="Area3D/MonitorContainer" unique_id=1740154672]
+transform = Transform3D(1.0048906, 0, 0, 0, 1.0000253, -3.7252903e-09, 0, 1.4901161e-08, 0.27628174, 0, 0.0006699562, -0.023178756)
+mesh = SubResource("QuadMesh_7f3mm")
+
+[node name="ScreenEffect" type="MeshInstance3D" parent="Area3D/MonitorContainer" unique_id=12667477]
+transform = Transform3D(1.0050112, 0, 0, 0, 1, -7.450581e-09, 0, 2.9802322e-08, 0.27616924, 0, -9.649992e-05, -0.027525902)
+mesh = SubResource("QuadMesh_f2rsq")
+
+
+[node name="PhishingMailSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_phishing_mail_sound")
+volume_db = -10.0
+[node name="IncidentMarker" parent="." instance=ExtResource("6_incident_marker")]
+position = Vector3(0, 16, 0)
+scale = Vector3(20, 20, 20)
+
+[node name="PhishingRepeatTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="PhishingRepeatTimer" to="." method="_on_phishing_repeat_timeout"]
+
+[node name="PhishingBreachTimer" type="Timer" parent="."]
+one_shot = true
+[connection signal="timeout" from="PhishingBreachTimer" to="." method="_on_phishing_breach_timeout"]

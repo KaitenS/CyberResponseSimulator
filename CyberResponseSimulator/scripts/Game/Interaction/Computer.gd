@@ -1,0 +1,389 @@
+class_name Computer
+extends Interactable
+
+const CYBER_DESK_SCENE := preload("res://scenes/Game/Computer/CyberDesk.tscn")
+
+## Espera antes de volver a asignar Phishing a este computador.
+@export_range(10.0, 300.0, 1.0) var phishing_repeat_delay: float = 45.0
+var _repeat_phishing_data: PhishingData = null
+@export_range(0.0, 1.0, 0.05) var phishing_chain_probability: float = 0.35
+@export_range(1.0, 20.0, 1.0) var phishing_breach_display_seconds: float = 6.0
+
+var phishing_active: bool = false
+var active_incident: IncidentData = null
+var cyber_desk: Control = null
+
+var phishing_controller: PishingIncidentController = null
+
+var malware_active: bool = false
+var malware_incident: MalwareIncidentData = null
+var malware_controller: MalwareIncidentController = null
+
+var cursor_position := Vector2(320.0, 320.0)
+var custom_cursor: TextureRect = null
+var _phishing_scroll_dragging: bool = false
+
+const CYBER_DESK_SIZE := Vector2(640.0, 640.0)
+const CURSOR_SIZE := Vector2(24.0, 24.0)
+const CURSOR_SENSITIVITY := 1.0
+
+@onready var cyber_desk_viewport: SubViewport = $Area3D/MonitorContainer/CyberDeskViewport
+@onready var computer_screen: MeshInstance3D = $Area3D/MonitorContainer/ComputerScreen
+@onready var computer_screen_black: MeshInstance3D = $Area3D/MonitorContainer/ComputerScreenBlack
+
+
+func _ready() -> void:
+	# El computador comienza con la pantalla apagada.
+	computer_screen.visible = false
+	computer_screen_black.visible = true
+
+
+
+func activate_phishing(incident: IncidentData) -> void:
+	if not incident is PhishingData:
+		push_error("Computer: El incidente no contiene PhishingData.")
+		return
+
+	if phishing_controller != null and phishing_controller.incident_active:
+		return
+
+	phishing_active = true
+	active_incident = incident
+
+	if is_instance_valid(phishing_controller):
+		phishing_controller.queue_free()
+	phishing_controller = PishingIncidentController.new()
+	add_child(phishing_controller)
+	phishing_controller.email_received.connect(_on_phishing_email_received)
+
+	phishing_controller.incident_finished.connect(
+		_on_phishing_finished
+	)
+
+	if cyber_desk != null:
+		cyber_desk.get_node("CyberDesk").set_phishing_controller(phishing_controller)
+
+	phishing_controller.start_incident(incident as PhishingData)
+
+
+func _on_phishing_finished(completed: bool) -> void:
+	phishing_active = false
+	var result := phishing_controller.last_result.duplicate(true)
+	GameManager.phishing_results.append(result)
+	GameManager.score += int(result["points"])
+
+	if completed:
+		GameManager.incidents_completed += 1
+	else:
+		GameManager.incidents_failed += 1
+
+	_repeat_phishing_data = active_incident as PhishingData
+	IncidentManager.finish_incident(active_incident)
+
+	active_incident = null
+	if phishing_controller.compromised:
+		$PhishingBreachTimer.start(phishing_breach_display_seconds)
+	else:
+		call_deferred("_reset_phishing_mailbox")
+
+	# Los resultados ya están guardados; la bandeja se vacía al finalizar.
+
+	print("Computer: Incidente Phishing finalizado.")
+
+
+func activate_malware(data: MalwareIncidentData) -> void:
+	malware_active = true
+	malware_incident = data
+
+	var machine := IncidentStateMachine.new()
+	add_child(machine)
+
+	malware_controller = MalwareIncidentController.new()
+	add_child(malware_controller)
+	malware_controller.setup(data, machine)
+	malware_controller.incident_finished.connect(_on_malware_finished)
+	
+func _on_malware_finished(result: Dictionary) -> void:
+	if result["success"]:
+		GameManager.score += 100
+		GameManager.incidents_completed += 1
+	else:
+		GameManager.incidents_failed += 1
+
+	IncidentManager.finish_incident(malware_incident)
+
+func has_active_incident() -> bool:
+	return active_incident != null
+
+
+func interact() -> void:
+	if cyber_desk != null:
+		return
+
+	print("INTERACCIÓN: Computer")
+
+	open_cyber_desk()
+
+
+func open_cyber_desk() -> void:
+	cyber_desk = CYBER_DESK_SCENE.instantiate()
+
+	cyber_desk_viewport.add_child(cyber_desk)
+	# El mouse virtual entra al SubViewport sin necesitar un primer clic.
+	cyber_desk_viewport.notify_mouse_entered()
+
+	# Mostrar la pantalla del CyberDesk.
+	computer_screen_black.visible = false
+	computer_screen.visible = true
+
+	var cyber_desk_root: Control = cyber_desk.get_node("CyberDesk")
+	
+	cyber_desk_root.set_malware_controller(malware_controller)
+	cyber_desk_root.set_phishing_controller(phishing_controller)
+
+	cyber_desk_root.close_requested.connect(
+		_on_cyber_desk_close_requested
+	)
+
+	var close_button: TextureButton = cyber_desk.get_node(
+		"CyberDesk/TaskBar/HBoxContainer/CloseButton"
+	)
+
+	close_button.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	close_button.gui_input.connect(
+		_on_close_button_gui_input
+	)
+
+	setup_computer_screen()
+	setup_custom_cursor()
+
+	var player = get_tree().current_scene.get_node_or_null("Player")
+
+	if player:
+		var camera_point: Marker3D = $CameraPoint
+		player.enter_computer_view(camera_point)
+
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+
+func setup_computer_screen() -> void:
+	var material := StandardMaterial3D.new()
+
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	material.albedo_texture = cyber_desk_viewport.get_texture()
+
+	material.uv1_scale = Vector3(-1.0, 1.0, 1.0)
+	material.uv1_offset = Vector3(1.0, 0.0, 0.0)
+
+	computer_screen.material_override = material
+
+
+func setup_custom_cursor() -> void:
+	if cyber_desk == null:
+		return
+
+	custom_cursor = cyber_desk.get_node_or_null(
+		"CyberDesk/CustomCursor"
+	)
+
+	if custom_cursor == null:
+		return
+
+	cursor_position = CYBER_DESK_SIZE / 2.0
+
+	custom_cursor.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	custom_cursor.size = CURSOR_SIZE
+	custom_cursor.z_index = 100
+	custom_cursor.visible = true
+
+	var half_cursor := CURSOR_SIZE / 2.0
+
+	custom_cursor.position = cursor_position - half_cursor
+
+
+func _input(event: InputEvent) -> void:
+	if cyber_desk == null:
+		return
+
+	# Salir del escritorio antes de que Esc libere el cursor del sistema.
+	if event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
+		_on_cyber_desk_close_requested()
+		return
+
+	if cyber_desk.get_node("CyberDesk/PhishingActionScreen").is_blocking():
+		return
+
+	if event is InputEventMouseMotion:
+		var previous_position := cursor_position
+		move_custom_cursor(event.relative)
+		if _phishing_scroll_dragging or _cursor_over_phishing_window():
+			var motion := InputEventMouseMotion.new()
+			motion.position = cursor_position - CURSOR_SIZE / 2.0
+			motion.global_position = motion.position
+			motion.relative = cursor_position - previous_position
+			motion.button_mask = event.button_mask
+			cyber_desk_viewport.push_input(motion, true)
+
+	if event is InputEventMouseButton:
+		if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+			if _cursor_over_phishing_window():
+				var wheel := event.duplicate() as InputEventMouseButton
+				wheel.position = cursor_position - CURSOR_SIZE / 2.0
+				wheel.global_position = wheel.position
+				cyber_desk_viewport.push_input(wheel, true)
+			return
+
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			_phishing_scroll_dragging = event.pressed and _cursor_over_phishing_window()
+
+		if event.button_index != MOUSE_BUTTON_LEFT:
+			return
+
+		var close_button: TextureButton = cyber_desk.get_node(
+			"CyberDesk/TaskBar/HBoxContainer/CloseButton"
+		)
+
+		var close_rect := close_button.get_global_rect()
+		var inside_button := close_rect.has_point(cursor_position)
+
+		if inside_button and event.pressed:
+			print("CLICK EN CLOSE BUTTON")
+			print("RECT: ", close_rect)
+			print("CURSOR: ", cursor_position)
+
+			var cyber_desk_root: Control = cyber_desk.get_node(
+				"CyberDesk"
+			)
+
+			print("LLAMANDO DIRECTAMENTE A _on_close_button_pressed()")
+
+			cyber_desk_root._on_close_button_pressed()
+			return
+
+		var virtual_click := InputEventMouseButton.new()
+
+		virtual_click.button_index = MOUSE_BUTTON_LEFT
+		virtual_click.pressed = event.pressed
+		virtual_click.position = cursor_position
+		if _cursor_over_phishing_window():
+			# La punta visible de la flecha, no el centro del sprite.
+			virtual_click.position -= CURSOR_SIZE / 2.0
+
+		print("ENVIANDO CLICK AL CYBERDESK: ", cursor_position)
+
+		cyber_desk_viewport.push_input(
+			virtual_click,
+			true
+		)
+
+
+func move_custom_cursor(relative: Vector2) -> void:
+	if custom_cursor == null:
+		return
+
+	cursor_position += relative * CURSOR_SENSITIVITY
+
+	var half_cursor := CURSOR_SIZE / 2.0
+
+	cursor_position.x = clamp(
+		cursor_position.x,
+		half_cursor.x,
+		CYBER_DESK_SIZE.x - half_cursor.x
+	)
+
+	cursor_position.y = clamp(
+		cursor_position.y,
+		half_cursor.y,
+		CYBER_DESK_SIZE.y - half_cursor.y
+	)
+
+	custom_cursor.position = cursor_position - half_cursor
+
+
+func _on_close_button_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		print("CLOSE BUTTON GUI INPUT: ", event)
+
+
+func _on_cyber_desk_close_requested() -> void:
+	print("===== CERRANDO CYBERDESK =====")
+
+	if cyber_desk == null:
+		print("ERROR: CyberDesk ya no existe.")
+		return
+
+	var player = get_tree().current_scene.get_node_or_null("Player")
+
+	if player:
+		player.exit_computer_view()
+
+	# Ocultar completamente la pantalla del CyberDesk.
+	computer_screen.visible = false
+
+	# Mostrar la pantalla negra.
+	computer_screen_black.visible = true
+
+	cyber_desk_viewport.notify_mouse_exited()
+	cyber_desk.queue_free()
+	cyber_desk = null
+	custom_cursor = null
+	_phishing_scroll_dragging = false
+
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+	print("CYBERDESK CERRADO")
+	print("============================")
+	
+
+
+func _on_phishing_email_received(_email: PhishingEmail) -> void:
+	$PhishingMailSound.play()
+
+
+func _cursor_over_phishing_window() -> bool:
+	if not is_instance_valid(cyber_desk):
+		return false
+	var desk := cyber_desk.get_node("CyberDesk")
+	# No enviar eventos adicionales a ventanas de otros incidentes.
+	for window_path in ["Windows/MalwareWindow", "DDoSWindow"]:
+		var other := desk.get_node_or_null(window_path) as Control
+		if other != null and other.is_visible_in_tree() and other.get_global_rect().has_point(cursor_position):
+			return false
+	return desk._is_click_on_phishing_window(cursor_position)
+
+
+func _reset_phishing_mailbox() -> void:
+	if phishing_active:
+		return
+	if is_instance_valid(cyber_desk):
+		cyber_desk.get_node("CyberDesk").set_phishing_controller(null)
+	if is_instance_valid(phishing_controller):
+		phishing_controller.queue_free()
+	phishing_controller = null
+	if GameManager.game_active:
+		$PhishingRepeatTimer.start(phishing_repeat_delay)
+
+
+func _on_phishing_repeat_timeout() -> void:
+	if not GameManager.game_active or _repeat_phishing_data == null:
+		return
+	if phishing_active:
+		return
+	# Esperar si este equipo está ocupado o se alcanzó el límite global.
+	if (is_instance_valid(malware_controller) and not malware_controller.finished) or not IncidentManager.start_incident(_repeat_phishing_data):
+		$PhishingRepeatTimer.start(10.0)
+		return
+	activate_phishing(_repeat_phishing_data)
+	var flow = get_parent().get_node_or_null("IncidentFlowManager")
+	if flow != null:
+		flow.show_incident_notification(_repeat_phishing_data)
+
+
+func _on_phishing_breach_timeout() -> void:
+	var flow = get_parent().get_node_or_null("IncidentFlowManager")
+	_reset_phishing_mailbox()
+	if GameManager.game_active and flow != null and randf() < phishing_chain_probability:
+		flow.start_phishing_consequence(self)

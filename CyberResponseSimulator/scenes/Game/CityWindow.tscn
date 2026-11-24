@@ -1,0 +1,75 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://materials/Office/city_window.tres" id="1_b533s"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_js441"]
+resource_name = "Frame"
+albedo_color = Color(0.627451, 0.70980394, 0.70980394, 1)
+metallic = 0.12
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_b533s"]
+material = SubResource("StandardMaterial3D_js441")
+size = Vector3(2.22, 1.27, 0.030000001)
+
+[sub_resource type="QuadMesh" id="QuadMesh_0wnbr"]
+material = ExtResource("1_b533s")
+size = Vector2(2.1, 1.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_o6lvg"]
+material = SubResource("StandardMaterial3D_js441")
+size = Vector3(0.045, 1.15, 0.014)
+
+[sub_resource type="BoxMesh" id="BoxMesh_0wnbr"]
+material = SubResource("StandardMaterial3D_js441")
+size = Vector3(2.1, 0.035, 0.014)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xmf1g"]
+material = SubResource("StandardMaterial3D_js441")
+size = Vector3(2.32, 0.08, 0.096)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6ewe5"]
+material = SubResource("StandardMaterial3D_js441")
+size = Vector3(2.26, 0.075, 0.04)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7kx6x"]
+material = SubResource("StandardMaterial3D_js441")
+size = Vector3(2.1, 0.03, 0.012)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mi16x"]
+material = SubResource("StandardMaterial3D_js441")
+size = Vector3(2.1, 0.03, 0.012)
+
+[node name="CityWindow" type="Node3D" unique_id=1739247194]
+
+[node name="OuterFrame" type="MeshInstance3D" parent="." unique_id=953168606]
+mesh = SubResource("BoxMesh_b533s")
+
+[node name="Glass" type="MeshInstance3D" parent="." unique_id=1923890500]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.0212)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_0wnbr")
+
+[node name="CenterMullion" type="MeshInstance3D" parent="." unique_id=1168682331]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.030000001)
+mesh = SubResource("BoxMesh_o6lvg")
+
+[node name="Crossbar" type="MeshInstance3D" parent="." unique_id=1041499411]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0.030000001)
+mesh = SubResource("BoxMesh_0wnbr")
+
+[node name="Sill" type="MeshInstance3D" parent="." unique_id=1148776945]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.63, 0.024)
+mesh = SubResource("BoxMesh_xmf1g")
+
+[node name="BlindRail" type="MeshInstance3D" parent="." unique_id=1976504339]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0.028)
+mesh = SubResource("BoxMesh_6ewe5")
+
+[node name="BlindSlat" type="MeshInstance3D" parent="." unique_id=1209796835]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49, 0.04)
+mesh = SubResource("BoxMesh_7kx6x")
+
+[node name="@MeshInstance3D@2" type="MeshInstance3D" parent="." unique_id=672981990]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0.04)
+mesh = SubResource("BoxMesh_mi16x")

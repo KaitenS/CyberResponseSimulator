@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "manual_soporte"
+sender_name = "Mesa de ayuda"
+sender_address = "soporte@empresa.cl"
+subject = "Guía de uso de impresoras"
+body = "Adjuntamos la guía solicitada para configurar las preferencias de impresión. No es necesario instalar software."
+attachment_name = "guia_impresoras.pdf"
+recipient = "empleado@empresa.cl"
+has_attachment = true
+is_phishing = false
+explanation = "La documentación está relacionada con soporte y no solicita instalar programas ni compartir credenciales."

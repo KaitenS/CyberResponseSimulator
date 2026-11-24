@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="PhishingEmail" format=3]
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/PishingEmail.gd" id="1"]
+[resource]
+script = ExtResource("1")
+email_id = "actualizacion_oficial"
+sender_name = "Mesa de ayuda"
+sender_address = "soporte@empresa.cl"
+recipient = "empleado@empresa.cl"
+subject = "Actualización programada del cliente de soporte"
+body = "Hola, la actualización anunciada está disponible en el portal habitual. Accede para aplicar el mantenimiento del cliente de soporte. No necesitamos tu contraseña por correo."
+is_phishing = false
+link_text = "Instalar actualización del cliente"
+link_url = "https://soporte.empresa.example/actualizaciones"
+simulates_update = true
+update_duration = 10.0
+explanation = "La actualización fue anunciada en el resumen. El remitente y el dominio real coinciden con la Mesa de ayuda y su portal habitual. Abrirla aplica una instalación simulada que consume tiempo."

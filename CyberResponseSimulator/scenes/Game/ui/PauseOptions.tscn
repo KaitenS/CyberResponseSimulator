@@ -1,0 +1,129 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Game/ui/PauseOptions.gd" id="1_gdini"]
+[ext_resource type="FontFile" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_005jk"]
+[ext_resource type="Texture2D" path="res://assets/Buttons/CheckBox_1.png" id="3_rwt2g"]
+[ext_resource type="Texture2D" path="res://assets/Buttons/CheckBox.png" id="4_n3aq0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8a8k8"]
+bg_color = Color(0.043137256, 0.05490196, 0.078431375, 0.93333334)
+border_width_top = 2
+border_width_bottom = 2
+border_color = Color(0.40784314, 0.4392157, 0.5019608, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_36svk"]
+bg_color = Color(0.1882353, 0.21568628, 0.26666668, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vb6jr"]
+bg_color = Color(0.5411765, 0.5803922, 0.65882355, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+corner_detail = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cqo3q"]
+bg_color = Color(15.581995, 16.00457, 16.70886, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+corner_detail = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7cver"]
+bg_color = Color(0.0627451, 0.07450981, 0.10980392, 0.8)
+border_width_top = 2
+border_width_bottom = 2
+border_color = Color(0.40784314, 0.4392157, 0.5019608, 1)
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c6y28"]
+bg_color = Color(0.03137255, 0.043137256, 0.0627451, 0.93333334)
+border_width_top = 3
+border_width_bottom = 3
+border_color = Color(0.65882355, 0.6901961, 0.7529412, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2obah"]
+bg_color = Color(0.10980392, 0.13333334, 0.1882353, 0.8666667)
+border_width_top = 2
+border_width_bottom = 2
+border_color = Color(0.5411765, 0.5803922, 0.65882355, 1)
+
+[node name="OptionsPanel" type="Panel" unique_id=1962027544]
+visible = false
+custom_minimum_size = Vector2(500, 445)
+offset_left = -250.0
+offset_top = -222.5
+offset_right = 250.0
+offset_bottom = 222.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_8a8k8")
+script = ExtResource("1_gdini")
+
+[node name="OptionsContainer" type="VBoxContainer" parent="." unique_id=1471777299]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 35.0
+offset_right = -40.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Title_Options" type="Label" parent="OptionsContainer" unique_id=1251370327]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_005jk")
+theme_override_font_sizes/font_size = 20
+text = "⛭ OPCIONES"
+horizontal_alignment = 1
+
+[node name="VolumeLabel" type="Label" parent="OptionsContainer" unique_id=1356659783]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_005jk")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.891, 0.954, 1.078, 1)
+text = "♫ Sonido General"
+
+[node name="VolumeSlider" type="HSlider" parent="OptionsContainer" unique_id=2013731555]
+layout_mode = 2
+theme_override_styles/slider = SubResource("StyleBoxFlat_36svk")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_vb6jr")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_cqo3q")
+value = 100.0
+
+[node name="FullScreenRow" type="HBoxContainer" parent="OptionsContainer" unique_id=845724477]
+layout_mode = 2
+
+[node name="Fullcreen_Label" type="Label" parent="OptionsContainer/FullScreenRow" unique_id=329558372]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_005jk")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(1.735573, 1.846974, 2.0856907, 1)
+text = "🖵 Pantalla Completa"
+
+[node name="Spacer" type="Control" parent="OptionsContainer/FullScreenRow" unique_id=1680039367]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FullScreenCheck" type="CheckBox" parent="OptionsContainer/FullScreenRow" unique_id=570962568]
+layout_mode = 2
+theme_override_icons/checked = ExtResource("3_rwt2g")
+theme_override_icons/unchecked = ExtResource("4_n3aq0")
+
+[node name="BackButton" type="Button" parent="OptionsContainer" unique_id=1156891526]
+layout_mode = 2
+size_flags_vertical = 10
+theme_override_styles/normal = SubResource("StyleBoxFlat_7cver")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_c6y28")
+theme_override_styles/hover = SubResource("StyleBoxFlat_2obah")
+theme_override_fonts/font = ExtResource("2_005jk")
+theme_override_font_sizes/font_size = 18
+text = "◈ VOLVER"
