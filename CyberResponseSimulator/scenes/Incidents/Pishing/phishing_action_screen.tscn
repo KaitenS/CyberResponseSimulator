@@ -1,4 +1,9 @@
 [gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Incidents/Pishing/phishing_action_audio.gd" id="10_action_audio"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Phishing/update_start.wav" id="11_update_start"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Phishing/update_work.wav" id="12_update_work"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Phishing/fraud_alert.wav" id="13_fraud_alert"]
 [ext_resource type="Script" path="res://scripts/Incidents/Pishing/phishing_action_screen.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/Logos/CyberResponseSimulatorLogo.png" id="2"]
 [ext_resource type="FontFile" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="3"]
@@ -70,3 +75,18 @@ theme_override_font_sizes/font_size = 14
 horizontal_alignment = 1
 autowrap_mode = 3
 mouse_filter = 2
+
+[node name="ActionAudio" type="Node" parent="."]
+script = ExtResource("10_action_audio")
+
+[node name="UpdateStart" type="AudioStreamPlayer" parent="ActionAudio"]
+stream = ExtResource("11_update_start")
+volume_db = -17.0
+
+[node name="UpdateWork" type="AudioStreamPlayer" parent="ActionAudio"]
+stream = ExtResource("12_update_work")
+volume_db = -23.0
+
+[node name="FraudAlert" type="AudioStreamPlayer" parent="ActionAudio"]
+stream = ExtResource("13_fraud_alert")
+volume_db = -17.0

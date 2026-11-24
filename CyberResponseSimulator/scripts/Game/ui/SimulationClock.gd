@@ -1,6 +1,9 @@
 extends PanelContainer
 
 @export var clock_sound_enabled: bool = true
+## Muestra del segundo golpe del mecanismo, editable desde la escena.
+@export var tock_sound: AudioStream
+@onready var _tick_sound: AudioStream = $TickSound.stream
 
 var _running := false
 var _alternate_tick := false
@@ -34,5 +37,6 @@ func _tick() -> void:
 	if not _running:
 		return
 	_alternate_tick = not _alternate_tick
-	$TickSound.pitch_scale = 1.0 if _alternate_tick else 0.82
+	$TickSound.stream = _tick_sound if _alternate_tick or tock_sound == null else tock_sound
+	$TickSound.pitch_scale = 1.0
 	$TickSound.play()

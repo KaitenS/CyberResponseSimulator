@@ -1,0 +1,27 @@
+FOLEY SOURCES — clic de ratón, pasos y reloj
+
+Todos los recursos de esta lista se publican bajo CC0 1.0.
+Licencia: https://creativecommons.org/publicdomain/zero/1.0/
+
+UI/mouse_click.wav
+Fuente: Woven SFX, mouse-click-2.
+Página y licencia: https://www.woven.video/sfx/click-sound-effect
+Descarga: https://assets.sfx.woven.video/sfx/mouse-click-2.wav
+Adaptación: eliminación de DC, normalización de pico y bordes suaves.
+
+Player/footstep_left.wav y Player/footstep_right.wav
+Autor: Kenney, Impact Sounds, footstep_concrete_000 y footstep_concrete_001.
+Fuente original y licencia: https://kenney.nl/assets/impact-sounds
+Distribución consultada: https://instrictlogic.com/AssetLibrary/sounds/banks/material-impacts-footsteps-kenney-2362a2f7/
+Descargas:
+https://instrictlogic.com/soundbank/audio.php?download=1&id=39c65348e0282e47b05eca9d
+https://instrictlogic.com/soundbank/audio.php?download=1&id=49f6e2e57946b84e052dcfcd
+Adaptación: conversión a WAV PCM de 16 bits, eliminación de DC, normalización y borde final suave. Variación ligera de tono durante el juego.
+
+UI/clock_tick.wav y UI/clock_tock.wav
+Autor: cemkalyoncu, Tick and Tock (grabación de golpes individuales de reloj).
+Página y licencia: https://opengameart.org/content/tick-and-tock
+Descargas: https://opengameart.org/sites/default/files/tick.wav
+https://opengameart.org/sites/default/files/tick2.wav
+Adaptación: eliminación de DC, normalización de pico y bordes suaves.
+Se alternan las dos muestras a velocidad natural, conservando el intervalo de 0,5 s.

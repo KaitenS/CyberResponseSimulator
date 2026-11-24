@@ -1,5 +1,8 @@
 [gd_scene format=3 uid="uid://7w828gjuoce5"]
 
+[ext_resource type="Script" path="res://scripts/Game/ambient_music.gd" id="40_ambient_music"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Music/office_ambient.wav" id="41_ambient_track"]
+
 [ext_resource type="PackedScene" uid="uid://b1rpuf13ck37c" path="res://scenes/Game/Player.tscn" id="1_bekgd"]
 [ext_resource type="PackedScene" path="res://scenes/Game/OfficeInterior.tscn" id="2_2k76m"]
 [ext_resource type="PackedScene" uid="uid://dx3u5dwfddwgy" path="res://scenes/Game/Computer/Computer.tscn" id="2_yqgss"]
@@ -126,3 +129,9 @@ one_shot = true
 [connection signal="timeout" from="IncidentFlowManager/ScheduleTimer" to="IncidentFlowManager" method="_on_schedule_timeout"]
 
 [node name="OfficeCeiling" parent="." instance=ExtResource("32_ceiling")]
+
+[node name="AmbientMusic" type="AudioStreamPlayer" parent="."]
+process_mode = 1
+stream = ExtResource("41_ambient_track")
+volume_db = -24.0
+script = ExtResource("40_ambient_music")

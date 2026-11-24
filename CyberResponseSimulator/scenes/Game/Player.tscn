@@ -1,5 +1,10 @@
 [gd_scene format=3 uid="uid://b1rpuf13ck37c"]
 
+[ext_resource type="Script" path="res://scripts/Game/player_audio.gd" id="20_player_audio"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Player/footstep_left.wav" id="21_step_left"]
+[ext_resource type="AudioStream" path="res://assets/Audio/Player/footstep_right.wav" id="22_step_right"]
+[ext_resource type="AudioStream" path="res://assets/Audio/UI/computer_enter.wav" id="23_enter_pc"]
+
 [ext_resource type="PackedScene" path="res://scenes/Game/FirstPersonModel.tscn" id="1_bon1s"]
 [ext_resource type="Script" uid="uid://dqssy831fvsrn" path="res://scripts/Game/Player.gd" id="1_jja0a"]
 
@@ -27,3 +32,18 @@ cull_mask = 524287
 [node name="InteractionRay" type="RayCast3D" parent="Camera3D" unique_id=490123858]
 transform = Transform3D(0.9999999, 0, 0, 0, -4.3711385e-08, 0.9999999, 0, -0.9999999, -4.3711385e-08, 3.7756981e-06, 0.00028955936, -5.0641596e-05)
 target_position = Vector3(0, 1.5, 0)
+
+[node name="PlayerAudio" type="Node" parent="."]
+script = ExtResource("20_player_audio")
+
+[node name="FootstepLeft" type="AudioStreamPlayer" parent="PlayerAudio"]
+stream = ExtResource("21_step_left")
+volume_db = -12.0
+
+[node name="FootstepRight" type="AudioStreamPlayer" parent="PlayerAudio"]
+stream = ExtResource("22_step_right")
+volume_db = -12.0
+
+[node name="ComputerEnter" type="AudioStreamPlayer" parent="PlayerAudio"]
+stream = ExtResource("23_enter_pc")
+volume_db = -15.0

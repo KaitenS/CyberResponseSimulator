@@ -1,4 +1,5 @@
 [gd_scene format=3]
+[ext_resource type="AudioStream" path="res://assets/Audio/UI/clock_tock.wav" id="5_tock"]
 [ext_resource type="Script" path="res://scripts/Game/ui/SimulationClock.gd" id="1"]
 [ext_resource type="Texture2D" path="res://scenes/Game/ui/clock_face.svg" id="2"]
 [ext_resource type="FontFile" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="3"]
@@ -22,6 +23,8 @@ offset_bottom = 40.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("Panel")
 script = ExtResource("1")
+tock_sound = ExtResource("5_tock")
+
 [node name="Layout" type="HBoxContainer" parent="."]
 layout_mode = 2
 mouse_filter = 2

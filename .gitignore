@@ -8,3 +8,9 @@
 CyberResponseSimulator/scripts/DDOS/terminal_mitigacion.gd.uid
 CyberResponseSimulator/scripts/Incidents/ddos/pantalla_resultado.gd.uid
 *.gd
+
+# Scripts de audio incorporados a las escenas (la regla general ignora .gd).
+!CyberResponseSimulator/scripts/Game/player_audio.gd
+!CyberResponseSimulator/scripts/Game/ui/cyberdesk_audio.gd
+!CyberResponseSimulator/scripts/Incidents/Pishing/phishing_action_audio.gd
+!CyberResponseSimulator/scripts/Game/ambient_music.gd

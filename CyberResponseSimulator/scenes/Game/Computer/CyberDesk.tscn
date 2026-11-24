@@ -1,5 +1,8 @@
 [gd_scene format=3 uid="uid://biyvuu061mkf2"]
 
+[ext_resource type="Script" path="res://scripts/Game/ui/cyberdesk_audio.gd" id="30_desktop_audio"]
+[ext_resource type="AudioStream" path="res://assets/Audio/UI/mouse_click.wav" id="31_desktop_click"]
+
 [ext_resource type="Script" uid="uid://bmyoitehr208m" path="res://scripts/Game/ui/CyberDesk.gd" id="1_l4s8k"]
 [ext_resource type="Texture2D" uid="uid://b382mppsyt32x" path="res://assets/CyberDesk/CyberDesk-Background.png" id="1_pg3wt"]
 [ext_resource type="Texture2D" uid="uid://b7a6s2rvefiqi" path="res://assets/CyberDesk/Desktop Icons/Email_Logo.png" id="2_qqs5g"]
@@ -725,6 +728,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="CyberDeskAudio" type="Node" parent="CyberDesk"]
+script = ExtResource("30_desktop_audio")
+
+[node name="Click" type="AudioStreamPlayer" parent="CyberDesk/CyberDeskAudio"]
+stream = ExtResource("31_desktop_click")
+volume_db = -14.0
+max_polyphony = 3
 
 [connection signal="gui_input" from="CyberDesk/DesktopIcons/GridContainer/DailySummary Button" to="CyberDesk" method="_on_daily_summary_button_gui_input"]
 [connection signal="pressed" from="CyberDesk/DesktopIcons/GridContainer/DailySummary Button" to="CyberDesk" method="_on_daily_summary_button_pressed"]
