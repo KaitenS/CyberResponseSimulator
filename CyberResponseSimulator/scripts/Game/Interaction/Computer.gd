@@ -110,7 +110,7 @@ func activate_malware(data: MalwareIncidentData) -> void:
 		var window = desk.get_node("Windows/MalwareWindow")
 		if window.visible:
 			window.open_investigation(malware_controller)
-	
+
 func _on_malware_finished(result: Dictionary) -> void:
 	malware_active = false
 	if result["success"]:
@@ -147,7 +147,7 @@ func open_cyber_desk() -> void:
 	computer_screen.visible = true
 
 	var cyber_desk_root: Control = cyber_desk.get_node("CyberDesk")
-	
+
 	cyber_desk_root.set_malware_controller(malware_controller)
 	cyber_desk_root.set_phishing_controller(phishing_controller)
 
@@ -239,7 +239,7 @@ func _input(event: InputEvent) -> void:
 
 	if event is InputEventMouseButton:
 		if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
-			if _cursor_over_phishing_window():
+			if _cursor_over_phishing_window() or _cursor_over_malware_window():
 				var wheel := event.duplicate() as InputEventMouseButton
 				wheel.position = cursor_position - CURSOR_SIZE / 2.0
 				wheel.global_position = wheel.position
@@ -346,7 +346,7 @@ func _on_cyber_desk_close_requested() -> void:
 
 	print("CYBERDESK CERRADO")
 	print("============================")
-	
+
 
 
 func _on_phishing_email_received(_email: PhishingEmail) -> void:
@@ -407,3 +407,10 @@ func is_available_for_incident() -> bool:
 	if phishing_active or (is_instance_valid(phishing_controller) and (phishing_controller.incident_active or phishing_controller.compromised)):
 		return false
 	return not (is_instance_valid(malware_controller) and not malware_controller.finished)
+
+func _cursor_over_malware_window() -> bool:
+	if not is_instance_valid(cyber_desk):
+		return false
+	var desk := cyber_desk.get_node("CyberDesk")
+	var window := desk.get_node_or_null("Windows/MalwareWindow") as Control
+	return window != null and window.is_visible_in_tree() and window.get_global_rect().has_point(cursor_position)
