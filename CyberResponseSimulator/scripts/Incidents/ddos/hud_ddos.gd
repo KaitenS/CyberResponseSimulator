@@ -22,6 +22,8 @@ var _chips: Array[Label] = []
 var _aviso_panel: PanelContainer
 var _aviso: Label
 var _aviso_t := 0.0
+var _aviso_id := 0      # para que un aviso viejo no apague uno nuevo
+var _sesion := 0        # idem para ocultar el HUD al terminar
 var _parpadeo := 0.0
 
 var _flash: ColorRect
@@ -40,6 +42,9 @@ func _ready() -> void:
 	IncidenteDDoS.oleada_iniciada.connect(_on_oleada)
 	IncidenteDDoS.servidor_estado_cambiado.connect(_on_servidor)
 	IncidenteDDoS.mitigacion_resultado.connect(_on_mitigacion)
+	# Si la partida termina con el ataque en curso, nada del DDoS debe quedar
+	# flotando sobre la pantalla de resultados ni en la partida siguiente.
+	GameManager.game_ended.connect(_ocultar_todo)
 
 
 func _process(delta: float) -> void:
@@ -93,6 +98,26 @@ func _process(delta: float) -> void:
 func mostrar_aviso(texto: String, segundos := 4.0) -> void:
 	_aviso.text = texto
 	_aviso_t = segundos
+	_aviso_panel.visible = true
+	# Respaldo: el aviso se apaga por su propio reloj aunque _process este
+	# detenido (pausa, manual abierto, HUD sin procesar).
+	_aviso_id += 1
+	var mi_id := _aviso_id
+	await get_tree().create_timer(segundos + 0.2, true, false, true).timeout
+	if mi_id == _aviso_id:
+		_aviso_t = 0.0
+		_aviso_panel.visible = false
+
+
+func _ocultar_todo() -> void:
+	_aviso_id += 1
+	_sesion += 1
+	_aviso_t = 0.0
+	_flash_t = 0.0
+	_aviso_panel.visible = false
+	_flash.visible = false
+	_raiz.visible = false
+	set_process(false)
 
 
 ## Destello breve de pantalla completa. color=verde para exito, rojo para fallo.
@@ -108,6 +133,7 @@ func destello(color: Color) -> void:
 # --------------------------------------------------------- SEÑALES
 
 func _on_iniciado() -> void:
+	_sesion += 1
 	_raiz.visible = true
 	set_process(true)
 	mostrar_aviso("ATAQUE DDoS DETECTADO\nDirijase a la sala de servidores", 5.0)
@@ -115,7 +141,10 @@ func _on_iniciado() -> void:
 
 func _on_terminado(exito: bool, _r: Dictionary) -> void:
 	mostrar_aviso("INCIDENTE CONTENIDO" if exito else "SERVICIO CAIDO", 6.0)
-	await get_tree().create_timer(6.0).timeout
+	var sesion := _sesion
+	await get_tree().create_timer(6.0, true, false, true).timeout
+	if sesion != _sesion:
+		return   # empezo otro ataque (o se oculto todo) mientras tanto
 	_raiz.visible = false
 	set_process(false)
 
@@ -159,9 +188,14 @@ func _construir() -> void:
 	_flash.visible = false
 	_raiz.add_child(_flash)
 
-	# --- Tarjeta compacta arriba a la izquierda
+	# --- Tarjeta compacta arriba a la DERECHA (no tapa el aviso de actividad
+	# inusual del juego, que sale arriba a la izquierda).
+	# Para cambiar de lado: PRESET_TOP_LEFT + GROW_DIRECTION_END y offset_left = 20.
 	var tarjeta := PanelContainer.new()
-	tarjeta.position = Vector2(20, 18)
+	tarjeta.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	tarjeta.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	tarjeta.offset_right = -20
+	tarjeta.offset_top = 18
 	tarjeta.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0.05, 0.07, 0.1, 0.78)

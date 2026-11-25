@@ -27,13 +27,20 @@ static var modo_practica: bool = false
 const ARCHIVO_AJUSTES := "user://ddos_ajustes.cfg"
 const COL_LUZ_ALARMA := Color(1.0, 0.18, 0.12)
 
+## En partida el ataque dura como maximo esto (hay otros incidentes y el reloj
+## es compartido); en modo practica dura IncidenteDDoS.DURACION_INCIDENTE.
+const DURACION_EN_PARTIDA := 90.0
+
+## La lista "COMO RESPONDER" se oculta sola a los N segundos aunque no se
+## hayan completado los pasos (antes quedaba en pantalla toda la partida).
+const TUTORIAL_SEGUNDOS := 20.0
+
 const SHAKE_DECAIMIENTO := 4.5
 const SHAKE_ESCALA := 0.08
 
 var _incidente: IncidentData = null
 var _ultimo_incidente: IncidentData = null   ## para poder reintentar
 var _hud: HudDDoS
-var _resultado: PantallaResultado
 var _prompt: Label
 var _rack_actual: ServidorFisico = null
 var _bloqueado := false
@@ -45,6 +52,7 @@ var _tutorial: CanvasLayer
 var _tutorial_lineas: Array[Label] = []
 var _tutorial_hecho := [false, false, false]
 var _tutorial_activo := false
+var _tutorial_id := 0
 
 # --- Luces de alarma
 var _luz: DirectionalLight3D
@@ -115,15 +123,6 @@ func _ready() -> void:
 	_hud = HudDDoS.new()
 	add_child(_hud)
 
-	_resultado = PantallaResultado.new()
-	add_child(_resultado)
-	_resultado.configurar_modo_integrado()
-	_resultado.reintento_solicitado.connect(reintentar)
-	_resultado.reinicio_partida_solicitado.connect(reiniciar_partida)
-
-	_resultado.pantalla_abierta.connect(_actualizar_bloqueo)
-	_resultado.pantalla_cerrada.connect(_actualizar_bloqueo)
-
 	_crear_prompt()
 
 
@@ -137,7 +136,7 @@ func empezar(incidente: IncidentData) -> void:
 	if modo_practica:
 		GameManager.time_remaining = maxf(GameManager.time_remaining, duracion + 10.0)
 	elif GameManager.game_active:
-		duracion = clampf(GameManager.time_remaining - 2.0, 30.0, duracion)
+		duracion = clampf(GameManager.time_remaining - 2.0, 30.0, DURACION_EN_PARTIDA)
 	cargar_ajustes()
 	IncidenteDDoS.aplicar_dificultad(dificultad, nivel_adaptativo)
 	IncidenteDDoS.iniciar(duracion)
@@ -219,7 +218,8 @@ func _accion() -> StringName:
 # ============================================================ BLOQUEO
 
 func _actualizar_bloqueo() -> void:
-	var bloquear: bool = _resultado.abierta
+	# El resultado final lo muestra la pantalla general del juego, no el DDoS.
+	var bloquear := false
 	if bloquear == _bloqueado:
 		return
 	_bloqueado = bloquear
@@ -252,6 +252,14 @@ func _on_terminado(exito: bool, _resumen: Dictionary) -> void:
 		GameManager.incidents_completed += 1
 	else:
 		GameManager.incidents_failed += 1
+
+	# Sin pantalla propia: un aviso corto y el juego sigue su curso.
+	if modo_practica:
+		_hud.mostrar_aviso("PRACTICA TERMINADA\nPausa > Menu para volver", 6.0)
+	elif exito:
+		_hud.mostrar_aviso("INCIDENTE DDoS CONTENIDO  +100", 5.0)
+	else:
+		_hud.mostrar_aviso("SERVICIO CAIDO\nEl ataque DDoS no se pudo contener", 5.0)
 
 	_restaurar_luz()
 	_cerrar_tutorial(true)
@@ -383,6 +391,12 @@ func _iniciar_tutorial() -> void:
 		col.add_child(pista)
 	_tutorial.visible = true
 	_refrescar_tutorial()
+
+	_tutorial_id += 1
+	var mi_id := _tutorial_id
+	await get_tree().create_timer(TUTORIAL_SEGUNDOS).timeout
+	if mi_id == _tutorial_id and _tutorial_activo:
+		_cerrar_tutorial(true)
 
 
 func _refrescar_tutorial() -> void:
