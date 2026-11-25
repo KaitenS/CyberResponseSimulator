@@ -188,9 +188,14 @@ func _construir() -> void:
 	_flash.visible = false
 	_raiz.add_child(_flash)
 
-	# --- Tarjeta compacta arriba a la izquierda
+	# --- Tarjeta compacta arriba a la DERECHA (no tapa el aviso de actividad
+	# inusual del juego, que sale arriba a la izquierda).
+	# Para cambiar de lado: PRESET_TOP_LEFT + GROW_DIRECTION_END y offset_left = 20.
 	var tarjeta := PanelContainer.new()
-	tarjeta.position = Vector2(20, 18)
+	tarjeta.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	tarjeta.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	tarjeta.offset_right = -20
+	tarjeta.offset_top = 18
 	tarjeta.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0.05, 0.07, 0.1, 0.78)
