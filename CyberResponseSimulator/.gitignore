@@ -1,0 +1,8 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Archivos temporales
+*.tmp
+*.tmo
+CyberResponseSimulator/scripts/DDOS/terminal_mitigacion.gd.uid
