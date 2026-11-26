@@ -48,7 +48,7 @@ var _shake := 0.0
 var _shake_activo := false
 
 # --- Tutorial (checklist de 3 pasos, solo la primera vez o en practica)
-var _tutorial: CanvasLayer
+var _tutorial: Control
 var _tutorial_lineas: Array[Label] = []
 var _tutorial_hecho := [false, false, false]
 var _tutorial_activo := false
@@ -142,7 +142,7 @@ func empezar(incidente: IncidentData) -> void:
 	IncidenteDDoS.iniciar(duracion)
 
 	_hud.mostrar_aviso(
-		"ATAQUE DDoS: abre Servidores en el PC y corre a los racks", 6.0
+		"Revisa el tráfico en Servidores. Si un servicio cae, acércate a los racks.", 6.0
 	)
 	_preparar_luz()
 	_iniciar_tutorial()
@@ -357,39 +357,12 @@ func _iniciar_tutorial() -> void:
 	_tutorial_activo = true
 
 	if _tutorial == null:
-		var capa := CanvasLayer.new()
-		capa.layer = 4
-		add_child(capa)
-
-		var panel := PanelContainer.new()
-		panel.position = Vector2(16, 70)
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = Color(0.03, 0.06, 0.07, 0.88)
-		sb.border_color = Color(0.15, 0.85, 0.55)
-		sb.set_border_width_all(2)
-		sb.set_content_margin_all(10)
-		panel.add_theme_stylebox_override("panel", sb)
-		capa.add_child(panel)
-		_tutorial = capa
-
-		var col := VBoxContainer.new()
-		panel.add_child(col)
-		var titulo := Label.new()
-		titulo.text = "COMO RESPONDER"
-		titulo.add_theme_color_override("font_color", Color(0.15, 0.85, 0.55))
-		col.add_child(titulo)
+		_tutorial = _hud.get_tutorial_card()
 		for i in 3:
-			var l := Label.new()
-			l.add_theme_font_size_override("font_size", 15)
-			col.add_child(l)
-			_tutorial_lineas.append(l)
-		var pista := Label.new()
-		pista.text = "M: silenciar sonidos   N: efectos reducidos"
-		pista.add_theme_font_size_override("font_size", 12)
-		pista.add_theme_color_override("font_color", Color(0.55, 0.7, 0.65))
-		col.add_child(pista)
+			_tutorial_lineas.append(_tutorial.get_node("Body/Step%d" % i))
 	_tutorial.visible = true
 	_refrescar_tutorial()
+	_hud.call_deferred("_fit_tutorial")
 
 	_tutorial_id += 1
 	var mi_id := _tutorial_id
@@ -408,7 +381,7 @@ func _refrescar_tutorial() -> void:
 		var hecho: bool = _tutorial_hecho[i]
 		_tutorial_lineas[i].text = ("[x] " if hecho else "[ ] ") + textos[i]
 		_tutorial_lineas[i].add_theme_color_override(
-			"font_color", Color(0.4, 1.0, 0.6) if hecho else Color(0.9, 0.95, 0.95))
+			"font_color", Color(0.5, 0.78, 0.6) if hecho else Color(0.9, 0.95, 0.95))
 
 
 func _marcar_tutorial(i: int) -> void:

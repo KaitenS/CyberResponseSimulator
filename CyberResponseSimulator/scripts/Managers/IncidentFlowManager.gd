@@ -7,12 +7,14 @@ extends Node
 # ==========================================
 
 @export var first_incident_delay: float = 5.0
+## Tiempo sin incidentes activos antes de sortear el siguiente tipo.
+@export_range(1.0, 300.0, 1.0) var idle_incident_delay: float = 45.0
+## Reintento cuando todavía no hay un computador disponible.
+@export_range(1.0, 30.0, 1.0) var retry_delay: float = 5.0
 
-## DDoS garantizado: el primer incidente sale al azar entre los tres, asi que
-## en muchas partidas el DDoS no aparecia. Si pasado este tiempo (segundos de
-## partida) todavia no hubo un DDoS, entra uno apenas no haya otro incidente
-## activo (asi no se acumulan ataques). 0 = desactivado.
-@export var ddos_garantizado_en: float = 150.0
+## Opción de compatibilidad: garantía de DDoS desactivada por defecto.
+## El flujo normal ahora sortea los tres tipos tras el intervalo de inactividad.
+@export var ddos_garantizado_en: float = 0.0
 ## Ya no se lanza un DDoS garantizado si quedan menos segundos que estos.
 @export var ddos_tiempo_minimo: float = 100.0
 @export var phishing_data: PhishingData
@@ -38,6 +40,9 @@ var available_incidents: Array[IncidentData] = []
 var computers: Array[Computer] = []
 var active_incident: IncidentData = null
 var _hubo_ddos: bool = false
+var _was_busy: bool = false
+var _practice_only: bool = false
+@onready var _schedule_timer: Timer = $ScheduleTimer
 
 
 # ==========================================
@@ -56,6 +61,7 @@ func _ready() -> void:
 	notification_panel.visible = false
 
 	setup_incidents()
+	GameManager.game_ended.connect(_on_game_ended)
 
 	for node in get_tree().get_nodes_in_group("computers"):
 
@@ -118,7 +124,10 @@ func setup_incidents() -> void:
 	if DDoSEnMapa.forzar_siguiente != "":
 		forzado = DDoSEnMapa.forzar_siguiente
 		DDoSEnMapa.forzar_siguiente = ""
+	if forzado == "phishing" and phishing_data != null:
+		forzado = phishing_data.incident_id
 	DDoSEnMapa.modo_practica = (forzado == "ddos")
+	_practice_only = DDoSEnMapa.modo_practica
 
 	if forzado != "":
 		var filtrados: Array[IncidentData] = []
@@ -152,121 +161,95 @@ func setup_incidents() -> void:
 # ==========================================
 
 func start_incident_test() -> void:
+	_schedule_timer.start(maxf(0.01, first_incident_delay))
 
-	await get_tree().create_timer(
-		first_incident_delay, false
-	).timeout
 
+func manages_incident_schedule() -> bool:
+	# El computador no debe abrir otro Phishing por su temporizador local.
+	return not _practice_only
+
+
+func _refresh_computers() -> void:
+	computers.clear()
+	for node in get_tree().get_nodes_in_group("computers"):
+		if node is Computer:
+			computers.append(node)
+
+
+func _has_running_incidents() -> bool:
+	if not IncidentManager.active_incidents.is_empty() or IncidenteDDoS.activo:
+		return true
+	for computer in computers:
+		if is_instance_valid(computer) and not computer.is_available_for_incident():
+			return true
+	return false
+
+
+func _process(_delta: float) -> void:
 	if not GameManager.game_active:
+		_schedule_timer.stop()
 		return
-
-	create_incident()
-
-
-# ==========================================
-# CREAR INCIDENTE
-# ==========================================
-
-func create_incident() -> void:
-
-	if computers.is_empty():
-
-		print(
-			"ERROR: No hay computadores disponibles."
-		)
-
+	if _practice_only:
 		return
-
-
-	if available_incidents.is_empty():
-
-		print(
-			"ERROR: No hay incidentes disponibles."
-		)
-
+	_refresh_computers()
+	var busy := _has_running_incidents()
+	if busy:
+		_schedule_timer.stop()
+		_was_busy = true
 		return
+	if _was_busy or _schedule_timer.is_stopped():
+		active_incident = null
+		_schedule_timer.start(idle_incident_delay)
+	_was_busy = false
 
 
-	# ==========================================
-	# SELECCIONAR INCIDENTE
-	# ==========================================
-
-	var incident: IncidentData = (
-		available_incidents.pick_random()
-	)
+func _on_schedule_timeout() -> void:
+	if not GameManager.game_active or _has_running_incidents():
+		return
+	if not create_incident() and not _practice_only:
+		_schedule_timer.start(retry_delay)
 
 
-	# ==========================================
-	# REGISTRAR INCIDENTE
-	# ==========================================
+func _on_game_ended() -> void:
+	_schedule_timer.stop()
 
+
+func create_incident() -> bool:
+	if not GameManager.game_active or _has_running_incidents():
+		return false
+	_refresh_computers()
+	var free: Array[Computer] = []
+	for computer in computers:
+		if computer.is_available_for_incident():
+			free.append(computer)
+	var choices: Array[IncidentData] = []
+	for incident in available_incidents:
+		if incident == null:
+			continue
+		if incident.incident_id == "ddos":
+			if not computers.is_empty() and not IncidenteDDoS.activo:
+				choices.append(incident)
+		elif (incident is PhishingData or incident is MalwareIncidentData) and not free.is_empty():
+			choices.append(incident)
+	if choices.is_empty():
+		return false
+	var incident: IncidentData = choices.pick_random()
+	var computer: Computer = computers.pick_random() if incident.incident_id == "ddos" else free.pick_random()
 	if not IncidentManager.start_incident(incident):
-
-		print(
-			"No se pudo iniciar el incidente."
-		)
-
-		return
-
-
+		return false
 	active_incident = incident
-
-
-	# ==========================================
-	# SELECCIONAR COMPUTADOR
-	# ==========================================
-
-	var computer: Computer = computers.pick_random()
-
-
-	# ==========================================
-	# ACTIVAR INCIDENTE
-	# ==========================================
-
-	match incident.incident_id:
-
-		"pishing_01":
-			computer.activate_phishing(incident)
-
-		"malware":
-			computer.activate_malware(malware_data)
-
-		"ddos":
-			_hubo_ddos = true
-			# El DDoS se juega en este mismo mapa: consola en el PC
-			# (icono "Servidores") y racks fisicos. Ver ddos_en_mapa.gd.
-			DDoSEnMapa.iniciar_en_escena(get_parent(), incident)
-
-
-	# ==========================================
-	# DEBUG
-	# ==========================================
-
-	print("================================")
-	print(
-		"NUEVO INCIDENTE: ",
-		incident.incident_name
-	)
-
-	print(
-		"ID: ",
-		incident.incident_id
-	)
-
-	print(
-		"DIFICULTAD: ",
-		incident.difficulty
-	)
-
-	print(
-		"COMPUTADOR AFECTADO: ",
-		computer.name
-	)
-
-	print("================================")
-
-
+	if incident is PhishingData:
+		computer.activate_phishing(incident)
+	elif incident is MalwareIncidentData:
+		computer.activate_malware(incident)
+	else:
+		_hubo_ddos = true
+		DDoSEnMapa.iniciar_en_escena(get_parent(), incident)
+	_was_busy = true
+	_schedule_timer.stop()
 	show_incident_notification(incident)
+	print("NUEVO INCIDENTE: ", incident.incident_name, " | Equipo: ", computer.name)
+	return true
 
 
 # ==========================================

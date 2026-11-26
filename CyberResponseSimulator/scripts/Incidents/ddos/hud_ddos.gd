@@ -4,12 +4,15 @@ class_name HudDDoS
 ## Muestra tiempo, disponibilidad, estado de los tres sistemas y avisos.
 ## Tambien da feedback inmediato (flash de pantalla completa + camara)
 ## cuando el jugador mitiga bien o mal, y cuando algo cae.
-## Se construye por codigo: basta con añadirlo a la escena principal.
+## Diseño editable en scenes/Incidents/DDOS/DDoSHudLayout.tscn.
 
-const COL_OK := Color(0.35, 1.0, 0.6)
+const HUD_LAYOUT := preload("res://scenes/Incidents/DDOS/DDoSHudLayout.tscn")
+const COL_OK := Color(0.5, 0.78, 0.6)
 const COL_AVISO := Color(1.0, 0.8, 0.3)
 const COL_MAL := Color(1.0, 0.35, 0.3)
 
+var _tutorial_card: PanelContainer
+var _tarjeta: PanelContainer
 var _raiz: Control
 var _reloj: Label
 var _punto: Indicador
@@ -97,6 +100,8 @@ func _process(delta: float) -> void:
 
 func mostrar_aviso(texto: String, segundos := 4.0) -> void:
 	_aviso.text = texto
+	_aviso_panel.reset_size()
+	_layout_cards()
 	_aviso_t = segundos
 	_aviso_panel.visible = true
 	# Respaldo: el aviso se apaga por su propio reloj aunque _process este
@@ -166,7 +171,7 @@ func _on_servidor(id: int, online: bool) -> void:
 		IncidenteDDoS.Servidor.CAMARAS:
 			mostrar_aviso("CAMARAS OFFLINE\nEficiencia reducida. Velocidad de jornada x1.5", 4.0)
 		IncidenteDDoS.Servidor.MONITOREO:
-			mostrar_aviso("MONITOREO OFFLINE\nAlgunas acciones no otorgaran puntaje", 4.0)
+			mostrar_aviso("MONITOREO OFFLINE\nSin bono de red. Los aciertos siguen en el cuaderno.", 4.0)
 
 
 func _on_mitigacion(exito: bool, _mensaje: String) -> void:
@@ -176,139 +181,58 @@ func _on_mitigacion(exito: bool, _mensaje: String) -> void:
 # --------------------------------------------------------- UI
 
 func _construir() -> void:
-	_raiz = Control.new()
-	_raiz.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_raiz.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_raiz = HUD_LAYOUT.instantiate() as Control
 	add_child(_raiz)
-
-	_flash = ColorRect.new()
-	_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_flash.color = COL_OK
-	_flash.visible = false
-	_raiz.add_child(_flash)
-
-	# --- Tarjeta compacta arriba a la DERECHA (no tapa el aviso de actividad
-	# inusual del juego, que sale arriba a la izquierda).
-	# Para cambiar de lado: PRESET_TOP_LEFT + GROW_DIRECTION_END y offset_left = 20.
-	var tarjeta := PanelContainer.new()
-	tarjeta.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	tarjeta.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	tarjeta.offset_right = -20
-	tarjeta.offset_top = 18
-	tarjeta.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.05, 0.07, 0.1, 0.78)
-	sb.border_color = Color(1, 1, 1, 0.10)
-	sb.set_border_width_all(1)
-	sb.set_corner_radius_all(10)
-	sb.content_margin_left = 14
-	sb.content_margin_right = 14
-	sb.content_margin_top = 10
-	sb.content_margin_bottom = 12
-	sb.shadow_color = Color(0, 0, 0, 0.35)
-	sb.shadow_size = 8
-	tarjeta.add_theme_stylebox_override("panel", sb)
-	_raiz.add_child(tarjeta)
-
-	var caja := VBoxContainer.new()
-	caja.custom_minimum_size = Vector2(250, 0)
-	caja.add_theme_constant_override("separation", 8)
-	caja.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	tarjeta.add_child(caja)
-
-	# Fila 1: punto parpadeante + titulo + reloj
-	var fila1 := HBoxContainer.new()
-	fila1.add_theme_constant_override("separation", 8)
-	fila1.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	caja.add_child(fila1)
-	_punto = Indicador.new()
-	_punto.custom_minimum_size = Vector2(10, 10)
-	_punto.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	fila1.add_child(_punto)
-	var titulo := Label.new()
-	titulo.text = "ATAQUE DDoS"
-	titulo.add_theme_font_size_override("font_size", 13)
-	titulo.add_theme_color_override("font_color", Color(0.72, 0.78, 0.85))
-	titulo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	fila1.add_child(titulo)
-	_reloj = Label.new()
-	_reloj.add_theme_font_size_override("font_size", 18)
-	_reloj.add_theme_color_override("font_color", Color(0.95, 0.97, 1.0))
-	fila1.add_child(_reloj)
-
-	# Fila 2: barra de disponibilidad fina y redondeada, sin porcentaje
-	_barra_fondo = Panel.new()
-	_barra_fondo.custom_minimum_size = Vector2(0, 6)
-	_barra_fondo.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var sbf := StyleBoxFlat.new()
-	sbf.bg_color = Color(1, 1, 1, 0.09)
-	sbf.set_corner_radius_all(3)
-	_barra_fondo.add_theme_stylebox_override("panel", sbf)
-	caja.add_child(_barra_fondo)
-	_barra_relleno = Panel.new()
-	_barra_relleno.position = Vector2.ZERO
-	_barra_relleno.size = Vector2(250, 6)
-	_barra_relleno.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_barra_estilo = StyleBoxFlat.new()
-	_barra_estilo.bg_color = COL_OK
-	_barra_estilo.set_corner_radius_all(3)
+	_flash = _raiz.get_node("Flash")
+	_tarjeta = _raiz.get_node("StatusCard")
+	_tutorial_card = _raiz.get_node("TutorialCard")
+	_tutorial_card.minimum_size_changed.connect(_fit_tutorial)
+	_reloj = _tarjeta.get_node("Body/Header/Clock")
+	_punto = _attach_indicator(_tarjeta.get_node("Body/Header/Light"))
+	_barra_fondo = _tarjeta.get_node("Body/Availability")
+	_barra_relleno = _barra_fondo.get_node("Fill")
+	_barra_estilo = _barra_relleno.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
 	_barra_relleno.add_theme_stylebox_override("panel", _barra_estilo)
-	_barra_fondo.add_child(_barra_relleno)
 	_barra_fondo.resized.connect(func(): _barra_relleno.size.y = _barra_fondo.size.y)
-
-	# Fila 3: estado de los 3 sistemas, solo con iconos y nombre corto
-	var fila := HBoxContainer.new()
-	fila.add_theme_constant_override("separation", 14)
-	fila.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	caja.add_child(fila)
-	for i in 3:
-		var item := HBoxContainer.new()
-		item.add_theme_constant_override("separation", 5)
-		item.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		fila.add_child(item)
-		var ind := Indicador.new()
-		ind.custom_minimum_size = Vector2(10, 10)
-		ind.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		item.add_child(ind)
-		_indicadores.append(ind)
-		var l := Label.new()
-		l.text = IncidenteDDoS.NOMBRE_SERVIDOR[i].replace("Servidor de ", "").to_upper()
-		l.add_theme_font_size_override("font_size", 12)
-		item.add_child(l)
-		_chips.append(l)
-
-	# --- Aviso central: pastilla translucida
-	_aviso_panel = PanelContainer.new()
-	_aviso_panel.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	_aviso_panel.anchor_left = 0.5
-	_aviso_panel.anchor_right = 0.5
-	_aviso_panel.offset_left = -320
-	_aviso_panel.offset_right = 320
-	_aviso_panel.offset_top = 90
-	_aviso_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	_aviso_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var sba := StyleBoxFlat.new()
-	sba.bg_color = Color(0.06, 0.07, 0.1, 0.82)
-	sba.border_color = Color(COL_MAL, 0.55)
-	sba.set_border_width_all(1)
-	sba.border_width_left = 4
-	sba.set_corner_radius_all(10)
-	sba.content_margin_left = 18
-	sba.content_margin_right = 18
-	sba.content_margin_top = 10
-	sba.content_margin_bottom = 10
-	_aviso_panel.add_theme_stylebox_override("panel", sba)
+	for name in ["Alerts", "Cameras", "Monitoring"]:
+		var item := _tarjeta.get_node("Body/Systems/" + name)
+		_indicadores.append(_attach_indicator(item.get_node("Light")))
+		_chips.append(item.get_node("Text"))
+	_aviso_panel = _raiz.get_node("NoticeCard")
+	_aviso = _aviso_panel.get_node("Body/Message")
 	_aviso_panel.visible = false
-	_raiz.add_child(_aviso_panel)
+	get_viewport().size_changed.connect(_layout_cards)
+	_layout_cards()
 
-	_aviso = Label.new()
-	_aviso.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_aviso.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_aviso.custom_minimum_size = Vector2(560, 0)
-	_aviso.add_theme_font_size_override("font_size", 18)
-	_aviso.add_theme_color_override("font_color", Color(0.97, 0.9, 0.9))
-	_aviso_panel.add_child(_aviso)
+
+func _attach_indicator(holder: Control) -> Indicador:
+	holder.get_node("PreviewMark").hide()
+	var indicator := Indicador.new()
+	indicator.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	indicator.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	holder.add_child(indicator)
+	return indicator
+
+
+func _layout_cards() -> void:
+	if _tarjeta == null:
+		return
+	var viewport_width := get_viewport().get_visible_rect().size.x
+	# Dos columnas en pantalla normal; una columna en ventanas estrechas.
+	_tarjeta.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_tarjeta.size.x = 320.0
+	_tarjeta.position = Vector2(maxf(24.0, viewport_width - 344.0), 80.0) if viewport_width >= 820.0 else Vector2(24, 230)
+	_aviso_panel.position = Vector2(24, 230) if viewport_width >= 820.0 else Vector2(24, 230 + maxf(_tarjeta.size.y, 120.0) + 16)
+	_tutorial_card.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_tutorial_card.position = Vector2(maxf(24.0, viewport_width - 344.0), 80 + maxf(_tarjeta.size.y, 120.0) + 16) if viewport_width >= 820.0 else Vector2(24, _aviso_panel.position.y + maxf(_aviso_panel.size.y, 100.0) + 16)
+
+
+func _fit_tutorial() -> void:
+	_tutorial_card.reset_size()
+
+
+func get_tutorial_card() -> PanelContainer:
+	return _tutorial_card
 
 
 ## Icono pequeno dibujado por codigo (no depende de la fuente).

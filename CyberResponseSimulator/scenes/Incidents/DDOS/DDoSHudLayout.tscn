@@ -1,0 +1,229 @@
+[gd_scene format=3]
+[ext_resource type="FontFile" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="1"]
+[sub_resource type="StyleBoxFlat" id="Card"]
+bg_color = Color(0.055, 0.075, 0.12, 0.96)
+border_width_left = 4
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.98, 0.66, 0.18, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 12.0
+content_margin_bottom = 14.0
+[sub_resource type="StyleBoxFlat" id="Track"]
+bg_color = Color(0.17, 0.2, 0.25, 1)
+[sub_resource type="StyleBoxFlat" id="Fill"]
+bg_color = Color(0.5, 0.78, 0.6, 1)
+[sub_resource type="Theme" id="HudTheme"]
+default_font = ExtResource("1")
+default_font_size = 16
+Label/colors/font_color = Color(0.93, 0.95, 0.98, 1)
+[node name="DDoSHudLayout" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme = SubResource("HudTheme")
+[node name="Flash" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+[node name="StatusCard" type="PanelContainer" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -344.0
+offset_top = 80.0
+offset_right = -24.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Card")
+[node name="Body" type="VBoxContainer" parent="StatusCard"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+[node name="Header" type="HBoxContainer" parent="StatusCard/Body"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+[node name="Light" type="Control" parent="StatusCard/Body/Header"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+[node name="PreviewMark" type="ColorRect" parent="StatusCard/Body/Header/Light"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.98, 0.66, 0.18, 1)
+[node name="Title" type="Label" parent="StatusCard/Body/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.74, 0.3, 1)
+theme_override_font_sizes/font_size = 17
+text = "RED · DDoS"
+[node name="Clock" type="Label" parent="StatusCard/Body/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "01:30"
+[node name="AvailabilityTitle" type="Label" parent="StatusCard/Body"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Disponibilidad de red"
+[node name="Availability" type="Panel" parent="StatusCard/Body"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Track")
+[node name="Fill" type="Panel" parent="StatusCard/Body/Availability"]
+offset_right = 285.0
+offset_bottom = 6.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Fill")
+[node name="Systems" type="HBoxContainer" parent="StatusCard/Body"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+
+[node name="Alerts" type="HBoxContainer" parent="StatusCard/Body/Systems"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 5
+[node name="Light" type="Control" parent="StatusCard/Body/Systems/Alerts"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+[node name="PreviewMark" type="ColorRect" parent="StatusCard/Body/Systems/Alerts/Light"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.5, 0.78, 0.6, 1)
+[node name="Text" type="Label" parent="StatusCard/Body/Systems/Alerts"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "ALERTAS"
+
+
+[node name="Cameras" type="HBoxContainer" parent="StatusCard/Body/Systems"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 5
+[node name="Light" type="Control" parent="StatusCard/Body/Systems/Cameras"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+[node name="PreviewMark" type="ColorRect" parent="StatusCard/Body/Systems/Cameras/Light"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.5, 0.78, 0.6, 1)
+[node name="Text" type="Label" parent="StatusCard/Body/Systems/Cameras"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "CÁMARAS"
+
+
+[node name="Monitoring" type="HBoxContainer" parent="StatusCard/Body/Systems"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 5
+[node name="Light" type="Control" parent="StatusCard/Body/Systems/Monitoring"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+[node name="PreviewMark" type="ColorRect" parent="StatusCard/Body/Systems/Monitoring/Light"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.5, 0.78, 0.6, 1)
+[node name="Text" type="Label" parent="StatusCard/Body/Systems/Monitoring"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "MONITOREO"
+
+
+[node name="NoticeCard" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(388, 0)
+offset_left = 24.0
+offset_top = 230.0
+offset_right = 412.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Card")
+[node name="Body" type="VBoxContainer" parent="NoticeCard"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+[node name="Title" type="Label" parent="NoticeCard/Body"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.74, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+text = "AVISO DE RED"
+[node name="Message" type="Label" parent="NoticeCard/Body"]
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
+text = "Revisa el tráfico desde Servidores. Si un servicio cae, acércate a los racks."
+
+[node name="TutorialCard" type="PanelContainer" parent="."]
+visible = false
+custom_minimum_size = Vector2(320, 0)
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -344.0
+offset_top = 230.0
+offset_right = -24.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("Card")
+[node name="Body" type="VBoxContainer" parent="TutorialCard"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 9
+[node name="Title" type="Label" parent="TutorialCard/Body"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.74, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+text = "CÓMO RESPONDER"
+[node name="Step0" type="Label" parent="TutorialCard/Body"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+text = "[ ] Abre Servidores en el PC"
+[node name="Step1" type="Label" parent="TutorialCard/Body"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+text = "[ ] Revisa el flujo y elige una medida"
+[node name="Step2" type="Label" parent="TutorialCard/Body"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+text = "[ ] Si cae un rack, acércate y mantén E"
+[node name="Keys" type="Label" parent="TutorialCard/Body"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 3
+text = "M: silenciar · N: efectos reducidos"
