@@ -1,6 +1,6 @@
-[gd_resource type="ArrayMesh" format=4]
+[gd_resource type="ArrayMesh" format=4 uid="uid://do7srs61blv7g"]
 
-[ext_resource type="Texture2D" path="res://assets/Models/textures/SC_Player_Texture.png" id="1_y33j2"]
+[ext_resource type="Texture2D" uid="uid://s2j18g4cptht" path="res://assets/Models/textures/SC_Player_Texture.png" id="1_y33j2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f103q"]
 resource_name = "Chest_Material"

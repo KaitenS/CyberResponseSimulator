@@ -1,6 +1,6 @@
-[gd_resource type="ArrayMesh" format=4]
+[gd_resource type="ArrayMesh" format=4 uid="uid://c4pb87wfv5ybg"]
 
-[ext_resource type="Texture2D" path="res://assets/Models/textures/SC_Player_Texture.png" id="1_s0wtw"]
+[ext_resource type="Texture2D" uid="uid://s2j18g4cptht" path="res://assets/Models/textures/SC_Player_Texture.png" id="1_s0wtw"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c0avx"]
 resource_name = "Legs_Material"

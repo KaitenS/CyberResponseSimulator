@@ -365,6 +365,11 @@ func _cursor_over_phishing_window() -> bool:
 	return desk._is_click_on_phishing_window(cursor_position)
 
 
+func _flow_manages_incident_schedule(flow: Node) -> bool:
+	# Los gestores sin esta API usan el temporizador local de repetición.
+	return is_instance_valid(flow) and flow.has_method("manages_incident_schedule") and bool(flow.call("manages_incident_schedule"))
+
+
 func _reset_phishing_mailbox() -> void:
 	if phishing_active:
 		return
@@ -374,13 +379,13 @@ func _reset_phishing_mailbox() -> void:
 		phishing_controller.queue_free()
 	phishing_controller = null
 	var flow = get_parent().get_node_or_null("IncidentFlowManager")
-	if GameManager.game_active and not (flow != null and flow.manages_incident_schedule()):
+	if GameManager.game_active and not _flow_manages_incident_schedule(flow):
 		$PhishingRepeatTimer.start(phishing_repeat_delay)
 
 
 func _on_phishing_repeat_timeout() -> void:
 	var scheduler = get_parent().get_node_or_null("IncidentFlowManager")
-	if scheduler != null and scheduler.manages_incident_schedule():
+	if _flow_manages_incident_schedule(scheduler):
 		return
 	if not GameManager.game_active or _repeat_phishing_data == null:
 		return

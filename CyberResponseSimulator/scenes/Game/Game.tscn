@@ -1,8 +1,5 @@
 [gd_scene format=3 uid="uid://7w828gjuoce5"]
 
-[ext_resource type="Script" path="res://scripts/Game/ambient_music.gd" id="40_ambient_music"]
-[ext_resource type="AudioStream" path="res://assets/Audio/Music/office_ambient.wav" id="41_ambient_track"]
-
 [ext_resource type="PackedScene" uid="uid://b1rpuf13ck37c" path="res://scenes/Game/Player.tscn" id="1_bekgd"]
 [ext_resource type="PackedScene" path="res://scenes/Game/OfficeInterior.tscn" id="2_2k76m"]
 [ext_resource type="PackedScene" uid="uid://dx3u5dwfddwgy" path="res://scenes/Game/Computer/Computer.tscn" id="2_yqgss"]
@@ -20,8 +17,9 @@
 [ext_resource type="PackedScene" path="res://scenes/Game/ui/Manual/AnalystManual.tscn" id="14_analyst_manual"]
 [ext_resource type="PackedScene" uid="uid://dhvarbgrejemb" path="res://scenes/Game/ResultsScreen.tscn" id="17_fvyqv"]
 [ext_resource type="PackedScene" path="res://scenes/Game/OfficeDoors.tscn" id="30_office_doors"]
-
 [ext_resource type="PackedScene" path="res://scenes/Game/OfficeCeiling.tscn" id="32_ceiling"]
+[ext_resource type="Script" uid="uid://wipc7wrtxhma" path="res://scripts/Game/ambient_music.gd" id="40_ambient_music"]
+[ext_resource type="AudioStream" uid="uid://e7lrrniikta4" path="res://assets/Audio/Music/office_ambient.wav" id="41_ambient_track"]
 
 [sub_resource type="Environment" id="Environment_bekgd"]
 
@@ -41,6 +39,12 @@ environment = SubResource("Environment_bekgd")
 
 [node name="Computer" parent="." unique_id=258026606 instance=ExtResource("2_yqgss")]
 transform = Transform3D(-0.05, 0, 0, 0, 0.05, 0, 0, 0, -0.05, -11.5, 0.791, -11.2)
+
+[node name="Computer2" parent="." unique_id=1867787470 instance=ExtResource("2_yqgss")]
+transform = Transform3D(-0.0058794688, 0, -0.049653117, 0, 0.05, 0, 0.049653117, 0, -0.0058794688, -12.175282, 0.7786713, -5.4657536)
+
+[node name="Computer3" parent="." unique_id=183112829 instance=ExtResource("2_yqgss")]
+transform = Transform3D(-0.05, 0, 0, 0, 0.05, 0, 0, 0, -0.05, 3.4170442, 0.791, -7.615176)
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1624057287]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.5181994)
@@ -95,6 +99,9 @@ script = ExtResource("5_yqgss")
 phishing_data = ExtResource("6_lfncv")
 malware_data = ExtResource("6_50swi")
 
+[node name="ScheduleTimer" type="Timer" parent="IncidentFlowManager" unique_id=505513708]
+one_shot = true
+
 [node name="ServidorFisico" parent="." unique_id=697435599 instance=ExtResource("7_f8ls4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9, 1, -10.8)
 
@@ -123,15 +130,12 @@ script = ExtResource("9_i6kj0")
 
 [node name="ResultsScreen" parent="." unique_id=1501641403 instance=ExtResource("17_fvyqv")]
 
-[node name="ScheduleTimer" type="Timer" parent="IncidentFlowManager"]
-one_shot = true
+[node name="OfficeCeiling" parent="." unique_id=1351374542 instance=ExtResource("32_ceiling")]
 
-[connection signal="timeout" from="IncidentFlowManager/ScheduleTimer" to="IncidentFlowManager" method="_on_schedule_timeout"]
-
-[node name="OfficeCeiling" parent="." instance=ExtResource("32_ceiling")]
-
-[node name="AmbientMusic" type="AudioStreamPlayer" parent="."]
+[node name="AmbientMusic" type="AudioStreamPlayer" parent="." unique_id=1612020145]
 process_mode = 1
 stream = ExtResource("41_ambient_track")
 volume_db = -24.0
 script = ExtResource("40_ambient_music")
+
+[connection signal="timeout" from="IncidentFlowManager/ScheduleTimer" to="IncidentFlowManager" method="_on_schedule_timeout"]
