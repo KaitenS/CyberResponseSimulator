@@ -13,8 +13,6 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 ## Arrastra aquí el CanvasLayer que tiene el script terminal_mitigacion.gd
 @export var terminal: TerminalMitigacion
-## Arrastra aquí el CanvasLayer que tiene el script pantalla_resultado.gd
-@export var resultado: PantallaResultado
 
 var _rack_actual: ServidorFisico = null
 var _prompt: Label
@@ -38,13 +36,6 @@ func _ready() -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		)
 
-	if resultado:
-		resultado.pantalla_abierta.connect(func(): set_physics_process(false))
-		resultado.pantalla_cerrada.connect(func():
-			set_physics_process(true)
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		)
-
 	IncidenteDDoS.impacto_camara.connect(_on_impacto_camara)
 
 
@@ -54,9 +45,9 @@ func _on_impacto_camara(intensidad: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	# Si la terminal o la pantalla de resultados están abiertas, el jugador
+	# Si la terminal está abierta, el jugador
 	# no rota la cámara ni mueve el mouse
-	if (terminal and terminal.abierta) or (resultado and resultado.abierta):
+	if (terminal and terminal.abierta):
 		return
 
 	# Rotación de cámara con el mouse
@@ -95,7 +86,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _procesar_interaccion(delta: float) -> void:
-	if (terminal and terminal.abierta) or (resultado and resultado.abierta):
+	if (terminal and terminal.abierta):
 		_prompt.visible = false
 		return
 
