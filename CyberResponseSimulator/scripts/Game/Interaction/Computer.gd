@@ -70,7 +70,7 @@ func _on_phishing_finished(completed: bool) -> void:
 	phishing_active = false
 	var result := phishing_controller.last_result.duplicate(true)
 	GameManager.phishing_results.append(result)
-	GameManager.score += int(result["points"])
+	GameManager.record_incident_report(result)
 
 	if completed:
 		GameManager.incidents_completed += 1
@@ -114,7 +114,6 @@ func activate_malware(data: MalwareIncidentData) -> void:
 func _on_malware_finished(result: Dictionary) -> void:
 	malware_active = false
 	if result["success"]:
-		GameManager.score += 100
 		GameManager.incidents_completed += 1
 	else:
 		GameManager.incidents_failed += 1
@@ -381,7 +380,6 @@ func _reset_phishing_mailbox() -> void:
 	var flow = get_parent().get_node_or_null("IncidentFlowManager")
 	if GameManager.game_active and not _flow_manages_incident_schedule(flow):
 		$PhishingRepeatTimer.start(phishing_repeat_delay)
-
 
 func _on_phishing_repeat_timeout() -> void:
 	var scheduler = get_parent().get_node_or_null("IncidentFlowManager")

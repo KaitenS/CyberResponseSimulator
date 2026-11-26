@@ -15,6 +15,7 @@ const MIN_EMAIL_INTERVAL: float = 10.0
 const MAX_EMAIL_INTERVAL: float = 25.0
 const MAX_EMAILS: int = 5
 
+var _day_session_id: int = 0
 var phishing_data: PhishingData = null
 var summary_read: bool = false
 
@@ -34,6 +35,7 @@ var update_remaining: float = 0.0
 var update_total: float = 0.0
 var updating_email: PhishingEmail = null
 var opened_content: Array[String] = []
+var _accepted_safe_emails: Array[PhishingEmail] = []
 var action_is_update: bool = false
 var action_description: String = ""
 
@@ -54,6 +56,7 @@ func start_incident(data: PhishingData) -> void:
 	for variant in data.variants:
 		if variant != null and not variant.emails.is_empty():
 			choices.append(variant)
+	_day_session_id = GameManager.session_id
 	phishing_data = choices.pick_random()
 
 	summary_read = false
@@ -68,6 +71,7 @@ func start_incident(data: PhishingData) -> void:
 	update_total = 0.0
 	updating_email = null
 	opened_content.clear()
+	_accepted_safe_emails.clear()
 	action_is_update = false
 	action_description = ""
 
@@ -165,6 +169,7 @@ func _deliver_next_email() -> void:
 
 	print("Nuevo correo recibido: ", email.subject)
 
+	GameManager.record_incident_report(get_result())
 	email_received.emit(email)
 
 
@@ -201,6 +206,7 @@ func resolve_email(
 	})
 
 	email_state_changed.emit(email)
+	GameManager.record_incident_report(get_result())
 	email_resolved.emit(email, accepted)
 
 	print(
@@ -233,6 +239,7 @@ func finish_incident(completed: bool) -> void:
 
 	last_result = get_result()
 	last_result["success"] = completed and not compromised and last_result["correct"] == selected_emails.size()
+	GameManager.record_incident_report(last_result)
 	incident_finished.emit(last_result["success"])
 
 
@@ -255,10 +262,17 @@ func _explain(email: PhishingEmail) -> String:
 # Devuelve una copia independiente; no cierra el incidente al consultar el resultado.
 func get_result() -> Dictionary:
 	var correct := 0
+	var incorrect := 0
 	for decision in decisions:
 		if decision["correct"]:
 			correct += 1
+		else:
+			incorrect += 1
 	var pending := received_emails.size() - decisions.size()
+	for email in _accepted_safe_emails:
+		if email not in resolved_emails:
+			correct += 1
+			pending -= 1
 	var details: Array[Dictionary] = decisions.duplicate(true)
 	for email in received_emails:
 		if email not in resolved_emails:
@@ -266,23 +280,33 @@ func get_result() -> Dictionary:
 				"email_id": email.email_id,
 				"subject": email.subject,
 				"sender": email.sender_address,
-				"accepted": null,
+				"accepted": true if email in _accepted_safe_emails else null,
 				"is_phishing": email.is_phishing,
-				"correct": false,
+				"correct": email in _accepted_safe_emails,
 				"explanation": _explain(email),
 			})
 	var total := selected_emails.size()
-	var points := roundi(100.0 * correct / total) if total > 0 else 0
+	var points := GameManager.POINTS_PER_CORRECT * correct
+	for detail in details:
+		detail["id"] = detail.email_id
+		detail["title"] = detail.subject
+		detail["action"] = "Sin responder" if detail.accepted == null else ("Aceptar correo" if detail.accepted else "Rechazar correo")
+		detail["expected"] = "Rechazar correo" if detail.is_phishing else "Aceptar correo"
+		if detail.accepted == null:
+			detail["correct"] = null
 	return {
+		"report_id": "phishing:%d" % get_instance_id(),
+		"kind": "phishing", "session_id": _day_session_id, "finished": not incident_active,
+		"max_points": received_emails.size() * GameManager.POINTS_PER_CORRECT,
 		"incident_name": phishing_data.incident_name if phishing_data != null else "Phishing",
 		"correct": correct,
-		"incorrect": decisions.size() - correct,
+		"incorrect": incorrect,
 		"pending": pending,
 		"not_received": total - received_emails.size(),
 		"total": total,
-		"points": 0 if compromised else points,
+		"points": points,
 		"compromised": compromised,
-		"success": not compromised and not incident_active and total > 0 and correct == total,
+		"success": last_result.get("success", not compromised and not incident_active and total > 0 and correct == total),
 		"status": "Equipo comprometido al abrir contenido fraudulento" if compromised else "En curso al terminar el día" if incident_active else ("Tiempo agotado" if time_remaining <= 0.0 else "Finalizado"),
 		"decisions": details,
 	}
@@ -376,3 +400,6 @@ func _open_payload(email: PhishingEmail, kinds: Array[String]) -> void:
 		update_total = maxf(1.0, email.update_duration) if action_is_update else 2.0 * pending.size()
 		update_remaining = update_total
 		updating_email = email
+		if email not in _accepted_safe_emails:
+			_accepted_safe_emails.append(email)
+		GameManager.record_incident_report(get_result())

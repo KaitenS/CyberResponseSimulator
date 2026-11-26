@@ -50,10 +50,8 @@ func configurar_modo_integrado() -> void:
 
 
 func abrir() -> void:
-	abierta = true
-	_raiz.visible = true
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	emit_signal("pantalla_abierta")
+	# Desactivada: el resultado final lo muestra la pantalla general del juego.
+	return
 
 
 func cerrar() -> void:
