@@ -1,8 +1,5 @@
 [gd_scene format=3 uid="uid://biyvuu061mkf2"]
 
-[ext_resource type="Script" path="res://scripts/Game/ui/cyberdesk_audio.gd" id="30_desktop_audio"]
-[ext_resource type="AudioStream" path="res://assets/Audio/UI/mouse_click.wav" id="31_desktop_click"]
-
 [ext_resource type="Script" uid="uid://bmyoitehr208m" path="res://scripts/Game/ui/CyberDesk.gd" id="1_l4s8k"]
 [ext_resource type="Texture2D" uid="uid://b382mppsyt32x" path="res://assets/CyberDesk/CyberDesk-Background.png" id="1_pg3wt"]
 [ext_resource type="Texture2D" uid="uid://b7a6s2rvefiqi" path="res://assets/CyberDesk/Desktop Icons/Email_Logo.png" id="2_qqs5g"]
@@ -24,6 +21,8 @@
 [ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/phishing_mail_notice.tscn" id="18_mail_notice"]
 [ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/phishing_summary_notice.tscn" id="19_summary_notice"]
 [ext_resource type="PackedScene" path="res://scenes/Incidents/Pishing/phishing_action_screen.tscn" id="20_phishing_action"]
+[ext_resource type="Script" uid="uid://80im8ljmu181" path="res://scripts/Game/ui/cyberdesk_audio.gd" id="30_desktop_audio"]
+[ext_resource type="AudioStream" uid="uid://cswdtwx6sm2cm" path="res://assets/Audio/UI/mouse_click.wav" id="31_desktop_click"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_re7y8"]
 bg_color = Color(0.9098039, 0.9098039, 0.9098039, 1)
@@ -534,7 +533,7 @@ text = "Registros"
 layout_mode = 0
 offset_top = 54.0
 offset_right = 570.0
-offset_bottom = 140.0
+offset_bottom = 149.0
 theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
 theme_override_colors/font_hovered_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
 theme_override_colors/font_selected_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
@@ -547,7 +546,7 @@ visible = false
 layout_mode = 1
 offset_top = 54.0
 offset_right = 570.0
-offset_bottom = 140.0
+offset_bottom = 149.0
 theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
 theme_override_colors/font_hovered_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
 theme_override_colors/font_selected_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
@@ -560,7 +559,7 @@ visible = false
 layout_mode = 1
 offset_top = 54.0
 offset_right = 570.0
-offset_bottom = 140.0
+offset_bottom = 149.0
 theme_override_colors/font_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
 theme_override_colors/font_hovered_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
 theme_override_colors/font_selected_color = Color(0.11764706, 0.11764706, 0.11764706, 1)
@@ -571,9 +570,9 @@ theme_override_styles/selected_focus = SubResource("StyleBoxFlat_g61b6")
 
 [node name="DetailLabel" type="Label" parent="CyberDesk/Windows/MalwareWindow/MalwareContent" unique_id=1084305360]
 layout_mode = 1
-offset_top = 142.0
+offset_top = 150.0
 offset_right = 570.0
-offset_bottom = 232.0
+offset_bottom = 250.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 13
 text = "Selecciona un elemento para ver sus detalles"
@@ -729,10 +728,10 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="CyberDeskAudio" type="Node" parent="CyberDesk"]
+[node name="CyberDeskAudio" type="Node" parent="CyberDesk" unique_id=758996577]
 script = ExtResource("30_desktop_audio")
 
-[node name="Click" type="AudioStreamPlayer" parent="CyberDesk/CyberDeskAudio"]
+[node name="Click" type="AudioStreamPlayer" parent="CyberDesk/CyberDeskAudio" unique_id=552274178]
 stream = ExtResource("31_desktop_click")
 volume_db = -14.0
 max_polyphony = 3

@@ -248,7 +248,6 @@ func _on_terminado(exito: bool, _resumen: Dictionary) -> void:
 	_prompt.visible = false
 
 	if exito:
-		GameManager.score += 100
 		GameManager.incidents_completed += 1
 	else:
 		GameManager.incidents_failed += 1
