@@ -26,6 +26,24 @@ extends Node
 @export var forzar_incidente: String = ""
 
 
+# Segundo equipo de Malware. Se alterna con malware_data entre incidentes y entre partidas.
+const MALWARE_DATA_RECEPCION: MalwareIncidentData = preload("res://scripts/Data/computador_recepcion.tres")
+# "static" hace que el turno se conserve al reiniciar la partida.
+static var _malware_turn: int = -1
+
+
+func _next_malware_data() -> MalwareIncidentData:
+	var options: Array[MalwareIncidentData] = []
+	if malware_data != null:
+		options.append(malware_data)
+	options.append(MALWARE_DATA_RECEPCION)
+	if _malware_turn < 0:
+		_malware_turn = randi() % options.size()
+	var chosen: MalwareIncidentData = options[_malware_turn % options.size()]
+	_malware_turn += 1
+	return chosen
+
+
 # ==========================================
 # INCIDENTES DISPONIBLES
 # ==========================================
@@ -239,6 +257,8 @@ func create_incident() -> bool:
 	if choices.is_empty():
 		return false
 	var incident: IncidentData = choices.pick_random()
+	if incident is MalwareIncidentData:
+		incident = _next_malware_data()
 	var computer: Computer = computers.pick_random() if incident.incident_id == "ddos" else free.pick_random()
 	if not IncidentManager.start_incident(incident):
 		return false
@@ -286,7 +306,7 @@ func start_phishing_consequence(computer: Computer) -> void:
 	if choices.is_empty():
 		return
 	var kind: String = choices.pick_random()
-	var incident: IncidentData = malware_data if kind == "malware" else IncidentData.new()
+	var incident: IncidentData = _next_malware_data() if kind == "malware" else IncidentData.new()
 	if kind == "ddos":
 		incident.incident_id = "ddos"
 		incident.incident_name = "DDoS"
@@ -294,7 +314,7 @@ func start_phishing_consequence(computer: Computer) -> void:
 	if not IncidentManager.start_incident(incident):
 		return
 	if kind == "malware":
-		computer.activate_malware(malware_data)
+		computer.activate_malware(incident)
 		if is_instance_valid(computer.cyber_desk):
 			computer.cyber_desk.get_node("CyberDesk").set_malware_controller(computer.malware_controller)
 	else:

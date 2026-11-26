@@ -4,37 +4,153 @@
 [ext_resource type="Script" uid="uid://c1nih121rphdg" path="res://scripts/Incidents/Malware/process_entry.gd" id="2_25yf0"]
 [ext_resource type="Script" uid="uid://cwpqq23dywlpr" path="res://scripts/Data/malware_incident_data.gd" id="3_sw52p"]
 
-[sub_resource type="Resource" id="Resource_d0drh"]
+[sub_resource type="Resource" id="Resource_rf1"]
+script = ExtResource("1_d0drh")
+file_name = "cv_candidato.pdf.exe"
+file_path = "C:\\Users\\usuario.recepcion\\Downloads\\cv_candidato.pdf.exe"
+file_size = "1.8 MB"
+modified_date = "19/11/2026"
+is_malicious = true
+evidence_id = "archivo_cv_exe"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_rf2"]
 script = ExtResource("1_d0drh")
 file_name = "contrato_cliente.pdf.locked"
+file_path = "C:\\Users\\usuario.recepcion\\Documents\\contrato_cliente.pdf.locked"
+file_size = "310 KB"
+modified_date = "19/11/2026"
 is_malicious = true
 evidence_id = "archivo_cifrado"
 metadata/_custom_type_script = "uid://cs1fyu2gc821y"
 
-[sub_resource type="Resource" id="Resource_25yf0"]
+[sub_resource type="Resource" id="Resource_rf3"]
 script = ExtResource("1_d0drh")
 file_name = "agenda_reuniones.docx"
+file_path = "C:\\Users\\usuario.recepcion\\Documents\\agenda_reuniones.docx"
+file_size = "64 KB"
+modified_date = "18/11/2026"
 metadata/_custom_type_script = "uid://cs1fyu2gc821y"
 
-[sub_resource type="Resource" id="Resource_sw52p"]
+[sub_resource type="Resource" id="Resource_rf4"]
+script = ExtResource("1_d0drh")
+file_name = "registro_visitas_2026.xlsx"
+file_path = "C:\\Users\\usuario.recepcion\\Documents\\registro_visitas_2026.xlsx"
+file_size = "2.4 MB"
+modified_date = "19/11/2026"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_rf5"]
+script = ExtResource("1_d0drh")
+file_name = "instalador_impresora.exe"
+file_path = "C:\\Users\\usuario.recepcion\\Downloads\\instalador_impresora.exe"
+file_size = "27.5 MB"
+modified_date = "10/11/2026"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_rf6"]
+script = ExtResource("1_d0drh")
+file_name = "respaldo_semanal.zip"
+file_path = "D:\\Respaldos\\respaldo_semanal.zip"
+file_size = "1.9 GB"
+modified_date = "19/11/2026"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_rf7"]
+script = ExtResource("1_d0drh")
+file_name = "politica_visitas.pdf"
+file_path = "C:\\Users\\usuario.recepcion\\Documents\\politica_visitas.pdf"
+file_size = "190 KB"
+modified_date = "02/10/2026"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_rf8"]
+script = ExtResource("1_d0drh")
+file_name = "planilla_turnos.xlsx"
+file_path = "C:\\Users\\usuario.recepcion\\Documents\\planilla_turnos.xlsx"
+file_size = "48 KB"
+modified_date = "16/11/2026"
+metadata/_custom_type_script = "uid://cs1fyu2gc821y"
+
+[sub_resource type="Resource" id="Resource_rp1"]
 script = ExtResource("2_25yf0")
 process_name = "winlogon32.exe"
+cpu_usage = 62.0
+process_path = "C:\\Users\\Public\\winlogon32.exe"
+started_by = "cv_candidato.pdf.exe"
 is_malicious = true
 evidence_id = "proceso_winlogon_falso"
 metadata/_custom_type_script = "uid://c1nih121rphdg"
 
-[sub_resource type="Resource" id="Resource_6p0r8"]
+[sub_resource type="Resource" id="Resource_rp2"]
+script = ExtResource("2_25yf0")
+process_name = "shadowcopy_clean.exe"
+cpu_usage = 18.5
+process_path = "C:\\Windows\\Temp\\shadowcopy_clean.exe"
+started_by = "winlogon32.exe"
+is_malicious = true
+evidence_id = "proceso_borra_respaldos"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_rp3"]
+script = ExtResource("2_25yf0")
+process_name = "winlogon.exe"
+cpu_usage = 0.3
+process_path = "C:\\Windows\\System32\\winlogon.exe"
+started_by = "SYSTEM"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_rp4"]
 script = ExtResource("2_25yf0")
 process_name = "outlook.exe"
+cpu_usage = 5.4
+process_path = "C:\\Program Files\\Microsoft Office\\root\\Office16\\OUTLOOK.EXE"
+started_by = "usuario.recepcion"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_rp5"]
+script = ExtResource("2_25yf0")
+process_name = "MsMpEng.exe"
+cpu_usage = 9.8
+process_path = "C:\\Program Files\\Windows Defender\\MsMpEng.exe"
+started_by = "SYSTEM"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_rp6"]
+script = ExtResource("2_25yf0")
+process_name = "backup_agent.exe"
+cpu_usage = 41.0
+process_path = "C:\\Program Files\\BackupCorp\\backup_agent.exe"
+started_by = "tarea programada"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_rp7"]
+script = ExtResource("2_25yf0")
+process_name = "soporte_remoto.exe"
+cpu_usage = 7.2
+process_path = "C:\\Program Files\\SoporteTI\\soporte_remoto.exe"
+started_by = "mesa.ayuda"
+metadata/_custom_type_script = "uid://c1nih121rphdg"
+
+[sub_resource type="Resource" id="Resource_rp8"]
+script = ExtResource("2_25yf0")
+process_name = "chrome.exe"
+cpu_usage = 14.6
+process_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+started_by = "usuario.recepcion"
 metadata/_custom_type_script = "uid://c1nih121rphdg"
 
 [resource]
 script = ExtResource("3_sw52p")
 title = "Equipo de Recepción cifrando archivos"
-required_evidence_ids = Array[String](["proceso_winlogon_falso", "archivo_cifrado"])
-processes = Array[ExtResource("2_25yf0")]([SubResource("Resource_sw52p"), SubResource("Resource_6p0r8")])
-files = Array[ExtResource("1_d0drh")]([SubResource("Resource_d0drh"), SubResource("Resource_25yf0")])
-malicious_process_ids = Array[String](["proceso_winlogon_falso"])
-malicious_file_ids = Array[String](["archivo_cifrado"])
+required_evidence_ids = Array[String](["proceso_winlogon_falso", "archivo_cv_exe", "proceso_borra_respaldos", "archivo_cifrado"])
+processes = Array[ExtResource("2_25yf0")]([SubResource("Resource_rp1"), SubResource("Resource_rp2"), SubResource("Resource_rp3"), SubResource("Resource_rp4"), SubResource("Resource_rp5"), SubResource("Resource_rp6"), SubResource("Resource_rp7"), SubResource("Resource_rp8")])
+log_lines = Array[String](["[18/11 17:45] usuario.recepcion modificó agenda_reuniones.docx", "[19/11 08:30] backup_agent.exe inició respaldo semanal programado", "[19/11 08:40] outlook.exe recibió correo de postulaciones@empleos-postulaciones.example con adjunto cv_candidato.pdf.exe", "[19/11 08:44] usuario.recepcion ejecutó cv_candidato.pdf.exe", "[19/11 08:44] winlogon32.exe iniciado desde C:\\Users\\Public", "[19/11 08:45] winlogon32.exe abrió conexión saliente a 198.51.100.77:8443", "[19/11 08:46] winlogon32.exe inició shadowcopy_clean.exe", "[19/11 08:46] shadowcopy_clean.exe eliminó las copias de seguridad del volumen C:", "[19/11 08:47] winlogon32.exe renombró 214 archivos de Documents con extensión .locked", "[19/11 09:02] MsMpEng.exe analizó C:\\Users\\usuario.recepcion\\Downloads: sin detecciones", "[19/11 09:15] soporte_remoto.exe aceptó conexión autorizada desde mesa.ayuda", "[19/11 09:20] chrome.exe aumentó uso de CPU al abrir politica_visitas.pdf", "[19/11 09:31] instalador_impresora.exe ejecutado por usuario.recepcion (firma digital válida)"])
+files = Array[ExtResource("1_d0drh")]([SubResource("Resource_rf1"), SubResource("Resource_rf2"), SubResource("Resource_rf3"), SubResource("Resource_rf4"), SubResource("Resource_rf5"), SubResource("Resource_rf6"), SubResource("Resource_rf7"), SubResource("Resource_rf8")])
+malicious_process_ids = Array[String](["proceso_winlogon_falso", "proceso_borra_respaldos"])
+malicious_file_ids = Array[String](["archivo_cv_exe", "archivo_cifrado"])
 correct_containment_strategy = "aislar_equipo"
+incident_id = "malware"
+incident_name = "Malware"
+difficulty = 2
 metadata/_custom_type_script = "uid://cwpqq23dywlpr"
