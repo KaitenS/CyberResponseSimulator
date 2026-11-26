@@ -7,13 +7,13 @@ extends Node
 # ==========================================
 
 @export var first_incident_delay: float = 5.0
-## Tiempo sin incidentes activos antes de sortear el siguiente tipo.
-@export_range(1.0, 300.0, 1.0) var idle_incident_delay: float = 45.0
+## Intervalo entre sorteos mientras quede espacio para otro incidente.
+@export_range(1.0, 300.0, 1.0) var idle_incident_delay: float = 20.0
 ## Reintento cuando todavía no hay un computador disponible.
 @export_range(1.0, 30.0, 1.0) var retry_delay: float = 5.0
 
 ## Opción de compatibilidad: garantía de DDoS desactivada por defecto.
-## El flujo normal ahora sortea los tres tipos tras el intervalo de inactividad.
+## El flujo normal ahora sortea los tres tipos mientras haya una plaza disponible.
 @export var ddos_garantizado_en: float = 0.0
 ## Ya no se lanza un DDoS garantizado si quedan menos segundos que estos.
 @export var ddos_tiempo_minimo: float = 100.0
@@ -40,7 +40,7 @@ var available_incidents: Array[IncidentData] = []
 var computers: Array[Computer] = []
 var active_incident: IncidentData = null
 var _hubo_ddos: bool = false
-var _was_busy: bool = false
+var _was_at_capacity: bool = false
 var _practice_only: bool = false
 @onready var _schedule_timer: Timer = $ScheduleTimer
 
@@ -176,13 +176,17 @@ func _refresh_computers() -> void:
 			computers.append(node)
 
 
-func _has_running_incidents() -> bool:
-	if not IncidentManager.active_incidents.is_empty() or IncidenteDDoS.activo:
-		return true
+func _at_incident_capacity() -> bool:
+	# Incluye incidentes activos que se hayan iniciado fuera del sorteo normal.
+	var running := 1 if IncidenteDDoS.activo else 0
 	for computer in computers:
-		if is_instance_valid(computer) and not computer.is_available_for_incident():
-			return true
-	return false
+		if not is_instance_valid(computer):
+			continue
+		if computer.phishing_active:
+			running += 1
+		if computer.malware_active:
+			running += 1
+	return maxi(running, IncidentManager.active_incidents.size()) >= IncidentManager.MAX_ACTIVE_INCIDENTS
 
 
 func _process(_delta: float) -> void:
@@ -192,19 +196,20 @@ func _process(_delta: float) -> void:
 	if _practice_only:
 		return
 	_refresh_computers()
-	var busy := _has_running_incidents()
-	if busy:
+	var at_capacity := _at_incident_capacity()
+	if at_capacity:
 		_schedule_timer.stop()
-		_was_busy = true
+		_was_at_capacity = true
 		return
-	if _was_busy or _schedule_timer.is_stopped():
-		active_incident = null
+	if _was_at_capacity or _schedule_timer.is_stopped():
+		if IncidentManager.active_incidents.is_empty():
+			active_incident = null
 		_schedule_timer.start(idle_incident_delay)
-	_was_busy = false
+	_was_at_capacity = false
 
 
 func _on_schedule_timeout() -> void:
-	if not GameManager.game_active or _has_running_incidents():
+	if not GameManager.game_active or _at_incident_capacity():
 		return
 	if not create_incident() and not _practice_only:
 		_schedule_timer.start(retry_delay)
@@ -215,7 +220,7 @@ func _on_game_ended() -> void:
 
 
 func create_incident() -> bool:
-	if not GameManager.game_active or _has_running_incidents():
+	if not GameManager.game_active or _at_incident_capacity():
 		return false
 	_refresh_computers()
 	var free: Array[Computer] = []
@@ -224,7 +229,7 @@ func create_incident() -> bool:
 			free.append(computer)
 	var choices: Array[IncidentData] = []
 	for incident in available_incidents:
-		if incident == null:
+		if incident == null or incident in IncidentManager.active_incidents:
 			continue
 		if incident.incident_id == "ddos":
 			if not computers.is_empty() and not IncidenteDDoS.activo:
@@ -245,8 +250,11 @@ func create_incident() -> bool:
 	else:
 		_hubo_ddos = true
 		DDoSEnMapa.iniciar_en_escena(get_parent(), incident)
-	_was_busy = true
-	_schedule_timer.stop()
+	_was_at_capacity = _at_incident_capacity()
+	if _practice_only or _was_at_capacity:
+		_schedule_timer.stop()
+	else:
+		_schedule_timer.start(idle_incident_delay)
 	show_incident_notification(incident)
 	print("NUEVO INCIDENTE: ", incident.incident_name, " | Equipo: ", computer.name)
 	return true
