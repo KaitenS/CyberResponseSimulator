@@ -33,6 +33,7 @@ folder_colors={
 "res://Resources/": "green",
 "res://assets/": "purple",
 "res://assets/CyberDesk/": "purple",
+"res://materials/": "blue",
 "res://resources/": "green",
 "res://resources/Incidents/": "green",
 "res://resources/Incidents/Pishing/": "green",
