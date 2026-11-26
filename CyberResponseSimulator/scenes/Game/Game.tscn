@@ -103,14 +103,14 @@ malware_data = ExtResource("6_50swi")
 one_shot = true
 
 [node name="ServidorFisico" parent="." unique_id=697435599 instance=ExtResource("7_f8ls4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9, 1, -10.8)
+transform = Transform3D(-0.99982274, 0, 0.018830955, 0, 1, 0, -0.018830955, 0, -0.99982274, 12.533929, 0.9771029, -3.8193028)
 
 [node name="ServidorFisico2" parent="." unique_id=771668072 instance=ExtResource("7_f8ls4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.35, 1, -10.8)
 id_servidor = 1
 
 [node name="ServidorFisico3" parent="." unique_id=559667837 instance=ExtResource("7_f8ls4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.8, 1, -10.8)
+transform = Transform3D(0.042032566, 0, -0.99911624, 0, 1, 0, 0.99911624, 0, 0.042032566, -8.794081, 1, -4.077321)
 id_servidor = 2
 
 [node name="ColisionesMapa" type="Node" parent="." unique_id=636990354]
