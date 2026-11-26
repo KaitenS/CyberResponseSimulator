@@ -238,7 +238,7 @@ func create_incident() -> bool:
 			choices.append(incident)
 	if choices.is_empty():
 		return false
-	var incident: IncidentData = malware_data 
+	var incident: IncidentData = choices.pick_random()
 	var computer: Computer = computers.pick_random() if incident.incident_id == "ddos" else free.pick_random()
 	if not IncidentManager.start_incident(incident):
 		return false
