@@ -256,6 +256,15 @@ var _usos_reinicio_general: int = 0
 var _oleadas_legitimas: int = 0
 var _oleadas_combinadas: int = 0
 var _rng := RandomNumberGenerator.new()
+# Informe de jornada separado del puntaje y las reglas propias de DDoS.
+var _day_report_id: String = ""
+var _day_serial: int = 0
+var _day_session_id: int = 0
+var _day_decisions: Dictionary = {}
+var _day_finished: bool = false
+var _day_success: bool = false
+var _day_recovery: Dictionary = {}
+var _day_infections: Dictionary = {}
 
 
 func _ready() -> void:
@@ -274,6 +283,16 @@ func iniciar(duracion: float = DURACION_INCIDENTE) -> void:
 	_limite_atencion = minf(LIMITE_SIN_ATENCION, duracion * 0.6)
 	_reset_estado()
 	activo = true
+	_day_session_id = GameManager.session_id
+	_day_serial += 1
+	_day_report_id = "ddos:%d:%d" % [GameManager.session_id, _day_serial]
+	_day_finished = false
+	_day_success = false
+	_day_decisions.clear()
+	_day_recovery.clear()
+	_day_infections.clear()
+	_day_record("service", "Disponibilidad del servicio", "Incidente en curso", "Conservar el servicio hasta el final", null,
+		"Esta tarea se evalúa al finalizar el ataque; no depende del número de correos ni de otros incidentes.")
 	set_process(true)
 	emit_signal("incidente_iniciado")
 	_log("[ALERTA] Trafico anomalo detectado hacia la infraestructura interna.")
@@ -330,6 +349,16 @@ func aplicar_mitigacion(m: int) -> void:
 	var idx: int = resultado.get("idx", -1)
 
 	if idx == -1:
+		var reviewed_legitimate := false
+		for wave in oleadas:
+			var key := "wave:%d:main" % wave.indice
+			if wave.vector == Vector.LEGITIMO and _day_decisions.get(key, {}).get("correct") == null:
+				_day_record(key, "Flujo #%d · Tráfico legítimo" % (wave.indice + 1), NOMBRE_MITIGACION.get(m, str(m)), "No bloquear el tráfico legítimo", false, "El pico no era un ataque. Esta acción se cuenta una sola vez.")
+				reviewed_legitimate = true
+				break
+		if not reviewed_legitimate:
+			_day_record("error:%d" % _day_decisions.size(), "Contramedida sin coincidencia", NOMBRE_MITIGACION.get(m, str(m)), "Aplicar una medida que coincida con un vector activo", false,
+				"La medida no correspondía al tráfico detectado. Las pulsaciones durante cooldown no se registran como decisiones.")
 		_falsos_positivos += 1
 		puntaje += PUNTOS_FALSO_POSITIVO
 		cooldown_restante = COOLDOWN_FALLO
@@ -347,6 +376,8 @@ func aplicar_mitigacion(m: int) -> void:
 	else:
 		ol.mitigada_extra = true
 
+	_day_record("wave:%d:%s" % [ol.indice, "main" if parte == "principal" else "extra"], "Flujo #%d · %s" % [ol.indice + 1, NOMBRE_VECTOR[ol.vector if parte == "principal" else ol.vector_extra]],
+		NOMBRE_MITIGACION[m], NOMBRE_MITIGACION[m], true, "La contramedida coincide con la firma del vector identificado.")
 	cooldown_restante = COOLDOWN_MITIGACION
 
 	var completo: bool = ol.mitigada and (ol.vector_extra == -1 or ol.mitigada_extra)
@@ -357,7 +388,7 @@ func aplicar_mitigacion(m: int) -> void:
 		if puede_registrar_puntaje():
 			puntaje += PUNTOS_OLEADA_MITIGADA
 		else:
-			_log("[AVISO] Monitoreo offline: esta accion no otorga puntaje.")
+			_log("[AVISO] Monitoreo offline: no hay bono de red; el acierto se conserva en el cuaderno.")
 		txt = "Contramedida aplicada. Flujo #%d neutralizado por completo." % (ol.indice + 1)
 		emit_signal("oleada_neutralizada", ol.indice, ol.vector)
 	else:
@@ -377,6 +408,10 @@ func iniciar_reinicio(id: int) -> bool:
 		return false # primero hay que autorizar en el PC
 	if infectado[id]:
 		return false # primero hay que aislarlo en el PC
+	if not servidores[id].online or servidores[id].carga >= 60.0:
+		_day_need_recovery(id)
+	else:
+		_day_record("healthy_restart:%d" % _day_decisions.size(), "Reinicio · " + NOMBRE_SERVIDOR[id], "Reiniciar servidor operativo", "Reiniciar cuando exista una necesidad de recuperación", null, "Se registra como contexto; repetir reinicios de un servidor sano no genera puntos.", false)
 	servidores[id].reiniciando = true
 	servidores[id].progreso_reinicio = 0.0
 	_set_online(id, false)
@@ -414,6 +449,9 @@ func iniciar_corte_luz(segundos: float = DURACION_CORTE_LUZ) -> void:
 func infectar(id: int) -> void:
 	_infeccion_dada = true
 	infectado[id] = true
+	var review_key := "infection:%d:%d" % [id, _day_decisions.size()]
+	_day_infections[id] = review_key
+	_day_record(review_key, "Infección · " + NOMBRE_SERVIDOR[id], "Sin aislar", "Aislar servidor infectado", null, "La infección debía contenerse desde la consola.")
 	_infecciones += 1
 	_log("[CRITICO] Ransomware detectado en %s. Aislelo desde el PC > Servidores." % NOMBRE_SERVIDOR[id])
 	emit_signal("impacto_camara", 0.4)
@@ -430,6 +468,7 @@ func aislar_servidor(id: int) -> bool:
 	registrar_atencion()
 	infectado[id] = false
 	_aislados += 1
+	_day_record(str(_day_infections.get(id, "isolate:%d" % id)), "Infección · " + NOMBRE_SERVIDOR[id], "Aislar servidor", "Aislar servidor infectado", true, "Se contuvo la infección del servidor.")
 	cooldown_restante = COOLDOWN_MITIGACION
 	servidores[id].carga = minf(servidores[id].carga, 40.0)
 	disponibilidad = minf(DISPONIBILIDAD_MAXIMA, disponibilidad + BONO_AISLAR)
@@ -489,6 +528,7 @@ func completar_secuencia(id: int, rapida: bool = false, racha: int = 0) -> void:
 	registrar_atencion()
 	verificaciones_pendientes[id] -= 1
 	_secuencias_ok += 1
+	_day_record("verify:%d" % _day_decisions.size(), "Autorización · " + NOMBRE_SERVIDOR[id], "Verificación correcta", "Completar la verificación solicitada en el rack", true, "La autorización permite volver al rack para completar la recuperación.")
 	_racha_max = maxi(_racha_max, racha)
 	var bono := RECOMPENSA_SECUENCIA
 	var detalle := PackedStringArray()
@@ -523,6 +563,7 @@ func completar_codigo(id: int, texto: String) -> bool:
 		_codigos_ok += 1
 		completar_secuencia(id, false, 0)
 		return true
+	_day_record("code_error:%d" % _day_decisions.size(), "Código · " + NOMBRE_SERVIDOR[id], "Código introducido: " + texto, "Introducir el código que muestra el rack", false, "El código no coincide con el solicitado por el servidor.")
 	_log("[ERROR] Codigo incorrecto para %s." % NOMBRE_SERVIDOR[id])
 	emit_signal("impacto_camara", 0.15)
 	return false
@@ -582,6 +623,7 @@ func reinicio_general() -> void:
 	if not activo or apagon_restante > 0.0:
 		return
 	_usos_reinicio_general += 1
+	_day_record("general:%d" % _usos_reinicio_general, "Reinicio general", "Reiniciar todos los servidores", "Evaluar el coste del apagado antes de reiniciar", null, "Acción registrada como contexto: la recuperación se puntúa cuando el servicio vuelve a estar disponible.", false)
 	for i in 3:
 		verificaciones_pendientes[i] = 0
 		autorizado[i] = false
@@ -661,6 +703,9 @@ func _actualizar_oleadas(delta: float) -> void:
 		oleadas[i].vida -= delta
 		if oleadas[i].vida <= 0.0:
 			if oleadas[i].vector == Vector.LEGITIMO and not oleadas[i].mitigada:
+				var key := "wave:%d:main" % oleadas[i].indice
+				if _day_decisions.get(key, {}).get("correct") == null:
+					_day_record(key, "Flujo #%d · Tráfico legítimo" % (oleadas[i].indice + 1), "No aplicar contramedidas", "No bloquear el tráfico legítimo", true, "El flujo terminó sin aplicar una medida innecesaria.")
 				puntaje += PUNTOS_LEGITIMA_IGNORADA
 				_log("[OK] El flujo #%d era trafico legitimo. Buen criterio: no se aplico ninguna contramedida." % (oleadas[i].indice + 1))
 			var idx: int = oleadas[i].indice
@@ -778,6 +823,11 @@ func _set_online(id: int, valor: bool) -> void:
 	if servidores[id].online == valor:
 		return
 	servidores[id].online = valor
+	if not valor and not servidores[id].reiniciando and apagon_restante <= 0.0:
+		_day_need_recovery(id)
+	elif valor and _day_recovery.has(id):
+		_day_record(str(_day_recovery[id]), "Recuperación · " + NOMBRE_SERVIDOR[id], "Restaurar servicio", "Restaurar el servidor afectado", true, "El servidor volvió a estar en línea.")
+		_day_recovery.erase(id)
 	emit_signal("servidor_estado_cambiado", id, valor)
 
 
@@ -788,6 +838,7 @@ func _finalizar_reinicio(id: int) -> void:
 
 	# Reinicio fisico fallido (aleatorio). Si ya fue autorizado en el PC, sale bien.
 	if not autorizado[id] and _rng.randf() < prob_fallo_actual(id):
+		_day_record("random_restart:%d" % _day_decisions.size(), "Arranque · " + NOMBRE_SERVIDOR[id], "El servidor no arrancó", "Autorizar y volver a intentar desde el rack", null, "Este fallo de arranque es aleatorio y no se cuenta como un error de decisión del jugador.", false)
 		_reinicios_fallidos += 1
 		var n: int
 		if _rng.randf() < prob_codigo:
@@ -869,6 +920,9 @@ func _lanzar_oleada() -> void:
 	else:
 		_log("[TRAFICO] Pico anomalo hacia: %s" % ", ".join(nombres))
 
+	_day_record("wave:%d:main" % _contador_oleadas, "Flujo #%d · %s" % [_contador_oleadas + 1, NOMBRE_VECTOR[vector]], "Sin decidir", "No bloquear el tráfico legítimo" if vector == Vector.LEGITIMO else NOMBRE_MITIGACION[CONTRAMEDIDA[vector]], null, "Revisar la telemetría y contrastar la firma antes de actuar.")
+	if vector_extra != -1:
+		_day_record("wave:%d:extra" % _contador_oleadas, "Flujo #%d · %s" % [_contador_oleadas + 1, NOMBRE_VECTOR[vector_extra]], "Sin decidir", NOMBRE_MITIGACION[CONTRAMEDIDA[vector_extra]], null, "Esta oleada contiene una segunda firma que requiere su propia contramedida.")
 	emit_signal("oleada_iniciada", _contador_oleadas, vector, objetivos, telemetria)
 	_contador_oleadas += 1
 	_sortear_eventos()
@@ -951,6 +1005,11 @@ func _castigo_falso_positivo() -> void:
 
 
 func _finalizar(exito: bool) -> void:
+	if not activo:
+		return
+	_day_finished = true
+	_day_success = exito
+	_day_record("service", "Disponibilidad del servicio", "Servicio conservado" if exito else "Servicio perdido o ataque abandonado", "Conservar el servicio hasta el final", exito, "El resultado del servicio no borra los puntos de las contramedidas correctas anteriores.")
 	activo = false
 	set_process(false)
 	var resumen := {
@@ -1037,3 +1096,29 @@ func _log(texto: String) -> void:
 	if historial_log.size() > 80:
 		historial_log.pop_front()
 	emit_signal("log_terminal", texto)
+
+
+func _day_record(key: String, title: String, action: String, expected: String, correct: Variant, explanation: String, scored: bool = true) -> void:
+	if _day_report_id.is_empty():
+		return
+	_day_decisions[key] = {"id": key, "title": title, "action": action, "expected": expected,
+		"correct": correct, "explanation": explanation, "scored": scored}
+	GameManager.record_incident_report(get_day_report())
+
+func _day_need_recovery(id: int) -> void:
+	if _day_report_id.is_empty() or _day_recovery.has(id):
+		return
+	var key := "recovery:%d:%d" % [id, _day_decisions.size()]
+	_day_recovery[id] = key
+	_day_record(key, "Recuperación · " + NOMBRE_SERVIDOR[id], "Sin restaurar", "Restaurar el servidor afectado", null, "El servicio estaba caído o saturado. Reiniciar un servidor sano no genera puntos adicionales.")
+
+func get_day_report() -> Dictionary:
+	if _day_report_id.is_empty():
+		return {}
+	var entries: Array[Dictionary] = []
+	for entry in _day_decisions.values():
+		entries.append(entry.duplicate(true))
+	return {"report_id": _day_report_id, "kind": "ddos", "session_id": _day_session_id, "incident_name": "Ataque DDoS",
+		"finished": _day_finished, "success": _day_success,
+		"status": ("Contenido" if _day_success else "Servicio perdido o ataque abandonado") if _day_finished else "En curso al cerrar el día",
+		"availability": disponibilidad, "decisions": entries}

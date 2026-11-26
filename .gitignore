@@ -14,3 +14,6 @@ CyberResponseSimulator/scripts/Incidents/ddos/pantalla_resultado.gd.uid
 !CyberResponseSimulator/scripts/Game/ui/cyberdesk_audio.gd
 !CyberResponseSimulator/scripts/Incidents/Pishing/phishing_action_audio.gd
 !CyberResponseSimulator/scripts/Game/ambient_music.gd
+
+# Decoración del cuaderno de resultados.
+!CyberResponseSimulator/scripts/Game/ui/result_notebook_art.gd
