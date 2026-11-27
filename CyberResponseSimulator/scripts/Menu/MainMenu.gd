@@ -99,8 +99,7 @@ func _on_back_button_pressed():
 func _on_play_button_pressed():
 	play_click_sound()
 
-	GameManager.start_game()
-	get_tree().change_scene_to_file("res://scenes/Game/Game.tscn")
+	get_tree().change_scene_to_file("res://scenes/Menu/TutorialIntro.tscn")
 
 
 func _on_exit_button_pressed():

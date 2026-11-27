@@ -306,13 +306,22 @@ visible = false
 layout_mode = 0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 914.0
+offset_right = 620.0
 offset_bottom = 35.0
 theme_override_font_sizes/font_size = 24
 text = "Phishing · Incidente 1"
 mouse_filter = 2
 
 
+
+[node name="IncidentSelector" type="OptionButton" parent="PageRoot/Notebook/Details"]
+visible = false
+offset_left = 640.0
+offset_top = 0.0
+offset_right = 914.0
+offset_bottom = 35.0
+theme_override_font_sizes/font_size = 17
+tooltip_text = "Elegir otro incidente de este tipo registrado durante la jornada."
 
 [node name="Status" type="Label" parent="PageRoot/Notebook/Details"]
 layout_mode = 0

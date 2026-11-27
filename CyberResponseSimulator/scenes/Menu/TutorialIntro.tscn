@@ -1,0 +1,573 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Menu/TutorialIntro.gd" id="1_script"]
+
+[ext_resource type="FontFile" path="res://assets/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_font"]
+
+[ext_resource type="Texture2D" path="res://assets/Tutorial/tutorial_1.png" id="3_image"]
+
+[ext_resource type="Texture2D" path="res://assets/Tutorial/tutorial_2.png" id="4_image"]
+
+[ext_resource type="Texture2D" path="res://assets/Tutorial/tutorial_3.png" id="5_image"]
+
+[ext_resource type="Texture2D" path="res://assets/Tutorial/tutorial_4.png" id="6_image"]
+
+[ext_resource type="Texture2D" path="res://assets/Tutorial/office_background.png" id="7_office"]
+
+[sub_resource type="Theme" id="TutorialTheme"]
+default_font = ExtResource("2_font")
+default_font_size = 22
+
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.94, 0.93, 0.88, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.20, 0.32, 0.49, 1)
+
+
+shadow_color = Color(0, 0, 0, 0.35)
+
+shadow_size = 14
+
+[sub_resource type="StyleBoxFlat" id="Normal"]
+bg_color = Color(0.93, 0.93, 0.90, 1)
+border_width_top = 1
+border_width_bottom = 1
+border_color = Color(0.47, 0.50, 0.55, 1)
+content_margin_left = 14.0
+content_margin_right = 14.0
+
+
+border_width_left = 1
+
+border_width_right = 1
+
+[sub_resource type="StyleBoxFlat" id="Hover"]
+bg_color = Color(0.85, 0.89, 0.95, 1)
+border_width_top = 1
+border_width_bottom = 1
+border_color = Color(0.47, 0.50, 0.55, 1)
+content_margin_left = 14.0
+content_margin_right = 14.0
+
+
+border_width_left = 1
+
+border_width_right = 1
+
+[sub_resource type="StyleBoxFlat" id="Pressed"]
+bg_color = Color(0.93, 0.93, 0.90, 1)
+border_width_top = 1
+border_width_bottom = 1
+border_color = Color(0.47, 0.50, 0.55, 1)
+content_margin_left = 14.0
+content_margin_right = 14.0
+
+
+border_width_left = 1
+
+border_width_right = 1
+
+[sub_resource type="StyleBoxFlat" id="Focus"]
+bg_color = Color(0.85, 0.89, 0.95, 1)
+border_width_top = 1
+border_width_bottom = 1
+border_color = Color(0.47, 0.50, 0.55, 1)
+content_margin_left = 14.0
+content_margin_right = 14.0
+
+
+border_width_left = 1
+
+border_width_right = 1
+
+[node name="TutorialIntro" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("TutorialTheme")
+script = ExtResource("1_script")
+
+
+[node name="Background" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+
+texture = ExtResource("7_office")
+
+expand_mode = 1
+
+stretch_mode = 6
+
+[node name="Dim" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.015, 0.025, 0.04, 0.30)
+
+[node name="Design" type="Control" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1280.0
+offset_bottom = 720.0
+
+
+
+[node name="Panel" type="Panel" parent="Design"]
+offset_left = 160.0
+offset_top = 82.0
+offset_right = 1120.0
+offset_bottom = 634.0
+theme_override_styles/panel = SubResource("PanelStyle")
+
+
+[node name="TitleBar" type="ColorRect" parent="Design/Panel"]
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 958.0
+offset_bottom = 88.0
+mouse_filter = 2
+color = Color(0.11, 0.25, 0.46, 1)
+
+[node name="Eyebrow" type="Label" parent="Design/Panel"]
+offset_left = 24.0
+offset_top = 12.0
+offset_right = 924.0
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(0.75, 0.83, 0.93, 1)
+theme_override_font_sizes/font_size = 17
+text = "Departamento de seguridad informática"
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Heading" type="Label" parent="Design/Panel"]
+offset_left = 24.0
+offset_top = 39.0
+offset_right = 924.0
+offset_bottom = 77.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 29
+text = "Primer día de trabajo"
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Progress" type="ProgressBar" parent="Design/Panel"]
+offset_left = 40.0
+offset_top = 132.0
+offset_right = 1144.0
+offset_bottom = 136.0
+mouse_filter = 2
+value = 25.0
+show_percentage = false
+
+
+visible = false
+
+[node name="Pages" type="Control" parent="Design/Panel"]
+offset_left = 24.0
+offset_top = 114.0
+offset_right = 936.0
+offset_bottom = 424.0
+
+
+
+[node name="Page1" type="Control" parent="Design/Panel/Pages"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 912.0
+offset_bottom = 310.0
+
+
+
+[node name="ImageBackground" type="ColorRect" parent="Design/Panel/Pages/Page1"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 360.0
+offset_bottom = 238.0
+color = Color(0.12, 0.15, 0.18, 1)
+mouse_filter = 2
+
+
+[node name="Screenshot" type="TextureRect" parent="Design/Panel/Pages/Page1"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 356.0
+offset_bottom = 234.0
+texture = ExtResource("3_image")
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+
+[node name="Caption" type="Label" parent="Design/Panel/Pages/Page1"]
+offset_left = 0.0
+offset_top = 250.0
+offset_right = 360.0
+offset_bottom = 304.0
+theme_override_colors/font_color = Color(0.35, 0.38, 0.41, 1)
+theme_override_font_sizes/font_size = 16
+text = "Tu oficina · el punto de partida"
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Title" type="Label" parent="Design/Panel/Pages/Page1"]
+offset_left = 392.0
+offset_top = 0.0
+offset_right = 912.0
+offset_bottom = 62.0
+theme_override_colors/font_color = Color(0.13, 0.25, 0.40, 1)
+theme_override_font_sizes/font_size = 26
+text = "Bienvenido al equipo"
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Body" type="Label" parent="Design/Panel/Pages/Page1"]
+offset_left = 392.0
+offset_top = 72.0
+offset_right = 912.0
+offset_bottom = 262.0
+theme_override_colors/font_color = Color(0.12, 0.15, 0.19, 1)
+theme_override_font_sizes/font_size = 20
+text = "Hoy comienza tu primera jornada como analista de ciberseguridad.\n\nDurante el día surgirán incidentes en distintos equipos de la oficina. Tu trabajo será investigar las señales y decidir cómo responder."
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Hint" type="Label" parent="Design/Panel/Pages/Page1"]
+offset_left = 392.0
+offset_top = 270.0
+offset_right = 912.0
+offset_bottom = 319.0
+theme_override_colors/font_color = Color(0.25, 0.30, 0.35, 1)
+theme_override_font_sizes/font_size = 17
+text = "Explora, observa y tómate un momento para investigar."
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Page2" type="Control" parent="Design/Panel/Pages"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 912.0
+offset_bottom = 310.0
+visible = false
+
+
+[node name="ImageBackground" type="ColorRect" parent="Design/Panel/Pages/Page2"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 360.0
+offset_bottom = 238.0
+color = Color(0.12, 0.15, 0.18, 1)
+mouse_filter = 2
+
+
+[node name="Screenshot" type="TextureRect" parent="Design/Panel/Pages/Page2"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 356.0
+offset_bottom = 234.0
+texture = ExtResource("4_image")
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+
+[node name="Caption" type="Label" parent="Design/Panel/Pages/Page2"]
+offset_left = 0.0
+offset_top = 250.0
+offset_right = 360.0
+offset_bottom = 304.0
+theme_override_colors/font_color = Color(0.35, 0.38, 0.41, 1)
+theme_override_font_sizes/font_size = 16
+text = "CyberMail · información para investigar"
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Title" type="Label" parent="Design/Panel/Pages/Page2"]
+offset_left = 392.0
+offset_top = 0.0
+offset_right = 912.0
+offset_bottom = 62.0
+theme_override_colors/font_color = Color(0.13, 0.25, 0.40, 1)
+theme_override_font_sizes/font_size = 26
+text = "El computador de trabajo"
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Body" type="Label" parent="Design/Panel/Pages/Page2"]
+offset_left = 392.0
+offset_top = 72.0
+offset_right = 912.0
+offset_bottom = 262.0
+theme_override_colors/font_color = Color(0.12, 0.15, 0.19, 1)
+theme_override_font_sizes/font_size = 20
+text = "Pulsa E frente a un computador para abrir CyberDesk y sus herramientas.\n\nSi aparece una alerta, busca el equipo señalado. Lee las pistas y revisa la información antes de responder."
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Hint" type="Label" parent="Design/Panel/Pages/Page2"]
+offset_left = 392.0
+offset_top = 270.0
+offset_right = 912.0
+offset_bottom = 319.0
+theme_override_colors/font_color = Color(0.25, 0.30, 0.35, 1)
+theme_override_font_sizes/font_size = 17
+text = "En los correos, contrasta remitentes y dominios con el Resumen Diario."
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Page3" type="Control" parent="Design/Panel/Pages"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 912.0
+offset_bottom = 310.0
+visible = false
+
+
+[node name="ImageBackground" type="ColorRect" parent="Design/Panel/Pages/Page3"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 360.0
+offset_bottom = 238.0
+color = Color(0.12, 0.15, 0.18, 1)
+mouse_filter = 2
+
+
+[node name="Screenshot" type="TextureRect" parent="Design/Panel/Pages/Page3"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 356.0
+offset_bottom = 234.0
+texture = ExtResource("5_image")
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+
+[node name="Caption" type="Label" parent="Design/Panel/Pages/Page3"]
+offset_left = 0.0
+offset_top = 250.0
+offset_right = 360.0
+offset_bottom = 304.0
+theme_override_colors/font_color = Color(0.35, 0.38, 0.41, 1)
+theme_override_font_sizes/font_size = 16
+text = "Servidores · investiga antes de aplicar medidas"
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Title" type="Label" parent="Design/Panel/Pages/Page3"]
+offset_left = 392.0
+offset_top = 0.0
+offset_right = 912.0
+offset_bottom = 62.0
+theme_override_colors/font_color = Color(0.13, 0.25, 0.40, 1)
+theme_override_font_sizes/font_size = 26
+text = "Qué puede pasar hoy"
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Body" type="Label" parent="Design/Panel/Pages/Page3"]
+offset_left = 392.0
+offset_top = 72.0
+offset_right = 912.0
+offset_bottom = 262.0
+theme_override_colors/font_color = Color(0.12, 0.15, 0.19, 1)
+theme_override_font_sizes/font_size = 20
+text = "PHISHING · Contrasta remitentes, enlaces y adjuntos.\n\nMALWARE · Investiga procesos, archivos y registros.\n\nDDoS · Revisa los servidores y responde a las anomalías del servicio."
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Hint" type="Label" parent="Design/Panel/Pages/Page3"]
+offset_left = 392.0
+offset_top = 270.0
+offset_right = 912.0
+offset_bottom = 319.0
+theme_override_colors/font_color = Color(0.25, 0.30, 0.35, 1)
+theme_override_font_sizes/font_size = 17
+text = "El reloj sigue avanzando y pueden coincidir dos incidentes."
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Page4" type="Control" parent="Design/Panel/Pages"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 912.0
+offset_bottom = 310.0
+visible = false
+
+
+[node name="ImageBackground" type="ColorRect" parent="Design/Panel/Pages/Page4"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 360.0
+offset_bottom = 238.0
+color = Color(0.12, 0.15, 0.18, 1)
+mouse_filter = 2
+
+
+[node name="Screenshot" type="TextureRect" parent="Design/Panel/Pages/Page4"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 356.0
+offset_bottom = 234.0
+texture = ExtResource("6_image")
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+
+[node name="Caption" type="Label" parent="Design/Panel/Pages/Page4"]
+offset_left = 0.0
+offset_top = 250.0
+offset_right = 360.0
+offset_bottom = 304.0
+theme_override_colors/font_color = Color(0.35, 0.38, 0.41, 1)
+theme_override_font_sizes/font_size = 16
+text = "Manual del Analista · tu referencia durante la jornada"
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Title" type="Label" parent="Design/Panel/Pages/Page4"]
+offset_left = 392.0
+offset_top = 0.0
+offset_right = 912.0
+offset_bottom = 62.0
+theme_override_colors/font_color = Color(0.13, 0.25, 0.40, 1)
+theme_override_font_sizes/font_size = 26
+text = "Antes de comenzar"
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Body" type="Label" parent="Design/Panel/Pages/Page4"]
+offset_left = 392.0
+offset_top = 72.0
+offset_right = 912.0
+offset_bottom = 262.0
+theme_override_colors/font_color = Color(0.12, 0.15, 0.19, 1)
+theme_override_font_sizes/font_size = 20
+text = "WASD · Moverte     RATÓN · Mirar\nE · Interactuar    Q · Abrir el manual\nESC · Salir de CyberDesk / pausar\n\nConsulta el manual cuando lo necesites. Al final, el cuaderno mostrará tus decisiones, aciertos y errores."
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Hint" type="Label" parent="Design/Panel/Pages/Page4"]
+offset_left = 392.0
+offset_top = 270.0
+offset_right = 912.0
+offset_bottom = 319.0
+theme_override_colors/font_color = Color(0.25, 0.30, 0.35, 1)
+theme_override_font_sizes/font_size = 17
+text = "Aprende de cada decisión. El reloj comenzará al entrar a la oficina."
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="Safety" type="Label" parent="Design/Panel"]
+offset_left = 24.0
+offset_top = 442.0
+offset_right = 936.0
+offset_bottom = 468.0
+theme_override_colors/font_color = Color(0.35, 0.38, 0.41, 1)
+theme_override_font_sizes/font_size = 16
+text = "Revisa esta guía antes de empezar. Puedes consultarla sin gastar tiempo de la jornada."
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="BackButton" type="Button" parent="Design/Panel"]
+offset_left = 24.0
+offset_top = 490.0
+offset_right = 204.0
+offset_bottom = 530.0
+theme_override_font_sizes/font_size = 20
+text = "< Anterior"
+theme_override_styles/normal = SubResource("Normal")
+theme_override_styles/hover = SubResource("Hover")
+theme_override_styles/pressed = SubResource("Pressed")
+theme_override_styles/focus = SubResource("Focus")
+
+
+
+theme_override_colors/font_color = Color(0.12, 0.15, 0.19, 1)
+
+theme_override_colors/font_focus_color = Color(0.12, 0.15, 0.19, 1)
+
+theme_override_colors/font_hover_color = Color(0.12, 0.15, 0.19, 1)
+
+theme_override_colors/font_pressed_color = Color(0.12, 0.15, 0.19, 1)
+
+[node name="PageNumber" type="Label" parent="Design/Panel"]
+offset_left = 437.0
+offset_top = 498.0
+offset_right = 597.0
+offset_bottom = 523.0
+theme_override_colors/font_color = Color(0.12, 0.15, 0.19, 1)
+theme_override_font_sizes/font_size = 18
+text = "01 / 04"
+autowrap_mode = 3
+mouse_filter = 2
+
+
+[node name="NextButton" type="Button" parent="Design/Panel"]
+offset_left = 646.0
+offset_top = 490.0
+offset_right = 936.0
+offset_bottom = 530.0
+theme_override_font_sizes/font_size = 20
+text = "Siguiente >"
+theme_override_styles/normal = SubResource("Normal")
+theme_override_styles/hover = SubResource("Hover")
+theme_override_styles/pressed = SubResource("Pressed")
+theme_override_styles/focus = SubResource("Focus")
+
+
+
+theme_override_colors/font_color = Color(0.12, 0.15, 0.19, 1)
+
+theme_override_colors/font_focus_color = Color(0.12, 0.15, 0.19, 1)
+
+theme_override_colors/font_hover_color = Color(0.12, 0.15, 0.19, 1)
+
+theme_override_colors/font_pressed_color = Color(0.12, 0.15, 0.19, 1)
+
+[node name="SkipButton" type="Button" parent="Design/Panel"]
+offset_left = 646.0
+offset_top = 566.0
+offset_right = 936.0
+offset_bottom = 596.0
+theme_override_font_sizes/font_size = 17
+text = "Omitir y entrar a la oficina"
+flat = true
+
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)

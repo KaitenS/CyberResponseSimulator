@@ -68,3 +68,4 @@ autoplay = "idle"
 libraries = {
 &"": ExtResource("8_animations")
 }
+[editable path="Rig/Torso/HeadSource"]

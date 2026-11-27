@@ -11,10 +11,12 @@ var _page_tween: Tween
 @onready var art: Control = $PageRoot/Notebook/Art
 @onready var summary_page: Control = $PageRoot/Notebook/Summary
 @onready var details_page: Control = $PageRoot/Notebook/Details
+@onready var incident_selector: OptionButton = $PageRoot/Notebook/Details/IncidentSelector
 @onready var stamp: Panel = $PageRoot/Notebook/GradeStamp
 
 func _ready() -> void:
 	visible = false
+	incident_selector.item_selected.connect(_select_incident)
 	GameManager.game_ended.connect(show_results)
 	$PageRoot/Notebook/Previous.pressed.connect(_turn_page.bind(-1))
 	$PageRoot/Notebook/Next.pressed.connect(_turn_page.bind(1))
@@ -88,6 +90,7 @@ func _set_page(index: int) -> void:
 	summary_page.visible = is_summary
 	stamp.visible = is_summary
 	details_page.visible = not is_summary
+	_refresh_incident_selector(page.kind)
 	if not is_summary:
 		_render_report(page)
 	$PageRoot/Notebook/Previous.disabled = _page == 0
@@ -112,7 +115,11 @@ func _render_report(page: Dictionary) -> void:
 	var report: Dictionary = page.report
 	var selected: Array[Dictionary] = [report]
 	var stats := GameManager.summarize_reports(selected)
-	details_page.get_node("Heading").text = "%s · Incidente %d" % [KIND_NAMES[page.kind], page.number]
+	var total := 0
+	for entry in _pages:
+		if entry.kind == page.kind and entry.has("report"):
+			total += 1
+	details_page.get_node("Heading").text = "%s · Incidente %d de %d" % [KIND_NAMES[page.kind], page.number, total]
 	details_page.get_node("Status").text = "%s · %d/%d puntos\n%d aciertos · %d errores · %d pendientes" % [report.get("status", ""), stats.points, stats.possible, stats.correct, stats.incorrect, stats.pending]
 	var blocks := PackedStringArray()
 	for decision in report.get("decisions", []):
@@ -130,6 +137,22 @@ func _render_report(page: Dictionary) -> void:
 		blocks.append("No hubo decisiones registradas para este incidente.")
 	text.text = "\n\n".join(blocks)
 	text.scroll_to_line(0)
+
+func _refresh_incident_selector(kind: String) -> void:
+	incident_selector.clear()
+	var indices: Array[int] = []
+	for i in range(_pages.size()):
+		if _pages[i].kind == kind and _pages[i].has("report"):
+			indices.append(i)
+	for i in range(indices.size()):
+		incident_selector.add_item("Incidente %d de %d" % [i + 1, indices.size()], indices[i])
+		if indices[i] == _page:
+			incident_selector.select(i)
+	incident_selector.visible = indices.size() > 1
+
+func _select_incident(index: int) -> void:
+	if index >= 0 and index < incident_selector.item_count:
+		_set_page(incident_selector.get_item_id(index))
 
 func _safe(value: Variant) -> String:
 	return str(value).replace("[", "[lb]")
